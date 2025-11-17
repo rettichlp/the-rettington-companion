@@ -1,4 +1,7 @@
 {
   "trc.option.general.title": "General",
   "trc.option.overlay.title": "Overlay"
+  "trc.option.overlay.title": "Overlay",
+  "trc.option.overlay.show_armor_hud.title": "Show Armor HUD",
+  "trc.option.overlay.show_arrow_hud.title": "Show Arrow HUD",
 }
