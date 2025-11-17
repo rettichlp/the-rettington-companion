@@ -1,6 +1,5 @@
 package de.rettichlp.therettingtoncompanion.common.gui.screens;
 
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
@@ -11,11 +10,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static java.util.Objects.nonNull;
 import static net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.vertical;
-import static net.minecraft.text.Text.of;
 
 public abstract class AbstractModScreen extends Screen {
 
@@ -24,26 +21,14 @@ public abstract class AbstractModScreen extends Screen {
     private static final Identifier MENU_LIST_BACKGROUND_TEXTURE = Identifier.ofVanilla("textures/gui/menu_list_background.png");
     private static final Identifier INWORLD_MENU_LIST_BACKGROUND_TEXTURE = Identifier.ofVanilla("textures/gui/inworld_menu_list_background.png");
 
+    private final Text subTitle;
     private final Screen parent;
-
-    private Text subTitle = of("v" + getVersion());
-    private boolean renderBackground = true;
-
-    public AbstractModScreen(Text title, Screen parent) {
-        super(title);
-        this.parent = parent;
-    }
-
-    public AbstractModScreen(Text title, Text subTitle, Screen parent) {
-        super(title);
-        this.parent = parent;
-        this.subTitle = subTitle;
-    }
+    private final boolean renderBackground;
 
     public AbstractModScreen(Text title, Text subTitle, Screen parent, boolean renderBackground) {
         super(title);
-        this.parent = parent;
         this.subTitle = subTitle;
+        this.parent = parent;
         this.renderBackground = renderBackground;
     }
 
@@ -118,11 +103,5 @@ public abstract class AbstractModScreen extends Screen {
     private void drawMenuListBackground(@NotNull DrawContext context) {
         Identifier identifier = this.client.world == null ? MENU_LIST_BACKGROUND_TEXTURE : INWORLD_MENU_LIST_BACKGROUND_TEXTURE;
         context.drawTexture(GUI_TEXTURED, identifier, this.layout.getX(), this.layout.getHeaderHeight(), 0.0F, 0.0F, this.layout.getWidth(), this.layout.getContentHeight(), 32, 32);
-    }
-
-    private String getVersion() {
-        return FabricLoader.getInstance().getModContainer(MOD_ID)
-                .map(modContainer -> modContainer.getMetadata().getVersion().getFriendlyString())
-                .orElseThrow(() -> new NullPointerException("Cannot find version"));
     }
 }
