@@ -5,8 +5,6 @@ import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrolla
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.AbstractOptionTab;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.GeneralOptionTab;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.OverlayOptionTab;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.widget.AxisGridWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -28,7 +26,6 @@ import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.text.Text.translatable;
 
-@Environment(EnvType.CLIENT)
 public class ModOptionScreen extends AbstractModScreen {
 
     private static final Text TITLE = empty()
