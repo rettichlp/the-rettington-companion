@@ -1,5 +1,6 @@
 package de.rettichlp.therettingtoncompanion.common;
 
+import de.rettichlp.therettingtoncompanion.common.models.ChatRegex;
 import lombok.Data;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -8,6 +9,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
@@ -22,6 +25,7 @@ public class Configuration {
 
     private boolean showArmorHud = true;
     private boolean showArrowHud = true;
+    private Set<ChatRegex> chatRegexes = new HashSet<>();
 
     public Configuration loadFromFile() {
         File file = CONFIG_PATH.toFile();
