@@ -12,9 +12,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
+import static net.minecraft.util.Formatting.YELLOW;
+
 @Getter
 @AllArgsConstructor
 public abstract class AbstractOptionTab {
+
+    protected final MinecraftClient client = MinecraftClient.getInstance();
 
     private final String id;
 
@@ -22,10 +26,11 @@ public abstract class AbstractOptionTab {
 
     public abstract Collection<ScrollableListEntry> getContent();
 
-    public ButtonWidget getButton() {
-        return ButtonWidget.builder(displayName(), button -> {
-            MinecraftClient.getInstance().setScreen(new ModOptionScreen(this.id));
-        }).width(100).build();
+    public ButtonWidget getButton(boolean isActive) {
+        Text displayName = isActive ? displayName().copy().formatted(YELLOW) : displayName();
+        return ButtonWidget.builder(displayName, button -> this.client.setScreen(new ModOptionScreen(this.id)))
+                .width(100)
+                .build();
     }
 
     public ElementListWidget<ScrollableListEntry> createContentWidget(int width, int height, int x, int y) {

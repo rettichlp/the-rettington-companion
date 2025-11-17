@@ -65,7 +65,7 @@ public class ModOptionScreen extends AbstractModScreen {
         AxisGridWidget axisGridWidget = this.layout.addBody(new AxisGridWidget(0, this.layout.getHeaderHeight() + 2, this.width, this.layout.getContentHeight() - 2, AxisGridWidget.DisplayAxis.VERTICAL));
 
         DirectionalLayoutWidget tabs = axisGridWidget.add(horizontal().spacing(8), Positioner::alignHorizontalCenter);
-        OPTION_TABS.forEach(ot -> tabs.add(ot.getButton()));
+        OPTION_TABS.forEach(ot -> tabs.add(ot.getButton(ot.equals(abstractOptionTab))));
 
         axisGridWidget.add(abstractOptionTab.createContentWidget(this.width, this.layout.getContentHeight() - 20 - 4, 0, this.layout.getHeaderHeight() + 20 + 4)); // 2 for separator
     }
