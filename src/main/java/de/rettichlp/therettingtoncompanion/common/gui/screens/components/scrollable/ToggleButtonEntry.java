@@ -1,6 +1,7 @@
 package de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable;
 
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
@@ -17,7 +18,7 @@ public class ToggleButtonEntry extends NamedEntry {
 
     private boolean buttonValue;
 
-    public ToggleButtonEntry(Text name, boolean initialValue, Consumer<Boolean> onValueChange) {
+    public ToggleButtonEntry(Text name, Text tooltip, boolean initialValue, Consumer<Boolean> onValueChange) {
         super(name);
         this.buttonValue = initialValue;
 
@@ -28,6 +29,7 @@ public class ToggleButtonEntry extends NamedEntry {
         }).build();
 
         this.buttonWidget.setWidth(60);
+        this.buttonWidget.setTooltip(Tooltip.of(tooltip));
 
         this.children.add(this.buttonWidget);
     }

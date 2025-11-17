@@ -23,8 +23,17 @@ public class OverlayOptionTab extends AbstractOptionTab {
 
     @Override
     public Collection<ScrollableListEntry> getContent() {
-        ToggleButtonEntry showArmorHudEntry = new ToggleButtonEntry(translatable("trc.option.overlay.show_armor_hud.title"), configuration.isShowArmorHud(), configuration::setShowArmorHud);
-        ToggleButtonEntry showArrowHudEntry = new ToggleButtonEntry(translatable("trc.option.overlay.show_arrow_hud.title"), configuration.isShowArrowHud(), configuration::setShowArrowHud);
+        ToggleButtonEntry showArmorHudEntry = new ToggleButtonEntry(
+                translatable("trc.option.overlay.show_armor_hud.title"),
+                translatable("trc.option.overlay.show_armor_hud.description"),
+                configuration.isShowArmorHud(),
+                configuration::setShowArmorHud);
+
+        ToggleButtonEntry showArrowHudEntry = new ToggleButtonEntry(
+                translatable("trc.option.overlay.show_arrow_hud.title"),
+                translatable("trc.option.overlay.show_arrow_hud.description"),
+                configuration.isShowArrowHud(),
+                configuration::setShowArrowHud);
 
         return List.of(showArmorHudEntry, showArrowHudEntry);
     }
