@@ -16,6 +16,8 @@ import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.vertical;
 
 public abstract class AbstractModScreen extends Screen {
 
+    protected static final int MARGIN = 8;
+
     protected final ThreePartsLayoutWidget layout = new ThreePartsLayoutWidget(this);
 
     private static final Identifier MENU_LIST_BACKGROUND_TEXTURE = Identifier.ofVanilla("textures/gui/menu_list_background.png");
