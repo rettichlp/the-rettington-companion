@@ -20,6 +20,8 @@ public class Configuration {
 
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve(MOD_ID + ".json");
 
+    private boolean showArmorHud = true;
+    private boolean showArrowHud = true;
 
     public Configuration loadFromFile() {
         File file = CONFIG_PATH.toFile();
