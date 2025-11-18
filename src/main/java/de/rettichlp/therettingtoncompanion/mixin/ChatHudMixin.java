@@ -5,7 +5,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
-import net.minecraft.util.math.ColorHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,6 +19,7 @@ import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getStri
 import static java.lang.Math.max;
 import static net.minecraft.client.gui.hud.ChatHud.getHeight;
 import static net.minecraft.client.gui.hud.ChatHud.getWidth;
+import static net.minecraft.util.math.ColorHelper.withAlpha;
 
 @Mixin(ChatHud.class)
 public abstract class ChatHudMixin {
@@ -50,7 +50,7 @@ public abstract class ChatHudMixin {
                           float backgroundOpacity,
                           CallbackInfo ci) {
         Color color = new Color(190, 255, 0);
-        int highlightColor = ColorHelper.withAlpha(50, color.getRGB());
+        int highlightColor = withAlpha(50, color.getRGB());
 
         checkForHighlightedMessageAndRun(getString(line.content()), () -> {
             // for some reason there is a 4px offset on the left side and 8px offset on the right side
