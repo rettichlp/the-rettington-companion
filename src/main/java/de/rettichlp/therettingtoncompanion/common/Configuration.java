@@ -25,6 +25,7 @@ public class Configuration {
 
     private boolean showArmorHud = true;
     private boolean showArrowHud = true;
+    private boolean defaultChatRegex = true;
     private Set<ChatRegex> chatRegexes = new HashSet<>();
 
     public Configuration loadFromFile() {
