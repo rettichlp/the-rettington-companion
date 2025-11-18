@@ -17,6 +17,7 @@ import java.net.URI;
 import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_NAME;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.common.utils.ModUtils.getVersionString;
 import static net.minecraft.client.gui.screen.ConfirmLinkScreen.opening;
 import static net.minecraft.client.gui.widget.AxisGridWidget.DisplayAxis.VERTICAL;
@@ -91,7 +92,7 @@ public class ModOptionScreen extends AbstractModScreen {
 
     @Override
     public void doOnClose() {
-        // FIXME configuration.saveToFile();
+        configuration.saveToFile();
     }
 
     @Override
