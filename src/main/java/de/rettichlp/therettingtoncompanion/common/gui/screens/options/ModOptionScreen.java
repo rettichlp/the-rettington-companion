@@ -64,12 +64,12 @@ public class ModOptionScreen extends AbstractModScreen {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No OptionTab found for id: " + this.activeOptionTabId));
 
-        AxisGridWidget axisGridWidget = this.layout.addBody(new AxisGridWidget(0, this.layout.getHeaderHeight(), this.width, this.layout.getContentHeight(), VERTICAL));
+        AxisGridWidget axisGridWidget = this.layout.addBody(new AxisGridWidget(0, this.layout.getHeaderHeight(), this.layout.getWidth(), this.layout.getContentHeight(), VERTICAL));
 
         this.tabWidget = axisGridWidget.add(horizontal().spacing(MARGIN));
         OPTION_TABS.forEach(ot -> this.tabWidget.add(ot.getButton(ot.equals(abstractOptionTab))));
 
-        this.contentWidget = axisGridWidget.add(abstractOptionTab.createContentWidget(this.width, this.layout.getContentHeight() - this.tabWidget.getHeight() - 4, 0, this.layout.getHeaderHeight() + this.tabWidget.getHeight() + 4));
+        this.contentWidget = axisGridWidget.add(abstractOptionTab.createContentWidget(this.layout.getWidth(), this.layout.getContentHeight() - this.tabWidget.getHeight() - 4, 0, this.layout.getHeaderHeight() + this.tabWidget.getHeight() + 4));
 
         axisGridWidget.forEachChild(this::addDrawableChild);
     }
@@ -83,7 +83,7 @@ public class ModOptionScreen extends AbstractModScreen {
         }
 
         if (this.contentWidget != null) {
-            this.contentWidget.position(this.width, this.layout.getContentHeight() - this.tabWidget.getHeight() - 4, 0, this.layout.getHeaderHeight() + this.tabWidget.getHeight() + 4);
+            this.contentWidget.position(this.layout.getWidth(), this.layout.getContentHeight() - this.tabWidget.getHeight() - 4, 0, this.layout.getHeaderHeight() + this.tabWidget.getHeight() + 4);
         }
     }
 

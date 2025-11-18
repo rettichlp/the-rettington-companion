@@ -44,5 +44,20 @@ public abstract class AbstractOptionTab {
             setPosition(x, y);
             content.forEach(this::addEntry);
         }
+
+        @Override
+        protected int getScrollbarX() {
+            return this.width - 6;
+        }
+
+        @Override
+        public int getRowLeft() {
+            return 0;
+        }
+
+        @Override
+        public int getRowWidth() {
+            return this.width;
+        }
     }
 }
