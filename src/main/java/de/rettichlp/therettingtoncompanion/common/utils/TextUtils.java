@@ -41,7 +41,7 @@ public class TextUtils {
     }
 
     public static void checkForHighlightedMessageAndRun(String message, Runnable runnable) {
-        if (configuration.isDefaultChatRegex() && message.equalsIgnoreCase(player.getGameProfile().name())) {
+        if (configuration.isDefaultChatRegex() && message.toLowerCase().contains(player.getGameProfile().name().toLowerCase())) {
             runnable.run();
         }
 

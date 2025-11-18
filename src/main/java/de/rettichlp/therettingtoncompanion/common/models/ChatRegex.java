@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.compile;
 
 @Data
@@ -19,7 +20,7 @@ public class ChatRegex {
 
     public Optional<Pattern> getCompiledPattern() {
         try {
-            return Optional.of(compile(this.pattern));
+            return Optional.of(compile(this.pattern, CASE_INSENSITIVE));
         } catch (PatternSyntaxException e) {
             return Optional.empty();
         }
