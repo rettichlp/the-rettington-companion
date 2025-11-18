@@ -72,7 +72,7 @@ public abstract class AbstractModScreen extends Screen {
     }
 
     public void back() {
-        if (nonNull(this.parent)) {
+        if (nonNull(this.parent) && nonNull(this.client) && nonNull(this.client.player)) {
             this.client.setScreen(this.parent);
             doOnClose();
         } else {
