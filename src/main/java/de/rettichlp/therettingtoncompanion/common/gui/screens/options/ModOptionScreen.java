@@ -3,6 +3,7 @@ package de.rettichlp.therettingtoncompanion.common.gui.screens.options;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.AbstractModScreen;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ScrollableListEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.AbstractOptionTab;
+import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.ChatOptionTab;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.GeneralOptionTab;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.OverlayOptionTab;
 import net.minecraft.client.gui.screen.GameMenuScreen;
@@ -39,7 +40,8 @@ public class ModOptionScreen extends AbstractModScreen {
 
     private static final List<AbstractOptionTab> OPTION_TABS = List.of(
             new GeneralOptionTab(),
-            new OverlayOptionTab()
+            new OverlayOptionTab(),
+            new ChatOptionTab()
     );
 
     private final String activeOptionTabId;
