@@ -22,7 +22,6 @@ public class TheRettingtonCompanion implements ModInitializer {
     public static final Configuration configuration = new Configuration().loadFromFile();
 
     public static ClientPlayerEntity player;
-    public static ClientPlayNetworkHandler networkHandler;
 
     private final Registry registry = new Registry();
 
@@ -34,7 +33,6 @@ public class TheRettingtonCompanion implements ModInitializer {
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             player = client.player;
-            networkHandler = handler;
 
             client.execute(this.registry::registerListeners);
         });
