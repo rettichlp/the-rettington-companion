@@ -12,6 +12,7 @@ import net.minecraft.text.MutableText;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static net.minecraft.screen.ScreenTexts.OFF;
 import static net.minecraft.screen.ScreenTexts.ON;
 import static net.minecraft.text.Text.empty;
@@ -23,6 +24,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
 
     private static final String PRIO_LITERAL = "Prio ";
 
+    private final ChatRegex chatRegex;
     private final boolean editable;
 
     private int contentWidth = 0;
@@ -33,19 +35,20 @@ public class ChatRegexEntry extends ScrollableListEntry {
     private ButtonWidget decreasePriorityButton; // decrease priority
 
     public ChatRegexEntry(ChatRegex chatRegex, boolean editable) {
+        this.chatRegex = chatRegex;
         this.editable = editable;
 
-        this.contentWidth += createTextFieldWidget(chatRegex);
+        this.contentWidth += createTextFieldWidget();
         this.contentWidth += 8;
-        this.contentWidth += createButtonWidget(chatRegex);
+        this.contentWidth += createButtonWidget();
         this.contentWidth += 8;
-        this.contentWidth += createTextWidget(chatRegex);
+        this.contentWidth += createTextWidget();
         this.contentWidth += 8;
 
         if (editable) {
-            this.contentWidth += createIncreasePriorityButton(chatRegex);
+            this.contentWidth += createIncreasePriorityButton();
             this.contentWidth += 2;
-            this.contentWidth += createDecreasePriorityButton(chatRegex);
+            this.contentWidth += createDecreasePriorityButton();
         } else {
             this.contentWidth += 42;
         }
@@ -96,6 +99,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
     @Override
     public boolean charTyped(CharInput input) {
         if (this.textFieldWidget.charTyped(input)) {
+            this.chatRegex.setPattern(this.textFieldWidget.getText());
             return true;
         }
 
@@ -136,18 +140,18 @@ public class ChatRegexEntry extends ScrollableListEntry {
         }
     }
 
-    private int createTextFieldWidget(ChatRegex chatRegex) {
+    private int createTextFieldWidget() {
         this.textFieldWidget = new TextFieldWidget(this.client.textRenderer, 0, 0, 150, 20, empty());
-        this.textFieldWidget.setText(chatRegex.getPattern().pattern());
+        this.textFieldWidget.setText(this.chatRegex.getPattern());
         this.textFieldWidget.setEditable(this.editable);
         return 150;
     }
 
-    private int createButtonWidget(ChatRegex chatRegex) {
+    private int createButtonWidget() {
         if (this.editable) {
-            this.buttonWidget = ButtonWidget.builder(chatRegex.isActive() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED), button -> {
-                chatRegex.setActive(!chatRegex.isActive());
-                button.setMessage(chatRegex.isActive() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED));
+            this.buttonWidget = ButtonWidget.builder(this.chatRegex.isActive() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED), button -> {
+                this.chatRegex.setActive(!this.chatRegex.isActive());
+                button.setMessage(this.chatRegex.isActive() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED));
             }).build();
         } else {
             this.buttonWidget = ButtonWidget.builder(configuration.isDefaultChatRegex() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED), button -> {
@@ -160,25 +164,25 @@ public class ChatRegexEntry extends ScrollableListEntry {
         return 50;
     }
 
-    private int createTextWidget(ChatRegex chatRegex) {
-        MutableText priorityLabel = literal(PRIO_LITERAL + chatRegex.getPriority());
+    private int createTextWidget() {
+        MutableText priorityLabel = literal(PRIO_LITERAL + this.chatRegex.getPriority());
         this.textWidget = new TextWidget(priorityLabel, this.client.textRenderer);
         return this.client.textRenderer.getWidth(priorityLabel);
     }
 
-    private int createIncreasePriorityButton(ChatRegex chatRegex) {
+    private int createIncreasePriorityButton() {
         this.increasePriorityButton = ButtonWidget.builder(literal("+"), button -> {
-            chatRegex.setPriority(chatRegex.getPriority() + 1);
-            this.textWidget.setMessage(literal(PRIO_LITERAL + chatRegex.getPriority()));
+            this.chatRegex.setPriority(min(9, this.chatRegex.getPriority() + 1));
+            this.textWidget.setMessage(literal(PRIO_LITERAL + this.chatRegex.getPriority()));
         }).build();
         this.increasePriorityButton.setWidth(20);
         return 20;
     }
 
-    private int createDecreasePriorityButton(ChatRegex chatRegex) {
+    private int createDecreasePriorityButton() {
         this.decreasePriorityButton = ButtonWidget.builder(literal("-"), button -> {
-            chatRegex.setPriority(max(0, chatRegex.getPriority() - 1));
-            this.textWidget.setMessage(literal(PRIO_LITERAL + chatRegex.getPriority()));
+            this.chatRegex.setPriority(max(0, this.chatRegex.getPriority() - 1));
+            this.textWidget.setMessage(literal(PRIO_LITERAL + this.chatRegex.getPriority()));
         }).build();
         this.decreasePriorityButton.setWidth(20);
         return 20;
