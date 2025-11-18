@@ -3,6 +3,7 @@ package de.rettichlp.therettingtoncompanion.common.gui.screens.options;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.AbstractModScreen;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ScrollableListEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.AbstractOptionTab;
+import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.ChatOptionTab;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.GeneralOptionTab;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.OverlayOptionTab;
 import net.minecraft.client.gui.screen.GameMenuScreen;
@@ -16,6 +17,7 @@ import java.net.URI;
 import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_NAME;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.common.utils.ModUtils.getVersionString;
 import static net.minecraft.client.gui.screen.ConfirmLinkScreen.opening;
 import static net.minecraft.client.gui.widget.AxisGridWidget.DisplayAxis.VERTICAL;
@@ -39,7 +41,8 @@ public class ModOptionScreen extends AbstractModScreen {
 
     private static final List<AbstractOptionTab> OPTION_TABS = List.of(
             new GeneralOptionTab(),
-            new OverlayOptionTab()
+            new OverlayOptionTab(),
+            new ChatOptionTab()
     );
 
     private final String activeOptionTabId;
@@ -64,12 +67,12 @@ public class ModOptionScreen extends AbstractModScreen {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No OptionTab found for id: " + this.activeOptionTabId));
 
-        AxisGridWidget axisGridWidget = this.layout.addBody(new AxisGridWidget(0, this.layout.getHeaderHeight(), this.width, this.layout.getContentHeight(), VERTICAL));
+        AxisGridWidget axisGridWidget = this.layout.addBody(new AxisGridWidget(0, this.layout.getHeaderHeight(), this.layout.getWidth(), this.layout.getContentHeight(), VERTICAL));
 
         this.tabWidget = axisGridWidget.add(horizontal().spacing(MARGIN));
         OPTION_TABS.forEach(ot -> this.tabWidget.add(ot.getButton(ot.equals(abstractOptionTab))));
 
-        this.contentWidget = axisGridWidget.add(abstractOptionTab.createContentWidget(this.width, this.layout.getContentHeight() - this.tabWidget.getHeight() - 4, 0, this.layout.getHeaderHeight() + this.tabWidget.getHeight() + 4));
+        this.contentWidget = axisGridWidget.add(abstractOptionTab.createContentWidget(this.layout.getWidth(), this.layout.getContentHeight() - this.tabWidget.getHeight() - 4, 0, this.layout.getHeaderHeight() + this.tabWidget.getHeight() + 4));
 
         axisGridWidget.forEachChild(this::addDrawableChild);
     }
@@ -83,13 +86,13 @@ public class ModOptionScreen extends AbstractModScreen {
         }
 
         if (this.contentWidget != null) {
-            this.contentWidget.position(this.width, this.layout.getContentHeight() - this.tabWidget.getHeight() - 4, 0, this.layout.getHeaderHeight() + this.tabWidget.getHeight() + 4);
+            this.contentWidget.position(this.layout.getWidth(), this.layout.getContentHeight() - this.tabWidget.getHeight() - 4, 0, this.layout.getHeaderHeight() + this.tabWidget.getHeight() + 4);
         }
     }
 
     @Override
     public void doOnClose() {
-        // FIXME configuration.saveToFile();
+        configuration.saveToFile();
     }
 
     @Override

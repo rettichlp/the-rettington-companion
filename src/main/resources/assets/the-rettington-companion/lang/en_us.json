@@ -4,5 +4,7 @@
   "trc.option.overlay.show_armor_hud.title": "Show Armor HUD",
   "trc.option.overlay.show_armor_hud.description": "Toggles the display of the armor items on the screen.",
   "trc.option.overlay.show_arrow_hud.title": "Show Arrow HUD",
-  "trc.option.overlay.show_arrow_hud.description": "Toggles the display of the number of arrows in your inventory on the screen."
+  "trc.option.overlay.show_arrow_hud.description": "Toggles the display of the number of arrows in your inventory on the screen.",
+  "trc.option.chat.title": "Chat",
+  "trc.option.chat.section.message_patterns.title": "Message patterns"
 }
