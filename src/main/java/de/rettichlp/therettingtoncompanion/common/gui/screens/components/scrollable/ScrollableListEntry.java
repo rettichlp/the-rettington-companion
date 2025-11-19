@@ -26,4 +26,14 @@ public abstract class ScrollableListEntry extends ElementListWidget.Entry<Scroll
     public List<? extends Element> children() {
         return this.children;
     }
+
+    @Override
+    public int getContentX() {
+        return (this.client.getWindow().getScaledWidth() - getContentWidth()) / 2;
+    }
+
+    @Override
+    public int getContentWidth() {
+        return 350;
+    }
 }

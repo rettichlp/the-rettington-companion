@@ -27,7 +27,6 @@ public class ChatRegexEntry extends ScrollableListEntry {
     private final ChatRegex chatRegex;
     private final boolean editable;
 
-    private int contentWidth = 0;
     private TextFieldWidget textFieldWidget; // regex input
     private ButtonWidget buttonWidget; // activate/deactivate
     private TextWidget textWidget; // priority display
@@ -38,19 +37,13 @@ public class ChatRegexEntry extends ScrollableListEntry {
         this.chatRegex = chatRegex;
         this.editable = editable;
 
-        this.contentWidth += createTextFieldWidget();
-        this.contentWidth += 8;
-        this.contentWidth += createButtonWidget();
-        this.contentWidth += 8;
-        this.contentWidth += createTextWidget();
-        this.contentWidth += 8;
+        createTextFieldWidget();
+        createButtonWidget();
+        createTextWidget();
 
         if (editable) {
-            this.contentWidth += createIncreasePriorityButton();
-            this.contentWidth += 2;
-            this.contentWidth += createDecreasePriorityButton();
-        } else {
-            this.contentWidth += 42;
+            createIncreasePriorityButton();
+            createDecreasePriorityButton();
         }
     }
 
@@ -108,46 +101,39 @@ public class ChatRegexEntry extends ScrollableListEntry {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
-        int currentX = getContentMiddleX() - this.contentWidth / 2;
-
-        if (this.textFieldWidget != null) {
-            this.textFieldWidget.setPosition(currentX, getContentY());
+        if (this.textFieldWidget != null) { // width = 182
+            this.textFieldWidget.setPosition(getContentX(), getContentY());
             this.textFieldWidget.render(context, mouseX, mouseY, deltaTicks);
-            currentX = currentX + this.textFieldWidget.getWidth() + 8;
         }
 
-        if (this.buttonWidget != null) {
-            this.buttonWidget.setPosition(currentX, getContentY());
+        if (this.buttonWidget != null) { // width = 50
+            this.buttonWidget.setPosition(getContentX() + 182 + 8, getContentY());
             this.buttonWidget.render(context, mouseX, mouseY, deltaTicks);
-            currentX = currentX + this.buttonWidget.getWidth() + 8;
         }
 
-        if (this.textWidget != null) {
-            this.textWidget.setPosition(currentX, getContentMiddleY() - (this.client.textRenderer.fontHeight / 2));
+        if (this.textWidget != null) { // width = variable (calculated from right)
+            this.textWidget.setPosition(getContentRightEnd() - this.client.textRenderer.getWidth(this.textWidget.getMessage()) - 50, getContentMiddleY() - (this.client.textRenderer.fontHeight / 2));
             this.textWidget.render(context, mouseX, mouseY, deltaTicks);
-            currentX = currentX + this.textWidget.getWidth() + 8;
         }
 
-        if (this.increasePriorityButton != null) {
-            this.increasePriorityButton.setPosition(currentX, getContentY());
+        if (this.increasePriorityButton != null) { // width = 20 (calculated from right)
+            this.increasePriorityButton.setPosition(getContentRightEnd() - 42, getContentY());
             this.increasePriorityButton.render(context, mouseX, mouseY, deltaTicks);
-            currentX = currentX + this.increasePriorityButton.getWidth() + 2;
         }
 
-        if (this.decreasePriorityButton != null) {
-            this.decreasePriorityButton.setPosition(currentX, getContentY());
+        if (this.decreasePriorityButton != null) { // width = 20 (calculated from right)
+            this.decreasePriorityButton.setPosition(getContentRightEnd() - 20, getContentY());
             this.decreasePriorityButton.render(context, mouseX, mouseY, deltaTicks);
         }
     }
 
-    private int createTextFieldWidget() {
-        this.textFieldWidget = new TextFieldWidget(this.client.textRenderer, 0, 0, 150, 20, empty());
+    private void createTextFieldWidget() {
+        this.textFieldWidget = new TextFieldWidget(this.client.textRenderer, 0, 0, 182, 20, empty());
         this.textFieldWidget.setText(this.chatRegex.getPattern());
         this.textFieldWidget.setEditable(this.editable);
-        return 150;
     }
 
-    private int createButtonWidget() {
+    private void createButtonWidget() {
         if (this.editable) {
             this.buttonWidget = ButtonWidget.builder(this.chatRegex.isActive() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED), button -> {
                 this.chatRegex.setActive(!this.chatRegex.isActive());
@@ -161,30 +147,27 @@ public class ChatRegexEntry extends ScrollableListEntry {
         }
 
         this.buttonWidget.setWidth(50);
-        return 50;
     }
 
-    private int createTextWidget() {
+    private void createTextWidget() {
         MutableText priorityLabel = literal(PRIO_LITERAL + this.chatRegex.getPriority());
         this.textWidget = new TextWidget(priorityLabel, this.client.textRenderer);
-        return this.client.textRenderer.getWidth(priorityLabel);
+        this.client.textRenderer.getWidth(priorityLabel);
     }
 
-    private int createIncreasePriorityButton() {
+    private void createIncreasePriorityButton() {
         this.increasePriorityButton = ButtonWidget.builder(literal("+"), button -> {
             this.chatRegex.setPriority(min(9, this.chatRegex.getPriority() + 1));
             this.textWidget.setMessage(literal(PRIO_LITERAL + this.chatRegex.getPriority()));
         }).build();
         this.increasePriorityButton.setWidth(20);
-        return 20;
     }
 
-    private int createDecreasePriorityButton() {
+    private void createDecreasePriorityButton() {
         this.decreasePriorityButton = ButtonWidget.builder(literal("-"), button -> {
             this.chatRegex.setPriority(max(0, this.chatRegex.getPriority() - 1));
             this.textWidget.setMessage(literal(PRIO_LITERAL + this.chatRegex.getPriority()));
         }).build();
         this.decreasePriorityButton.setWidth(20);
-        return 20;
     }
 }
