@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.Color;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.checkForHighlightedMessageAndRun;
 import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getString;
 import static java.lang.Math.max;
@@ -60,6 +61,10 @@ public abstract class ChatHudMixin {
 
     @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))
     private int moreWidth(int width) {
+        if (!configuration.isOptimizedChatSize()) {
+            return width;
+        }
+
         // from x = 0 to hotbar (length = 182)
         int chatWidth = this.client.getWindow().getScaledWidth() / 2 - 91 - 12; // for some reason there is a 12px offset
         double minecraftChatWidth = getWidth(this.client.options.getChatWidth().getValue());
@@ -69,6 +74,10 @@ public abstract class ChatHudMixin {
 
     @ModifyReturnValue(method = "getHeight()I", at = @At("RETURN"))
     private int moreFocusedHeight(int height) {
+        if (!configuration.isOptimizedChatSize()) {
+            return height;
+        }
+
         // half of the screen height
         int chatHeight = this.client.getWindow().getScaledHeight() / 2;
         double minecraftChatHeight = getHeight(this.client.options.getChatHeightFocused().getValue());
