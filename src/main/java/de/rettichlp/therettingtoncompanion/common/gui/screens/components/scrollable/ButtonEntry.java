@@ -11,6 +11,7 @@ public class ButtonEntry extends ScrollableListEntry {
 
     public ButtonEntry(Text text, ButtonWidget.PressAction onPress) {
         this.buttonWidget = ButtonWidget.builder(text, onPress).build();
+        this.buttonWidget.setWidth(getContentWidth());
     }
 
     @Override

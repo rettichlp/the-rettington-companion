@@ -4,6 +4,7 @@ import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrolla
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ChatRegexEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ScrollableListEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.SectionEntry;
+import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ToggleButtonEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.ModOptionScreen;
 import de.rettichlp.therettingtoncompanion.common.models.ChatRegex;
 import net.minecraft.text.Text;
@@ -30,8 +31,14 @@ public class ChatOptionTab extends AbstractOptionTab {
     public Collection<ScrollableListEntry> getContent() {
         Collection<ScrollableListEntry> scrollableListEntries = new ArrayList<>();
 
-        SectionEntry sectionEntry = new SectionEntry(translatable("trc.option.chat.section.message_patterns.title"));
-        scrollableListEntries.add(sectionEntry);
+        SectionEntry sectionEntry1 = new SectionEntry(translatable("trc.option.chat.section.general.title"));
+        scrollableListEntries.add(sectionEntry1);
+
+        ToggleButtonEntry toggleButtonEntry = new ToggleButtonEntry(translatable("trc.option.chat.optimized_chat_size.title"), translatable("trc.option.chat.optimized_chat_size.description"), configuration.isOptimizedChatSize(), configuration::setOptimizedChatSize);
+        scrollableListEntries.add(toggleButtonEntry);
+
+        SectionEntry sectionEntry2 = new SectionEntry(translatable("trc.option.chat.section.message_patterns.title"));
+        scrollableListEntries.add(sectionEntry2);
 
         // default chat regex
         ChatRegex defaultChatRegex = new ChatRegex(this.client.getGameProfile().name(), configuration.isDefaultChatRegex(), 0);

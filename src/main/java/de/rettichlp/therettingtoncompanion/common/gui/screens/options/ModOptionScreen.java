@@ -78,6 +78,11 @@ public class ModOptionScreen extends AbstractModScreen {
     }
 
     @Override
+    public void doOnClose() {
+        configuration.saveToFile();
+    }
+
+    @Override
     protected void refreshWidgetPositions() {
         super.refreshWidgetPositions();
 
@@ -88,11 +93,6 @@ public class ModOptionScreen extends AbstractModScreen {
         if (this.contentWidget != null) {
             this.contentWidget.position(this.layout.getWidth(), this.layout.getContentHeight() - this.tabWidget.getHeight() - 4, 0, this.layout.getHeaderHeight() + this.tabWidget.getHeight() + 4);
         }
-    }
-
-    @Override
-    public void doOnClose() {
-        configuration.saveToFile();
     }
 
     @Override

@@ -25,6 +25,7 @@ public class Configuration {
 
     private boolean showArmorHud = true;
     private boolean showArrowHud = true;
+    private boolean optimizedChatSize = true;
     private boolean defaultChatRegex = true;
     private Set<ChatRegex> chatRegexes = new HashSet<>();
 

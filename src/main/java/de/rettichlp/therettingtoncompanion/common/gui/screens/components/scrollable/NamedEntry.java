@@ -13,6 +13,6 @@ public abstract class NamedEntry extends ScrollableListEntry {
     }
 
     public void drawName(@NotNull DrawContext context) {
-        context.drawTextWithShadow(this.client.textRenderer, this.name, getContentX() + 5, getContentMiddleY() - (this.client.textRenderer.fontHeight / 2), -1);
+        context.drawTextWithShadow(this.client.textRenderer, this.name, getContentX(), getContentMiddleY() - (this.client.textRenderer.fontHeight / 2), -1);
     }
 }

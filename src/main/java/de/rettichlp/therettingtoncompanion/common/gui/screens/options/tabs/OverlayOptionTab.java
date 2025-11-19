@@ -1,7 +1,7 @@
 package de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs;
 
-import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ToggleButtonEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ScrollableListEntry;
+import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ToggleButtonEntry;
 import net.minecraft.text.Text;
 
 import java.util.Collection;
