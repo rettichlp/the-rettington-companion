@@ -10,6 +10,8 @@ import net.minecraft.client.input.CharInput;
 import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.MutableText;
 
+import java.awt.Color;
+
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -74,6 +76,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
     @Override
     public boolean keyPressed(KeyInput input) {
         if (this.textFieldWidget != null && this.textFieldWidget.keyPressed(input)) {
+            this.chatRegex.setPattern(this.textFieldWidget.getText());
             return true;
         }
 
@@ -83,6 +86,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
     @Override
     public boolean keyReleased(KeyInput input) {
         if (this.textFieldWidget.keyReleased(input)) {
+            this.chatRegex.setPattern(this.textFieldWidget.getText());
             return true;
         }
 
@@ -104,6 +108,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
         if (this.textFieldWidget != null) { // width = 182
             this.textFieldWidget.setPosition(getContentX(), getContentY());
             this.textFieldWidget.render(context, mouseX, mouseY, deltaTicks);
+            this.textFieldWidget.setEditableColor(this.chatRegex.isValidPattern() ? Color.WHITE.getRGB() : Color.RED.getRGB());
         }
 
         if (this.buttonWidget != null) { // width = 50

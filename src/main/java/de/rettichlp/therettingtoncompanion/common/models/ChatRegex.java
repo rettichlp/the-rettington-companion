@@ -18,11 +18,16 @@ public class ChatRegex {
     private boolean active;
     private int priority;
 
-    public Optional<Pattern> getCompiledPattern() {
+    public boolean isValidPattern() {
         try {
-            return Optional.of(compile(this.pattern, CASE_INSENSITIVE));
+            compile(this.pattern);
+            return true;
         } catch (PatternSyntaxException e) {
-            return Optional.empty();
+            return false;
         }
+    }
+
+    public Optional<Pattern> getCompiledPattern() {
+        return isValidPattern() ? Optional.of(compile(this.pattern, CASE_INSENSITIVE)) : Optional.empty();
     }
 }

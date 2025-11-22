@@ -40,19 +40,41 @@ public class TextUtils {
         };
     }
 
-    public static void checkForHighlightedMessageAndRun(String message, Runnable runnable) {
+    /**
+     * Determines if a given message should be highlighted based on the current chat configuration.
+     * <p>
+     * This method checks if the message matches a series of active regular expressions in the chat configuration or if the message
+     * contains the player's name and the default chat regex is enabled.
+     *
+     * @param message the message to be checked.
+     *
+     * @return {@code true} if the message should be highlighted; {@code false} otherwise.
+     */
+    public static boolean shouldBeHighlighted(String message) {
         if (configuration.isDefaultChatRegex() && message.toLowerCase().contains(player.getGameProfile().name().toLowerCase())) {
-            runnable.run();
+            return true;
         }
 
-        configuration.getChatRegexes().stream()
+        return configuration.getChatRegexes().stream()
                 .filter(ChatRegex::isActive)
                 .sorted(Comparator.comparingInt(ChatRegex::getPriority))
                 .map(ChatRegex::getCompiledPattern)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(pattern -> pattern.matcher(message))
-                .filter(Matcher::find)
-                .forEach(matcher -> runnable.run());
+                .anyMatch(Matcher::find);
+    }
+
+    /**
+     * Checks if a given message should be highlighted and, if so, executes the specified {@link Runnable}. This method uses the
+     * highlighting logic defined in {@link #shouldBeHighlighted(String)}.
+     *
+     * @param message  the message to check for highlighting; must not be null.
+     * @param runnable the code to execute if the message is highlighted; must not be null.
+     */
+    public static void checkForHighlightedMessageAndRun(String message, Runnable runnable) {
+        if (shouldBeHighlighted(message)) {
+            runnable.run();
+        }
     }
 }
