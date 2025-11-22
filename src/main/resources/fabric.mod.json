@@ -17,6 +17,9 @@
   "entrypoints": {
     "main": [
       "de.rettichlp.therettingtoncompanion.TheRettingtonCompanion"
+    ],
+    "modmenu": [
+      "de.rettichlp.therettingtoncompanion.common.integrations.ModMenuIntegration"
     ]
   },
   "mixins": [
@@ -27,6 +30,9 @@
     "minecraft": "~1.21.10",
     "java": ">=21",
     "fabric-api": "*"
+  },
+  "recommends": {
+    "modmenu": "*"
   },
   "suggests": {
     "another-mod": "*"
