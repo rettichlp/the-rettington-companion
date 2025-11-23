@@ -42,11 +42,13 @@ public class ColorSelectWidget extends ButtonWidget {
     @Override
     public boolean mouseClicked(Click click, boolean doubled) {
         int button = click.button();
-        if (button == 0) { // left
+        boolean mouseOver = isMouseOver(click.x(), click.y());
+
+        if (button == 0 && mouseOver) { // left
             nextFormatting();
             this.onPress.accept(this.currentFormatting);
             return true;
-        } else if (button == 1) { // right
+        } else if (button == 1 && mouseOver) { // right
             previousFormatting();
             this.onPress.accept(this.currentFormatting);
             return true;
