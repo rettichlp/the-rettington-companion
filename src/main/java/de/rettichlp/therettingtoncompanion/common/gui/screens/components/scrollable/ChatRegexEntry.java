@@ -144,6 +144,15 @@ public class ChatRegexEntry extends ScrollableListEntry {
         }
     }
 
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (this.colorSelectWidget.isHovered() && this.colorSelectWidget.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
+            return true;
+        }
+
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+    }
+
     private void createTextFieldWidget() {
         this.textFieldWidget = new TextFieldWidget(this.client.textRenderer, 0, 0, 182, 20, empty());
         this.textFieldWidget.setText(this.chatRegex.getPattern());

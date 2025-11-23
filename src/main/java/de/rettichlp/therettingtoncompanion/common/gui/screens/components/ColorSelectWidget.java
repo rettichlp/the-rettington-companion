@@ -59,10 +59,10 @@ public class ColorSelectWidget extends ButtonWidget {
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         System.out.println("mouseScrolled: " + verticalAmount + " and horizontalAmount: " + horizontalAmount);
         if (verticalAmount > 0) {
-            nextFormatting();
+            previousFormatting();
             return true;
         } else if (verticalAmount < 0) {
-            previousFormatting();
+            nextFormatting();
             return true;
         }
 
