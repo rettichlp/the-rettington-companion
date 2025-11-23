@@ -13,6 +13,7 @@
     "ChatHudMixin",
     "GameMenuScreenMixin",
     "InGameHudMixin",
+    "SimpleOptionMixin",
     "TitleScreenMixin"
   ]
 }

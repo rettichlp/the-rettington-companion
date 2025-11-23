@@ -1,4 +1,12 @@
 {
+  "trc.gamma_preset.bright": "Bright",
+  "trc.gamma_preset.default": "Default",
+  "trc.gamma_preset.fullbright": "Fullbright",
+  "trc.gamma_preset.moody": "Moody",
+  "trc.gamma_preset.own_setting": "Settings",
+  "trc.key.category.name": "The Rettington Companion",
+  "trc.key.change_gamma_value": "Change gamma value",
+  "trc.key.toggle_armor_visibility": "Toggle armor visibility",
   "trc.option.general.title": "General",
   "trc.option.overlay.title": "Overlay",
   "trc.option.overlay.show_armor_hud.title": "Show Armor HUD",
