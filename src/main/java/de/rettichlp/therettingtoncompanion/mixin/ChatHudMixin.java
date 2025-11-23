@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -13,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getHighlightColor;
 import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getString;
-import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.shouldBeHighlighted;
 import static java.awt.Color.GREEN;
 import static java.lang.Math.max;
 import static net.minecraft.client.gui.hud.ChatHud.getHeight;
@@ -42,8 +43,8 @@ public abstract class ChatHudMixin {
                      @Local(argsOnly = true) ChatHudLine.Visible line) {
         int backgroundColor = color;
 
-        boolean shouldBeHighlighted = shouldBeHighlighted(getString(line.content()));
-        if (shouldBeHighlighted) {
+        Formatting highlightColor = getHighlightColor(getString(line.content()));
+        if (highlightColor != null) {
             backgroundColor = withAlpha(100, GREEN.getRGB());
         }
 
