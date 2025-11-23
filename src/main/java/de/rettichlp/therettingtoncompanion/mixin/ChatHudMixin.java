@@ -53,7 +53,7 @@ public abstract class ChatHudMixin {
 
     @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))
     private int moreWidth(int width) {
-        if (!configuration.getChatConfiguration().isOptimizedChatSize()) {
+        if (!configuration.chat().isOptimizedChatSize()) {
             return width;
         }
 
@@ -66,7 +66,7 @@ public abstract class ChatHudMixin {
 
     @ModifyReturnValue(method = "getHeight()I", at = @At("RETURN"))
     private int moreFocusedHeight(int height) {
-        if (!configuration.getChatConfiguration().isOptimizedChatSize()) {
+        if (!configuration.chat().isOptimizedChatSize()) {
             return height;
         }
 

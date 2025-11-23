@@ -35,25 +35,25 @@ public class ChatOptionTab extends AbstractOptionTab {
         SectionEntry sectionEntry1 = new SectionEntry(translatable("trc.option.chat.section.general.title"));
         scrollableListEntries.add(sectionEntry1);
 
-        ToggleButtonEntry toggleButtonEntry = new ToggleButtonEntry(translatable("trc.option.chat.optimized_chat_size.title"), translatable("trc.option.chat.optimized_chat_size.description"), configuration.getChatConfiguration().isOptimizedChatSize(), value -> configuration.getChatConfiguration().setOptimizedChatSize(value));
+        ToggleButtonEntry toggleButtonEntry = new ToggleButtonEntry(translatable("trc.option.chat.optimized_chat_size.title"), translatable("trc.option.chat.optimized_chat_size.description"), configuration.chat().isOptimizedChatSize(), value -> configuration.chat().setOptimizedChatSize(value));
         scrollableListEntries.add(toggleButtonEntry);
 
         SectionEntry sectionEntry2 = new SectionEntry(translatable("trc.option.chat.section.message_patterns.title"));
         scrollableListEntries.add(sectionEntry2);
 
         // default chat regex
-        ChatRegex defaultChatRegex = new ChatRegex(this.client.getGameProfile().name(), configuration.getChatConfiguration().getChatRegexConfiguration().isDefaultChatRegex(), configuration.getChatConfiguration().getChatRegexConfiguration().getDefaultChatRegexStyle(), 0);
+        ChatRegex defaultChatRegex = new ChatRegex(this.client.getGameProfile().name(), configuration.chat().regex().isDefaultChatRegex(), configuration.chat().regex().getDefaultChatRegexStyle(), 0);
         ChatRegexEntry defaultChatRegexEntry = new ChatRegexEntry(defaultChatRegex, false);
         scrollableListEntries.add(defaultChatRegexEntry);
 
-        configuration.getChatConfiguration().getChatRegexConfiguration().getChatRegexes().forEach(chatRegex -> {
+        configuration.chat().regex().getChatRegexes().forEach(chatRegex -> {
             ChatRegexEntry chatRegexEntry = new ChatRegexEntry(chatRegex, true);
             scrollableListEntries.add(chatRegexEntry);
         });
 
         ButtonEntry buttonEntry = new ButtonEntry(literal("+"), button -> {
             ChatRegex newChatRegex = new ChatRegex("", true, GREEN, 0);
-            configuration.getChatConfiguration().getChatRegexConfiguration().getChatRegexes().add(newChatRegex);
+            configuration.chat().regex().getChatRegexes().add(newChatRegex);
             this.client.execute(() -> this.client.setScreen(new ModOptionScreen("chat")));
         });
         scrollableListEntries.add(buttonEntry);

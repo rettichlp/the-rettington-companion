@@ -55,7 +55,7 @@ public class TextUtils {
      */
     public static @Nullable Formatting getHighlightColor(String message) {
         if (matchesDefaultRegex(message)) {
-            return configuration.getChatConfiguration().getChatRegexConfiguration().getDefaultChatRegexStyle();
+            return configuration.chat().regex().getDefaultChatRegexStyle();
         }
 
         List<ChatRegex> matchingCustomRegexes = getMatchingCustomRegexes(message);
@@ -72,7 +72,7 @@ public class TextUtils {
      *         otherwise.
      */
     private static boolean matchesDefaultRegex(String message) {
-        return configuration.getChatConfiguration().getChatRegexConfiguration().isDefaultChatRegex()
+        return configuration.chat().regex().isDefaultChatRegex()
                 && message.toLowerCase().contains(player.getGameProfile().name().toLowerCase());
     }
 
@@ -86,7 +86,7 @@ public class TextUtils {
      * @return an unmodifiable list of {@link ChatRegex} objects that match the given message.
      */
     private static @NotNull @Unmodifiable List<ChatRegex> getMatchingCustomRegexes(CharSequence message) {
-        return configuration.getChatConfiguration().getChatRegexConfiguration().getChatRegexes().stream()
+        return configuration.chat().regex().getChatRegexes().stream()
                 .sorted(comparingInt(ChatRegex::getPriority))
                 .filter(ChatRegex::isActive)
                 .filter(chatRegex -> {

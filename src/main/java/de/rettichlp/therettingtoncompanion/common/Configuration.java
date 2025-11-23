@@ -2,6 +2,7 @@ package de.rettichlp.therettingtoncompanion.common;
 
 import de.rettichlp.therettingtoncompanion.common.configuration.ChatConfiguration;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.File;
@@ -21,9 +22,10 @@ public class Configuration {
 
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve(MOD_ID + ".json");
 
+    @Accessors(fluent = true)
+    private ChatConfiguration chat = new ChatConfiguration();
     private boolean showArmorHud = true;
     private boolean showArrowHud = true;
-    private ChatConfiguration chatConfiguration = new ChatConfiguration();
 
     public Configuration loadFromFile() {
         File file = CONFIG_PATH.toFile();

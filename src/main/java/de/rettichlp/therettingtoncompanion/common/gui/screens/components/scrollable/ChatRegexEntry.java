@@ -157,9 +157,9 @@ public class ChatRegexEntry extends ScrollableListEntry {
                 button.setMessage(this.chatRegex.isActive() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED));
             }).build();
         } else {
-            this.buttonWidget = ButtonWidget.builder(configuration.getChatConfiguration().getChatRegexConfiguration().isDefaultChatRegex() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED), button -> {
-                configuration.getChatConfiguration().getChatRegexConfiguration().setDefaultChatRegex(!configuration.getChatConfiguration().getChatRegexConfiguration().isDefaultChatRegex());
-                button.setMessage(configuration.getChatConfiguration().getChatRegexConfiguration().isDefaultChatRegex() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED));
+            this.buttonWidget = ButtonWidget.builder(configuration.chat().regex().isDefaultChatRegex() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED), button -> {
+                configuration.chat().regex().setDefaultChatRegex(!configuration.chat().regex().isDefaultChatRegex());
+                button.setMessage(configuration.chat().regex().isDefaultChatRegex() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED));
             }).build();
         }
 
