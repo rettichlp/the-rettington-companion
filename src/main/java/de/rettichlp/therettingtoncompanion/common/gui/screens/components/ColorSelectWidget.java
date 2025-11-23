@@ -16,18 +16,18 @@ public class ColorSelectWidget extends ButtonWidget {
 
     private static final List<Formatting> COLORS = stream(Formatting.values()).filter(Formatting::isColor).toList();
 
-    private final Consumer<Formatting> onPress;
+    private final Consumer<Formatting> onChange;
 
     private Formatting currentFormatting;
 
-    public ColorSelectWidget(int width, int height, @NotNull Formatting initialFormatting, Consumer<Formatting> onPress) {
+    public ColorSelectWidget(int width, int height, @NotNull Formatting initialFormatting, Consumer<Formatting> onChange) {
         super(0, 0, width, height, empty(), button -> {}, null);
 
         if (!initialFormatting.isColor()) {
             throw new IllegalArgumentException("Initial formatting must be a color.");
         }
 
-        this.onPress = onPress;
+        this.onChange = onChange;
         this.currentFormatting = initialFormatting;
     }
 
@@ -38,11 +38,9 @@ public class ColorSelectWidget extends ButtonWidget {
 
         if (button == 0 && mouseOver) { // left
             nextFormatting();
-            this.onPress.accept(this.currentFormatting);
             return true;
         } else if (button == 1 && mouseOver) { // right
             previousFormatting();
-            this.onPress.accept(this.currentFormatting);
             return true;
         }
 
@@ -74,11 +72,13 @@ public class ColorSelectWidget extends ButtonWidget {
         int currentIndex = COLORS.indexOf(this.currentFormatting);
         int nextIndex = (currentIndex + 1) % COLORS.size();
         this.currentFormatting = COLORS.get(nextIndex);
+        this.onChange.accept(this.currentFormatting);
     }
 
     private void previousFormatting() {
         int currentIndex = COLORS.indexOf(this.currentFormatting);
         int previousIndex = currentIndex - 1;
         this.currentFormatting = previousIndex < 0 ? COLORS.getLast() : COLORS.get(previousIndex);
+        this.onChange.accept(this.currentFormatting);
     }
 }
