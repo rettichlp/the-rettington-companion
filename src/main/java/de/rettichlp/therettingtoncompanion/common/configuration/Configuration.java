@@ -1,6 +1,5 @@
-package de.rettichlp.therettingtoncompanion.common;
+package de.rettichlp.therettingtoncompanion.common.configuration;
 
-import de.rettichlp.therettingtoncompanion.common.configuration.ChatConfiguration;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import net.fabricmc.loader.api.FabricLoader;
