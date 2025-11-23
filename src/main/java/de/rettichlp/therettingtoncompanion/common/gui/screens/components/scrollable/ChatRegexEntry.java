@@ -1,5 +1,6 @@
 package de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable;
 
+import de.rettichlp.therettingtoncompanion.common.gui.screens.components.ColorSelectWidget;
 import de.rettichlp.therettingtoncompanion.common.models.ChatRegex;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
@@ -31,6 +32,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
 
     private TextFieldWidget textFieldWidget; // regex input
     private ButtonWidget buttonWidget; // activate/deactivate
+    private ColorSelectWidget colorSelectWidget; // color select
     private TextWidget textWidget; // priority display
     private ButtonWidget increasePriorityButton; // increase priority
     private ButtonWidget decreasePriorityButton; // decrease priority
@@ -41,6 +43,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
 
         createTextFieldWidget();
         createButtonWidget();
+        createColorSelectWidget();
         createTextWidget();
 
         if (editable) {
@@ -59,6 +62,10 @@ public class ChatRegexEntry extends ScrollableListEntry {
         }
 
         if (this.buttonWidget != null && this.buttonWidget.mouseClicked(click, doubled)) {
+            return true;
+        }
+
+        if (this.colorSelectWidget != null && this.colorSelectWidget.mouseClicked(click, doubled)) {
             return true;
         }
 
@@ -111,23 +118,28 @@ public class ChatRegexEntry extends ScrollableListEntry {
             this.textFieldWidget.setEditableColor(this.chatRegex.isValidPattern() ? Color.WHITE.getRGB() : Color.RED.getRGB());
         }
 
-        if (this.buttonWidget != null) { // width = 50
+        if (this.buttonWidget != null) { // width = 40
             this.buttonWidget.setPosition(getContentX() + 182 + 8, getContentY());
             this.buttonWidget.render(context, mouseX, mouseY, deltaTicks);
         }
 
+        if (this.colorSelectWidget != null) { // width = 40
+            this.colorSelectWidget.setPosition(getContentX() + 230 + 8, getContentY());
+            this.colorSelectWidget.render(context, mouseX, mouseY, deltaTicks);
+        }
+
         if (this.textWidget != null) { // width = variable (calculated from right)
-            this.textWidget.setPosition(getContentRightEnd() - this.client.textRenderer.getWidth(this.textWidget.getMessage()) - 50, getContentMiddleY() - (this.client.textRenderer.fontHeight / 2));
+            this.textWidget.setPosition(getContentRightEnd() - this.client.textRenderer.getWidth(this.textWidget.getMessage()) - 30, getContentMiddleY() - (this.client.textRenderer.fontHeight / 2));
             this.textWidget.render(context, mouseX, mouseY, deltaTicks);
         }
 
         if (this.increasePriorityButton != null) { // width = 20 (calculated from right)
-            this.increasePriorityButton.setPosition(getContentRightEnd() - 42, getContentY());
+            this.increasePriorityButton.setPosition(getContentRightEnd() - 20, getContentY());
             this.increasePriorityButton.render(context, mouseX, mouseY, deltaTicks);
         }
 
         if (this.decreasePriorityButton != null) { // width = 20 (calculated from right)
-            this.decreasePriorityButton.setPosition(getContentRightEnd() - 20, getContentY());
+            this.decreasePriorityButton.setPosition(getContentRightEnd() - 20, getContentY() + 10);
             this.decreasePriorityButton.render(context, mouseX, mouseY, deltaTicks);
         }
     }
@@ -151,7 +163,12 @@ public class ChatRegexEntry extends ScrollableListEntry {
             }).build();
         }
 
-        this.buttonWidget.setWidth(50);
+        this.buttonWidget.setWidth(40);
+    }
+
+    private void createColorSelectWidget() {
+        this.colorSelectWidget = new ColorSelectWidget(40, 20, GREEN, this.chatRegex::setColor);
+        this.colorSelectWidget.setWidth(40);
     }
 
     private void createTextWidget() {
@@ -166,6 +183,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
             this.textWidget.setMessage(literal(PRIO_LITERAL + this.chatRegex.getPriority()));
         }).build();
         this.increasePriorityButton.setWidth(20);
+        this.increasePriorityButton.setHeight(10);
     }
 
     private void createDecreasePriorityButton() {
@@ -174,5 +192,6 @@ public class ChatRegexEntry extends ScrollableListEntry {
             this.textWidget.setMessage(literal(PRIO_LITERAL + this.chatRegex.getPriority()));
         }).build();
         this.decreasePriorityButton.setWidth(20);
+        this.decreasePriorityButton.setHeight(10);
     }
 }
