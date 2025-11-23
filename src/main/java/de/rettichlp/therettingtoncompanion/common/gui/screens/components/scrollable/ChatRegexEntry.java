@@ -81,36 +81,6 @@ public class ChatRegexEntry extends ScrollableListEntry {
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
-        if (this.textFieldWidget != null && this.textFieldWidget.keyPressed(input)) {
-            this.chatRegex.setPattern(this.textFieldWidget.getText());
-            return true;
-        }
-
-        return super.keyPressed(input);
-    }
-
-    @Override
-    public boolean keyReleased(KeyInput input) {
-        if (this.textFieldWidget.keyReleased(input)) {
-            this.chatRegex.setPattern(this.textFieldWidget.getText());
-            return true;
-        }
-
-        return super.keyReleased(input);
-    }
-
-    @Override
-    public boolean charTyped(CharInput input) {
-        if (this.textFieldWidget.charTyped(input)) {
-            this.chatRegex.setPattern(this.textFieldWidget.getText());
-            return true;
-        }
-
-        return super.charTyped(input);
-    }
-
-    @Override
     public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
         if (this.textFieldWidget != null) { // width = 182
             this.textFieldWidget.setPosition(getContentX(), getContentY());
@@ -151,6 +121,36 @@ public class ChatRegexEntry extends ScrollableListEntry {
         }
 
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+    }
+
+    @Override
+    public boolean keyPressed(KeyInput input) {
+        if (this.textFieldWidget != null && this.textFieldWidget.keyPressed(input)) {
+            this.chatRegex.setPattern(this.textFieldWidget.getText());
+            return true;
+        }
+
+        return super.keyPressed(input);
+    }
+
+    @Override
+    public boolean keyReleased(KeyInput input) {
+        if (this.textFieldWidget.keyReleased(input)) {
+            this.chatRegex.setPattern(this.textFieldWidget.getText());
+            return true;
+        }
+
+        return super.keyReleased(input);
+    }
+
+    @Override
+    public boolean charTyped(CharInput input) {
+        if (this.textFieldWidget.charTyped(input)) {
+            this.chatRegex.setPattern(this.textFieldWidget.getText());
+            return true;
+        }
+
+        return super.charTyped(input);
     }
 
     private void createTextFieldWidget() {

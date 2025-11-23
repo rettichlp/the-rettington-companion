@@ -38,6 +38,6 @@ public class IconButtonWidget extends ButtonWidget {
         int iconX = getX() + (getWidth() - this.iconWidth) / 2;
         int iconY = getY() + (getHeight() - this.iconHeight) / 2;
 
-        context.drawTexture(GUI_TEXTURED, iconTexture, iconX, iconY, this.iconU, this.iconV, this.iconWidth, this.iconHeight, this.iconWidth, this.iconHeight);
+        context.drawTexture(GUI_TEXTURED, this.iconTexture, iconX, iconY, this.iconU, this.iconV, this.iconWidth, this.iconHeight, this.iconWidth, this.iconHeight);
     }
 }

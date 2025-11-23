@@ -32,14 +32,6 @@ public class ColorSelectWidget extends ButtonWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
-
-        assert this.currentFormatting.getColorValue() != null;
-        context.fill(getX() + 2, getY() + 2, getX() + getWidth() - 2, getY() + getHeight() - 2, 0xFF000000 | this.currentFormatting.getColorValue());
-    }
-
-    @Override
     public boolean mouseClicked(Click click, boolean doubled) {
         int button = click.button();
         boolean mouseOver = isMouseOver(click.x(), click.y());
@@ -59,7 +51,6 @@ public class ColorSelectWidget extends ButtonWidget {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        System.out.println("mouseScrolled: " + verticalAmount + " and horizontalAmount: " + horizontalAmount);
         if (verticalAmount > 0) {
             previousFormatting();
             return true;
@@ -69,6 +60,14 @@ public class ColorSelectWidget extends ButtonWidget {
         }
 
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+    }
+
+    @Override
+    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+
+        assert this.currentFormatting.getColorValue() != null;
+        context.fill(getX() + 2, getY() + 2, getX() + getWidth() - 2, getY() + getHeight() - 2, 0xFF000000 | this.currentFormatting.getColorValue());
     }
 
     private void nextFormatting() {

@@ -8,7 +8,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
@@ -48,6 +47,12 @@ public abstract class AbstractOptionTab {
             content.forEach(this::addEntry);
         }
 
+        @Override // forward mouse scroll events to children (is not transmitted by default, because of ElementListWidget)
+        public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+            this.content.forEach(scrollableListEntry -> scrollableListEntry.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount));
+            return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+        }
+
         @Override
         protected int getScrollbarX() {
             return this.width - 6;
@@ -61,12 +66,6 @@ public abstract class AbstractOptionTab {
         @Override
         public int getRowWidth() {
             return this.width;
-        }
-
-        @Override // forward mouse scroll events to children (is not transmitted by default, because of ElementListWidget)
-        public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-            this.content.forEach(scrollableListEntry -> scrollableListEntry.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount));
-            return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
         }
     }
 }
