@@ -10,7 +10,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
-import static java.util.Objects.nonNull;
 import static net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.vertical;
 
@@ -72,7 +71,7 @@ public abstract class AbstractModScreen extends Screen {
     }
 
     public void back() {
-        if (nonNull(this.parent) && nonNull(this.client) && nonNull(this.client.player)) {
+        if (this.parent != null && this.client != null && this.client.player != null) {
             this.client.setScreen(this.parent);
             doOnClose();
         } else {

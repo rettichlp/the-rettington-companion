@@ -2,6 +2,7 @@ package de.rettichlp.therettingtoncompanion.common.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import net.minecraft.util.Formatting;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -16,6 +17,7 @@ public class ChatRegex {
 
     private String pattern;
     private boolean active;
+    private Formatting color;
     private int priority;
 
     public boolean isValidPattern() {

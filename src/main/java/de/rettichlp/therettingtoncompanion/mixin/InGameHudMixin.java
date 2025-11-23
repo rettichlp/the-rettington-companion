@@ -25,7 +25,6 @@ import java.util.SequencedCollection;
 import java.util.function.Predicate;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static java.util.Objects.isNull;
 import static net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.entity.EquipmentSlot.CHEST;
 import static net.minecraft.entity.EquipmentSlot.FEET;
@@ -64,7 +63,7 @@ public abstract class InGameHudMixin {
         MinecraftClient client = MinecraftClient.getInstance();
         ClientPlayerEntity playerEntity = client.player;
 
-        if (isNull(playerEntity)) {
+        if (playerEntity == null) {
             return;
         }
 

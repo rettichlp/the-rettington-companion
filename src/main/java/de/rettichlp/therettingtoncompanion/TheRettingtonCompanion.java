@@ -1,6 +1,6 @@
 package de.rettichlp.therettingtoncompanion;
 
-import de.rettichlp.therettingtoncompanion.common.Configuration;
+import de.rettichlp.therettingtoncompanion.common.configuration.Configuration;
 import de.rettichlp.therettingtoncompanion.common.registry.Registry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
