@@ -176,7 +176,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
     }
 
     private void createColorSelectWidget() {
-        this.colorSelectWidget = new ColorSelectWidget(40, 20, GREEN, this.chatRegex::setColor);
+        this.colorSelectWidget = new ColorSelectWidget(40, 20, this.chatRegex.getColor(), this.chatRegex::setColor);
         this.colorSelectWidget.setWidth(40);
     }
 

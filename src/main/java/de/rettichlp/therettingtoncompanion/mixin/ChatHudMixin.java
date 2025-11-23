@@ -44,8 +44,8 @@ public abstract class ChatHudMixin {
         int backgroundColor = color;
 
         Formatting highlightColor = getHighlightColor(getString(line.content()));
-        if (highlightColor != null) {
-            backgroundColor = withAlpha(100, GREEN.getRGB());
+        if (highlightColor != null && highlightColor.getColorValue() != null) {
+            backgroundColor = withAlpha(100, 0xFF000000 | highlightColor.getColorValue());
         }
 
         drawContext.fill(x1, y1, x2, y2, backgroundColor);
