@@ -1,17 +1,31 @@
 package de.rettichlp.therettingtoncompanion.common.registry;
 
+import de.rettichlp.therettingtoncompanion.common.models.GammaPreset;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.Set;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.common.models.GammaPreset.OWN_SETTING;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
+import static net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.registerKeyBinding;
+import static net.minecraft.client.util.InputUtil.Type.KEYSYM;
 import static org.atteo.classindex.ClassIndex.getAnnotated;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_G;
 
 public class Registry {
+
+    public static final KeyBinding.Category KEY_CATEGORY = KeyBinding.Category.create(Identifier.of(MOD_ID, "trc.key.category.name"));
+    public static final KeyBinding CHANGE_GAMMA_VALUE_KEY = registerKeyBinding(new KeyBinding("trc.key.change_gamma_value", KEYSYM, GLFW_KEY_G, KEY_CATEGORY));
 
     private final Set<IListener> listenerInstances = getListenerInstances();
 
@@ -35,6 +49,18 @@ public class Registry {
             }
 
             return showMessage;
+        });
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client == null) {
+                return;
+            }
+
+            if (CHANGE_GAMMA_VALUE_KEY.wasPressed()) {
+                GammaPreset newGammaPreset = ofNullable(configuration.getGammaPreset()).orElse(OWN_SETTING).next();
+                configuration.setGammaPreset(newGammaPreset);
+                newGammaPreset.sendMessage();
+            }
         });
 
         // prevent multiple registrations of listeners
