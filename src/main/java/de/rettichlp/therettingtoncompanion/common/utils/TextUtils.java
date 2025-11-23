@@ -55,7 +55,7 @@ public class TextUtils {
      */
     public static @Nullable Formatting getHighlightColor(String message) {
         if (matchesDefaultRegex(message)) {
-            return configuration.chat().regex().getDefaultChatRegexStyle();
+            return configuration.chat().regex().getDefaultChatRegexColor();
         }
 
         List<ChatRegex> matchingCustomRegexes = getMatchingCustomRegexes(message);

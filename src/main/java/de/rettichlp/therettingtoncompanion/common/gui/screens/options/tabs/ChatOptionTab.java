@@ -42,7 +42,7 @@ public class ChatOptionTab extends AbstractOptionTab {
         scrollableListEntries.add(sectionEntry2);
 
         // default chat regex
-        ChatRegex defaultChatRegex = new ChatRegex(this.client.getGameProfile().name(), configuration.chat().regex().isDefaultChatRegex(), configuration.chat().regex().getDefaultChatRegexStyle(), 0);
+        ChatRegex defaultChatRegex = new ChatRegex(this.client.getGameProfile().name(), configuration.chat().regex().isDefaultChatRegex(), configuration.chat().regex().getDefaultChatRegexColor(), 0);
         ChatRegexEntry defaultChatRegexEntry = new ChatRegexEntry(defaultChatRegex, false);
         scrollableListEntries.add(defaultChatRegexEntry);
 

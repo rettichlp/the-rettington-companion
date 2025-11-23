@@ -21,7 +21,7 @@ public class ChatConfiguration {
     public static class ChatRegexConfiguration {
 
         private boolean defaultChatRegex = true;
-        private Formatting defaultChatRegexStyle = GREEN;
+        private Formatting defaultChatRegexColor = GREEN;
         private Set<ChatRegex> chatRegexes = new HashSet<>();
     }
 }
