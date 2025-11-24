@@ -59,7 +59,7 @@ public abstract class InGameHudMixin {
                                              int seed);
 
     @Inject(method = "renderHotbar", at = @At("TAIL"))
-    private void renderHotbar(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+    private void trc$renderHotbarTail(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();
         ClientPlayerEntity playerEntity = client.player;
 

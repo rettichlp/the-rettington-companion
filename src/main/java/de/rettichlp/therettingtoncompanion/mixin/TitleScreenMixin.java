@@ -23,7 +23,7 @@ public abstract class TitleScreenMixin extends Screen {
     }
 
     @Inject(method = "addDevelopmentWidgets", at = @At("RETURN"), cancellable = true)
-    private void addOwnDevelopmentWidgets(int y, int spacingY, CallbackInfoReturnable<Integer> cir) {
+    private void trc$addDevelopmentWidgetsReturn(int y, int spacingY, CallbackInfoReturnable<Integer> cir) {
         if (getBoolean("fabric.development")) {
             this.addDrawableChild(ButtonWidget.builder(literal(MOD_NAME), button -> this.client.setScreen(new ModOptionScreen()))
                     .dimensions(MinecraftClient.getInstance().getWindow().getScaledWidth() / 2 - 100, y += spacingY, 200, 20)
