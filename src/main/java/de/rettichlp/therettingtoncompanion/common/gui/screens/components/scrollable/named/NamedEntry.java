@@ -1,5 +1,6 @@
-package de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable;
+package de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.named;
 
+import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ScrollableListEntry;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
