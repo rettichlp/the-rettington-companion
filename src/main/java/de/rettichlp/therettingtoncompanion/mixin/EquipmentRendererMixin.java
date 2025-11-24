@@ -12,7 +12,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 public abstract class EquipmentRendererMixin {
 
     @Inject(method = "render*", at = @At("HEAD"), cancellable = true)
-    private void hideArmor(CallbackInfo ci) {
+    private void trc$renderHead(CallbackInfo ci) {
         if (configuration.isHideArmor()) {
             ci.cancel();
         }

@@ -34,13 +34,13 @@ public abstract class ChatHudMixin {
 
     @Redirect(method = "method_71992",
               at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;fill(IIIII)V", ordinal = 0))
-    public void test(DrawContext drawContext,
-                     int x1,
-                     int y1,
-                     int x2,
-                     int y2,
-                     int color,
-                     @Local(argsOnly = true) ChatHudLine.Visible line) {
+    public void trc$method_71992Invoke(DrawContext drawContext,
+                                       int x1,
+                                       int y1,
+                                       int x2,
+                                       int y2,
+                                       int color,
+                                       @Local(argsOnly = true) ChatHudLine.Visible line) {
         int backgroundColor = color;
 
         Formatting highlightColor = getHighlightColor(getString(line.content()));
@@ -52,7 +52,7 @@ public abstract class ChatHudMixin {
     }
 
     @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))
-    private int moreWidth(int width) {
+    private int trc$getWidthReturn(int width) {
         if (!configuration.chat().isOptimizedChatSize()) {
             return width;
         }
@@ -65,7 +65,7 @@ public abstract class ChatHudMixin {
     }
 
     @ModifyReturnValue(method = "getHeight()I", at = @At("RETURN"))
-    private int moreFocusedHeight(int height) {
+    private int trc$getHeightReturn(int height) {
         if (!configuration.chat().isOptimizedChatSize()) {
             return height;
         }

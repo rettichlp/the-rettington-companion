@@ -27,14 +27,14 @@ public class SimpleOptionMixin<T> {
     Text text;
 
     @Inject(method = "getValue", at = @At("HEAD"), cancellable = true)
-    public void getModifiedValue(CallbackInfoReturnable<Double> ci) {
+    public void trc$getValueHead(CallbackInfoReturnable<Double> ci) {
         if (isGammaOption()) {
             ci.setReturnValue(ofNullable(configuration.getGammaPreset()).orElse(OWN_SETTING).getGammaValue());
         }
     }
 
     @Inject(method = "setValue", at = @At("HEAD"), cancellable = true)
-    public void setModValue(T value, CallbackInfo ci) {
+    public void trc$setValueHead(T value, CallbackInfo ci) {
         if (isGammaOption()) {
             configuration.setOwnGammaValue((Double) value);
             ci.cancel();

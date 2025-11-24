@@ -38,7 +38,7 @@ public abstract class GameMenuScreenMixin extends Screen {
     }
 
     @Inject(method = "render", at = @At("RETURN"))
-    private void addOptionsButton(DrawContext context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
+    private void trc$renderReturn(DrawContext context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
         this.buttonWidget = new IconButtonWidget(0, 0, Identifier.of(MOD_ID, "icon.png"), 0, 0, 12, 12, button -> this.client.setScreen(new ModOptionScreen()));
 
         Window window = this.client.getWindow();
