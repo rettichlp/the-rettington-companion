@@ -49,8 +49,8 @@ public abstract class AbstractOptionTab {
 
         @Override // forward mouse scroll events to children (is not transmitted by default, because of ElementListWidget)
         public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-            this.content.forEach(scrollableListEntry -> scrollableListEntry.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount));
-            return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+            return this.content.stream().anyMatch(sle -> sle.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount))
+                    || super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
         }
 
         @Override
