@@ -8,6 +8,8 @@
   "trc.key.change_gamma_value": "Change gamma value",
   "trc.key.toggle_armor_visibility": "Toggle armor visibility",
   "trc.option.general.title": "General",
+  "trc.option.general.gamma_preset.title": "Gamma preset",
+  "trc.option.general.gamma_preset.description": "Select a gamma value or choose 'Settings' for the Minecraft gamma setting.",
   "trc.option.overlay.title": "Overlay",
   "trc.option.overlay.show_armor_hud.title": "Show Armor HUD",
   "trc.option.overlay.show_armor_hud.description": "Toggles the display of the armor items on the screen.",
