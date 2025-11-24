@@ -21,11 +21,13 @@ import static net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.regi
 import static net.minecraft.client.util.InputUtil.Type.KEYSYM;
 import static org.atteo.classindex.ClassIndex.getAnnotated;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_G;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_H;
 
 public class Registry {
 
     public static final KeyBinding.Category KEY_CATEGORY = KeyBinding.Category.create(Identifier.of(MOD_ID, "trc.key.category.name"));
-    public static final KeyBinding CHANGE_GAMMA_VALUE_KEY = registerKeyBinding(new KeyBinding("trc.key.change_gamma_value", KEYSYM, GLFW_KEY_G, KEY_CATEGORY));
+    public static final KeyBinding GAMMA_PRESET_KEY = registerKeyBinding(new KeyBinding("trc.key.gamma_preset", KEYSYM, GLFW_KEY_G, KEY_CATEGORY));
+    public static final KeyBinding HIDE_ARMOR_KEY = registerKeyBinding(new KeyBinding("trc.key.hide_armor", KEYSYM, GLFW_KEY_H, KEY_CATEGORY));
 
     private final Set<IListener> listenerInstances = getListenerInstances();
 
@@ -56,7 +58,11 @@ public class Registry {
                 return;
             }
 
-            if (CHANGE_GAMMA_VALUE_KEY.wasPressed()) {
+            if (HIDE_ARMOR_KEY.wasPressed()) {
+                configuration.setHideArmor(!configuration.isHideArmor());
+            }
+
+            if (GAMMA_PRESET_KEY.wasPressed()) {
                 GammaPreset newGammaPreset = ofNullable(configuration.getGammaPreset()).orElse(OWN_SETTING).next();
                 configuration.setGammaPreset(newGammaPreset);
                 newGammaPreset.sendMessage();
