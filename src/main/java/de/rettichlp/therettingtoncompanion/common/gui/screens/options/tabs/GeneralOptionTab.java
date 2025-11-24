@@ -2,6 +2,7 @@ package de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs;
 
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ScrollableListEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.named.CyclingButtonEntry;
+import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.named.ToggleButtonEntry;
 import de.rettichlp.therettingtoncompanion.common.models.GammaPreset;
 import net.minecraft.text.Text;
 
@@ -32,6 +33,12 @@ public class GeneralOptionTab extends AbstractOptionTab {
                 GammaPreset::getDisplayName,
                 configuration::setGammaPreset);
 
-        return List.of(cyclingButtonEntry);
+        ToggleButtonEntry toggleButtonEntry = new ToggleButtonEntry(
+                translatable("trc.option.general.hide_armor.title"),
+                translatable("trc.option.general.hide_armor.description"),
+                configuration.isHideArmor(),
+                configuration::setHideArmor);
+
+        return List.of(cyclingButtonEntry, toggleButtonEntry);
     }
 }
