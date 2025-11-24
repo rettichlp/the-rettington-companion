@@ -4,7 +4,7 @@ import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrolla
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ChatRegexEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ScrollableListEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.SectionEntry;
-import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ToggleButtonEntry;
+import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.named.ToggleButtonEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.ModOptionScreen;
 import de.rettichlp.therettingtoncompanion.common.models.ChatRegex;
 import net.minecraft.text.Text;
