@@ -26,14 +26,14 @@ public class InventoryOptionTab extends AbstractOptionTab {
         ToggleButtonEntry instantQuickMoveEntry = new ToggleButtonEntry(
                 translatable("trc.option.inventory.instant_quick_move.title"),
                 translatable("trc.option.inventory.instant_quick_move.description"),
-                configuration.isShowArmorHud(),
-                configuration::setShowArmorHud);
+                configuration.inventory().isInstantQuickMove(),
+                value -> configuration.inventory().setInstantQuickMove(value));
 
         ToggleButtonEntry autoRestockEntry = new ToggleButtonEntry(
                 translatable("trc.option.inventory.auto_restock.title"),
                 translatable("trc.option.inventory.auto_restock.description"),
-                configuration.isShowArrowHud(),
-                configuration::setShowArrowHud);
+                configuration.inventory().isAutoRestock(),
+                value -> configuration.inventory().setAutoRestock(value));
 
         return List.of(instantQuickMoveEntry, autoRestockEntry);
     }

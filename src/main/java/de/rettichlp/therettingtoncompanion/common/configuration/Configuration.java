@@ -25,8 +25,11 @@ public class Configuration {
 
     @Accessors(fluent = true)
     private ChatConfiguration chat = new ChatConfiguration();
-    private boolean showArmorHud = true;
-    private boolean showArrowHud = true;
+    @Accessors(fluent = true)
+    private InventoryConfiguration inventory = new InventoryConfiguration();
+    @Accessors(fluent = true)
+    private OverlayConfiguration overlay = new OverlayConfiguration();
+
     private double ownGammaValue = 0.5;
     private GammaPreset gammaPreset = OWN_SETTING;
     private boolean hideArmor = false;
