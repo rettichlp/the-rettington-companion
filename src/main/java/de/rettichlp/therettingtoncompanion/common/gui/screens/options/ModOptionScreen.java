@@ -6,7 +6,7 @@ import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.Abstr
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.ChatOptionTab;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.GeneralOptionTab;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.InventoryOptionTab;
-import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.OverlayOptionTab;
+import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.VisualsOptionTab;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.widget.AxisGridWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -44,7 +44,7 @@ public class ModOptionScreen extends AbstractModScreen {
             new GeneralOptionTab(),
             new ChatOptionTab(),
             new InventoryOptionTab(),
-            new OverlayOptionTab()
+            new VisualsOptionTab()
     );
 
     private final String activeOptionTabId;
