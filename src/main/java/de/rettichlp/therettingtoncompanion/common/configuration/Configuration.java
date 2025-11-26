@@ -28,11 +28,10 @@ public class Configuration {
     @Accessors(fluent = true)
     private InventoryConfiguration inventory = new InventoryConfiguration();
     @Accessors(fluent = true)
-    private OverlayConfiguration overlay = new OverlayConfiguration();
+    private VisualsConfiguration visuals = new VisualsConfiguration();
 
     private double ownGammaValue = 0.5;
     private GammaPreset gammaPreset = OWN_SETTING;
-    private boolean hideArmor = false;
 
     public Configuration loadFromFile() {
         File file = CONFIG_PATH.toFile();

@@ -78,7 +78,7 @@ public abstract class InGameHudMixin {
                 playerEntity.getEquippedStack(FEET)
         );
 
-        if (!armorItems.stream().allMatch(ItemStack::isEmpty) && configuration.overlay().isShowArmorHud()) {
+        if (!armorItems.stream().allMatch(ItemStack::isEmpty) && configuration.visuals().isShowArmorHud()) {
             drawArmorHud(context, tickCounter, y, armorItems);
         }
 
@@ -92,7 +92,7 @@ public abstract class InGameHudMixin {
             arrowItems.add(offHandStack);
         }
 
-        if (!arrowItems.isEmpty() && configuration.overlay().isShowArrowHud()) {
+        if (!arrowItems.isEmpty() && configuration.visuals().isShowArrowHud()) {
             drawArrowHud(context, tickCounter, y, arrowItems);
         }
     }

@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static java.util.Comparator.comparingInt;
 import static net.minecraft.client.sound.PositionedSoundInstance.master;
@@ -50,13 +51,17 @@ public abstract class ItemStackMixin {
 
     @Inject(method = "useOnBlock", at = @At("RETURN"))
     private void trc$useOnBlockReturn(@NotNull ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-        if (context.getWorld().isClient() && this.client.player != null && context.getStack().getCount() == 0) {
+        if (context.getWorld().isClient() && this.client.player != null && context.getStack().getCount() == 0 && configuration.inventory().isAutoRestock()) {
             tryRestock(false);
         }
     }
 
     @Inject(method = "onDurabilityChange", at = @At("HEAD"))
     private void trc$onDurabilityChange(int damage, ServerPlayerEntity player, Consumer<Item> breakCallback, CallbackInfo ci) {
+        if (!configuration.inventory().isAutoRestock()) {
+            return;
+        }
+
         int remainingUses = getMaxDamage() - damage;
         switch (remainingUses) {
             case 50 -> {

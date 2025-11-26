@@ -8,6 +8,7 @@ import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static net.minecraft.screen.slot.SlotActionType.QUICK_MOVE;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
@@ -22,6 +23,10 @@ public abstract class HandledScreenMixin extends Screen {
 
     @Override
     public void mouseMoved(double mouseX, double mouseY) {
+        if (!configuration.inventory().isInstantQuickMove()) {
+            return;
+        }
+
         Slot slot = getSlotAt(mouseX, mouseY);
         boolean isShiftPressed = this.client.isShiftPressed();
         boolean isMouseLeftDown = (glfwGetMouseButton(this.client.getWindow().getHandle(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS);
