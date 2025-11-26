@@ -20,21 +20,30 @@ import static net.minecraft.client.render.entity.equipment.EquipmentModel.LayerT
 @Mixin(EquipmentRenderer.class)
 public abstract class EquipmentRendererMixin {
 
-    @Inject(method = "render(Lnet/minecraft/client/render/entity/equipment/EquipmentModel$LayerType;Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;ILnet/minecraft/util/Identifier;II)V", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "render(Lnet/minecraft/client/render/entity/equipment/EquipmentModel$LayerType;Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;ILnet/minecraft/util/Identifier;II)V",
+            at = @At("HEAD"),
+            cancellable = true)
     private <S> void trc$renderHead(EquipmentModel.LayerType layerType,
-                                RegistryKey<EquipmentAsset> assetKey,
-                                Model<? super S> model,
-                                S object,
-                                ItemStack itemStack,
-                                MatrixStack matrixStack,
-                                OrderedRenderCommandQueue orderedRenderCommandQueue,
-                                int i,
-                                Identifier identifier,
-                                int j,
-                                int k,
-                                CallbackInfo ci) {
-        if (configuration.isHideArmor() && layerType != WINGS) {
-            ci.cancel();
+                                    RegistryKey<EquipmentAsset> assetKey,
+                                    Model<? super S> model,
+                                    S object,
+                                    ItemStack itemStack,
+                                    MatrixStack matrixStack,
+                                    OrderedRenderCommandQueue orderedRenderCommandQueue,
+                                    int i,
+                                    Identifier identifier,
+                                    int j,
+                                    int k,
+                                    CallbackInfo ci) {
+        switch (configuration.visuals().getEquipmentModelVisibility()) {
+            case ALL -> {} // do nothing, render all equipment
+            case NONE -> ci.cancel(); // cancel rendering of all equipment
+            case ONLY_WINGS -> {
+                // cancel rendering of non-wing equipment
+                if (layerType != WINGS) {
+                    ci.cancel();
+                }
+            }
         }
     }
 }
