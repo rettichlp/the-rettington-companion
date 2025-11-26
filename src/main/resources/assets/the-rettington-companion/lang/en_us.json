@@ -1,4 +1,7 @@
 {
+  "trc.equipment_model_visibility.all": "All",
+  "trc.equipment_model_visibility.none": "None",
+  "trc.equipment_model_visibility.only_wings": "Only wings",
   "trc.gamma_preset.bright": "Bright",
   "trc.gamma_preset.default": "Default",
   "trc.gamma_preset.fullbright": "Fullbright",
@@ -7,9 +10,9 @@
   "trc.key.category.name": "The Rettington Companion",
   "trc.key.gamma_preset": "Change gamma value",
   "trc.key.hide_armor": "Toggle armor visibility",
-  "trc.message.auto_restock.tool_durability_warning": "%s has %d uses left",
-  "trc.message.auto_restock.restock_succeeded": "Restocked %s",
   "trc.message.auto_restock.restock_failed": "Failed to restock %s",
+  "trc.message.auto_restock.restock_succeeded": "Restocked %s",
+  "trc.message.auto_restock.tool_durability_warning": "%s has %d uses left",
   "trc.option.chat.optimized_chat_size.description": "Increases the chat box size to better fit longer messages.",
   "trc.option.chat.optimized_chat_size.title": "Optimized chat size",
   "trc.option.chat.section.general.title": "General",
@@ -17,8 +20,6 @@
   "trc.option.chat.title": "Chat",
   "trc.option.general.gamma_preset.description": "Select a gamma value or choose 'Settings' for the Minecraft gamma setting.",
   "trc.option.general.gamma_preset.title": "Gamma preset",
-  "trc.option.general.hide_armor.description": "Hides the armor model from yourself and from other players.",
-  "trc.option.general.hide_armor.title": "Hide armor",
   "trc.option.general.title": "General",
   "trc.option.inventory.auto_restock.description": "Automatically restocks blocks in your hotbar when you place the last one of a stack.",
   "trc.option.inventory.auto_restock.title": "Auto restock",
@@ -30,7 +31,6 @@
   "trc.option.visuals.show_arrow_hud.description": "Toggles the display of the number of arrows in your inventory on the screen.",
   "trc.option.visuals.show_arrow_hud.title": "Show Arrow HUD",
   "trc.option.visuals.title": "Overlay",
-  "trc.equipment_model_visibility.all": "All",
-  "trc.equipment_model_visibility.none": "None",
-  "trc.equipment_model_visibility.only_wings": "Only wings"
+  "trc.option.visuals.visible_equipment_model.description": "Hides equipment models from yourself and from other players.",
+  "trc.option.visuals.visible_equipment_model.title": "Visible equipment models"
 }
