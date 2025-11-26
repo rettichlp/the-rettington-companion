@@ -1,5 +1,6 @@
 package de.rettichlp.therettingtoncompanion.common.registry;
 
+import de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration;
 import de.rettichlp.therettingtoncompanion.common.models.GammaPreset;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -27,7 +28,7 @@ public class Registry {
 
     public static final KeyBinding.Category KEY_CATEGORY = KeyBinding.Category.create(Identifier.of(MOD_ID, "trc.key.category.name"));
     public static final KeyBinding GAMMA_PRESET_KEY = registerKeyBinding(new KeyBinding("trc.key.gamma_preset", KEYSYM, GLFW_KEY_G, KEY_CATEGORY));
-    public static final KeyBinding HIDE_ARMOR_KEY = registerKeyBinding(new KeyBinding("trc.key.hide_armor", KEYSYM, GLFW_KEY_H, KEY_CATEGORY));
+    public static final KeyBinding EQUIPMENT_MODEL_VISIBILITY_KEY = registerKeyBinding(new KeyBinding("trc.key.hide_armor", KEYSYM, GLFW_KEY_H, KEY_CATEGORY));
 
     private final Set<IListener> listenerInstances = getListenerInstances();
 
@@ -58,8 +59,10 @@ public class Registry {
                 return;
             }
 
-            if (HIDE_ARMOR_KEY.wasPressed()) {
-                configuration.setHideArmor(!configuration.isHideArmor());
+            if (EQUIPMENT_MODEL_VISIBILITY_KEY.wasPressed()) {
+                VisualsConfiguration.EquipmentModelVisibility equipmentModelVisibility = configuration.visuals().getEquipmentModelVisibility().next();
+                configuration.visuals().setEquipmentModelVisibility(equipmentModelVisibility);
+                equipmentModelVisibility.sendMessage();
             }
 
             if (GAMMA_PRESET_KEY.wasPressed()) {
