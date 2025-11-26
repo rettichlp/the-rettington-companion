@@ -29,5 +29,8 @@
   "trc.option.visuals.show_armor_hud.title": "Show Armor HUD",
   "trc.option.visuals.show_arrow_hud.description": "Toggles the display of the number of arrows in your inventory on the screen.",
   "trc.option.visuals.show_arrow_hud.title": "Show Arrow HUD",
-  "trc.option.visuals.title": "Overlay"
+  "trc.option.visuals.title": "Overlay",
+  "trc.equipment_model_visibility.all": "All",
+  "trc.equipment_model_visibility.none": "None",
+  "trc.equipment_model_visibility.only_wings": "Only wings"
 }
