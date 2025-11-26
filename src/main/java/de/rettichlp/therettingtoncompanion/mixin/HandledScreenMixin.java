@@ -20,12 +20,6 @@ public abstract class HandledScreenMixin extends Screen {
         super(title);
     }
 
-    @Shadow
-    protected abstract Slot getSlotAt(double mouseX, double mouseY);
-
-    @Shadow
-    protected abstract void onMouseClick(Slot slot, int slotId, int button, SlotActionType actionType);
-
     @Override
     public void mouseMoved(double mouseX, double mouseY) {
         Slot slot = getSlotAt(mouseX, mouseY);
@@ -36,4 +30,10 @@ public abstract class HandledScreenMixin extends Screen {
             onMouseClick(slot, slot.id, 0, QUICK_MOVE);
         }
     }
+
+    @Shadow
+    protected abstract Slot getSlotAt(double mouseX, double mouseY);
+
+    @Shadow
+    protected abstract void onMouseClick(Slot slot, int slotId, int button, SlotActionType actionType);
 }

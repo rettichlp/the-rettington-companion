@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getHighlightColor;
 import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getString;
-import static java.awt.Color.GREEN;
 import static java.lang.Math.max;
 import static net.minecraft.client.gui.hud.ChatHud.getHeight;
 import static net.minecraft.client.gui.hud.ChatHud.getWidth;

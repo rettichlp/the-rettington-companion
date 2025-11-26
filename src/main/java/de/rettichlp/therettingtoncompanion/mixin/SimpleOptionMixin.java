@@ -19,12 +19,12 @@ import static java.util.Optional.ofNullable;
 @Mixin(SimpleOption.class)
 public class SimpleOptionMixin<T> {
 
-    @Unique
-    private static final String GAMMA_OPTION_KEY = "options.gamma";
-
     @Shadow
     @Final
     Text text;
+
+    @Unique
+    private static final String GAMMA_OPTION_KEY = "options.gamma";
 
     @Inject(method = "getValue", at = @At("HEAD"), cancellable = true)
     public void trc$getValueHead(CallbackInfoReturnable<Double> ci) {
