@@ -14,8 +14,6 @@ import java.util.Set;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.common.models.GammaPreset.OWN_SETTING;
-import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 import static net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.registerKeyBinding;
@@ -66,7 +64,7 @@ public class Registry {
             }
 
             if (GAMMA_PRESET_KEY.wasPressed()) {
-                GammaPreset newGammaPreset = ofNullable(configuration.getGammaPreset()).orElse(OWN_SETTING).next();
+                GammaPreset newGammaPreset = configuration.getGammaPreset().next();
                 configuration.setGammaPreset(newGammaPreset);
                 newGammaPreset.sendMessage();
             }

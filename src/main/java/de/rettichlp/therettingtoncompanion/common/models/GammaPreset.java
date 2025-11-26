@@ -45,7 +45,7 @@ public enum GammaPreset {
         player.sendMessage(empty().formatted(this.color)
                 .append(literal("Gamma").formatted(GRAY))
                 .append(literal(": ").formatted(DARK_GRAY))
-                .append(this.displayName.copy())
+                .append(this.displayName)
                 .append(literal(" (" + toPercent() + "%)")), true);
     }
 

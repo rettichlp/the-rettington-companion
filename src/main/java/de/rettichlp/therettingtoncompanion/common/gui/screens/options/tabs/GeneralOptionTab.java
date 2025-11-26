@@ -24,7 +24,7 @@ public class GeneralOptionTab extends AbstractOptionTab {
 
     @Override
     public Collection<ScrollableListEntry> getContent() {
-        CyclingButtonEntry<GammaPreset> cyclingButtonEntry = new CyclingButtonEntry<>(
+        CyclingButtonEntry<GammaPreset> gammaPresetEntry = new CyclingButtonEntry<>(
                 translatable("trc.option.general.gamma_preset.title"),
                 translatable("trc.option.general.gamma_preset.description"),
                 configuration.getGammaPreset(),
@@ -32,6 +32,6 @@ public class GeneralOptionTab extends AbstractOptionTab {
                 GammaPreset::getDisplayName,
                 configuration::setGammaPreset);
 
-        return List.of(cyclingButtonEntry);
+        return List.of(gammaPresetEntry);
     }
 }
