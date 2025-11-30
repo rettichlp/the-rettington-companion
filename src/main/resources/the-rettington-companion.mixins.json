@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "package": "de.rettichlp.therettingtoncompanion.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ItemStackMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "client": [
+    "ChatHudMixin",
+    "EquipmentRendererMixin",
+    "GameMenuScreenMixin",
+    "HandledScreenMixin",
+    "InGameHudMixin",
+    "SimpleOptionMixin",
+    "TitleScreenMixin"
+  ]
+}

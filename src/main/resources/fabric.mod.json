@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "the-rettington-companion",
+  "version": "${version}",
+  "name": "The Rettington Companion",
+  "description": "Useful utilities to enhance your everyday survival experience.",
+  "authors": [
+    "RettichLP"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "Apache-2.0",
+  "icon": "assets/the-rettington-companion/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "de.rettichlp.therettingtoncompanion.TheRettingtonCompanion"
+    ],
+    "modmenu": [
+      "de.rettichlp.therettingtoncompanion.common.integrations.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "the-rettington-companion.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.17.3",
+    "minecraft": "~1.21.10",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "recommends": {
+    "modmenu": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
