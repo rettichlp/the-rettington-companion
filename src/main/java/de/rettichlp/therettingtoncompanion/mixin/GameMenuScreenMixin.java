@@ -42,7 +42,7 @@ public abstract class GameMenuScreenMixin extends Screen {
         this.buttonWidget = new IconButtonWidget(0, 0, Identifier.of(MOD_ID, "icon.png"), 0, 0, 12, 12, button -> this.client.setScreen(new ModOptionScreen()));
 
         Window window = this.client.getWindow();
-        this.buttonWidget.setPosition(window.getScaledWidth() / 2 + 102 + 8, window.getScaledHeight() / 4 + 8);
+        this.buttonWidget.setPosition(window.getScaledWidth() / 2 + 102 + 4, window.getScaledHeight() / 4 + 8);
 
         this.buttonWidget.render(context, mouseX, mouseY, deltaTicks);
     }
