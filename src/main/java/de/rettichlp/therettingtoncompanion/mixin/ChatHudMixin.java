@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -51,6 +52,14 @@ public abstract class ChatHudMixin {
         }
 
         drawContext.fill(x1, y1, x2, y2, backgroundColor);
+    }
+
+    @Inject(method = "clear", at = @At("HEAD"), cancellable = true)
+    public void trc$clearHead(boolean clearHistory, CallbackInfo ci) {
+        // clearHistory is only true when changing worlds or disconnecting
+        if (clearHistory) {
+            ci.cancel(); // prevent chat history from being cleared, except on triggering by the player with F3 + D
+        }
     }
 
     @ModifyExpressionValue(method = { "addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V", "addVisibleMessage" }, at = @At(value = "CONSTANT", args = "intValue=100"))
