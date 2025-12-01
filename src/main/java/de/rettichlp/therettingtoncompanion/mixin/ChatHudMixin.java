@@ -1,5 +1,6 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.MinecraftClient;
@@ -12,10 +13,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getHighlightColor;
 import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getString;
+import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Math.max;
 import static net.minecraft.client.gui.hud.ChatHud.getHeight;
 import static net.minecraft.client.gui.hud.ChatHud.getWidth;
@@ -48,6 +51,11 @@ public abstract class ChatHudMixin {
         }
 
         drawContext.fill(x1, y1, x2, y2, backgroundColor);
+    }
+
+    @ModifyExpressionValue(method = { "addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V", "addVisibleMessage" }, at = @At(value = "CONSTANT", args = "intValue=100"))
+    public int trc$addMessageConstant(int value) {
+        return MAX_VALUE;
     }
 
     @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))
