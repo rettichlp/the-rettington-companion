@@ -35,6 +35,19 @@ public abstract class ChatHudMixin {
     @Shadow
     public abstract boolean isChatFocused();
 
+    /**
+     * Redirects the invocation of the {@code fill} method in the {@link DrawContext} class during the execution of the
+     * {@code method_71992} in the {@link ChatHud} class. This method adjusts the background color for chat lines by applying custom
+     * highlight colors when applicable.
+     *
+     * @param drawContext the {@link DrawContext} used for rendering, provided by the redirected invocation.
+     * @param x1          the x-coordinate of the first corner of the rectangle to fill.
+     * @param y1          the y-coordinate of the first corner of the rectangle to fill.
+     * @param x2          the x-coordinate of the opposite corner of the rectangle to fill.
+     * @param y2          the y-coordinate of the opposite corner of the rectangle to fill.
+     * @param color       the original color to use for the background of the rectangle.
+     * @param line        the {@link ChatHudLine.Visible} instance containing the content of the current chat line being rendered.
+     */
     @Redirect(method = "method_71992",
               at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;fill(IIIII)V", ordinal = 0))
     public void trc$method_71992Invoke(DrawContext drawContext,
@@ -54,19 +67,43 @@ public abstract class ChatHudMixin {
         drawContext.fill(x1, y1, x2, y2, backgroundColor);
     }
 
+    /**
+     * Prevents the chat history from being cleared unless explicitly triggered by the player using F3 + D. The method intercepts the
+     * clear operation and cancels it based on the provided conditions.
+     *
+     * @param clearHistory Specifies whether the chat history should be cleared. If true, the operation was triggered by changing
+     *                     worlds or disconnecting. If false, it was manually triggered by the player.
+     * @param ci           A {@link CallbackInfo} instance used to control whether the operation should proceed or be canceled.
+     */
     @Inject(method = "clear", at = @At("HEAD"), cancellable = true)
     public void trc$clearHead(boolean clearHistory, CallbackInfo ci) {
-        // clearHistory is only true when changing worlds or disconnecting
         if (clearHistory) {
-            ci.cancel(); // prevent chat history from being cleared, except on triggering by the player with F3 + D
+            ci.cancel();
         }
     }
 
-    @ModifyExpressionValue(method = { "addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V", "addVisibleMessage" }, at = @At(value = "CONSTANT", args = "intValue=100"))
+    /**
+     * Modifies the value of a specific constant used during the execution of methods related to adding messages to the chat HUD. The
+     * modified constant value is applied to customize the behavior or a specific limit during the execution of these methods.
+     *
+     * @param value the original constant value passed to the method.
+     *
+     * @return the modified constant value, specified as {@code MAX_VALUE}.
+     */
+    @ModifyExpressionValue(method = { "addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V", "addVisibleMessage" },
+                           at = @At(value = "CONSTANT", args = "intValue=100"))
     public int trc$addMessageConstant(int value) {
         return MAX_VALUE;
     }
 
+    /**
+     * Modifies the return value of the {@code getWidth()} method to dynamically adjust the width based on specific conditions. The
+     * width is optimized if the chat size optimization is enabled; otherwise, the original width is returned.
+     *
+     * @param width the original width value returned by the {@code getWidth()} method.
+     *
+     * @return the modified width value if chat size optimization is enabled, otherwise the original width.
+     */
     @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))
     private int trc$getWidthReturn(int width) {
         if (!configuration.chat().isOptimizedChatSize()) {
@@ -80,6 +117,14 @@ public abstract class ChatHudMixin {
         return (int) max(chatWidth, minecraftChatWidth);
     }
 
+    /**
+     * Modifies the return value of the {@code getHeight()} method to dynamically adjust the height based on specific conditions. The
+     * height is optimized if the chat size optimization is enabled; otherwise, the original height is returned.
+     *
+     * @param height the original height value returned by the {@code getHeight()} method.
+     *
+     * @return the modified height value if chat size optimization is enabled, otherwise the original height.
+     */
     @ModifyReturnValue(method = "getHeight()I", at = @At("RETURN"))
     private int trc$getHeightReturn(int height) {
         if (!configuration.chat().isOptimizedChatSize()) {
