@@ -42,4 +42,9 @@ public class ChatRegex {
                 && this.color == chatRegex.color
                 && this.priority == chatRegex.priority;
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

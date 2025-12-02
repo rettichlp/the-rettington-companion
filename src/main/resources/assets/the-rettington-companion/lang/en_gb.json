@@ -36,5 +36,7 @@
   "trc.option.visuals.show_arrow_hud.title": "Show Arrow HUD",
   "trc.option.visuals.title": "Overlay",
   "trc.option.visuals.visible_equipment_model.description": "Hides equipment models from yourself and from other players.",
-  "trc.option.visuals.visible_equipment_model.title": "Visible equipment models"
+  "trc.option.visuals.visible_equipment_model.title": "Visible equipment models",
+  "trc.option.visuals.day_time_value.title": "Day time value",
+  "trc.option.visuals.day_time_value.description": "Sets the time of day in the world to a fixed value (only client-side)."
 }
