@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -34,6 +35,19 @@ public abstract class ChatHudMixin {
     @Shadow
     public abstract boolean isChatFocused();
 
+    /**
+     * Redirects the invocation of the {@code fill} method in the {@link DrawContext} class during the execution of the
+     * {@code method_71992} in the {@link ChatHud} class. This method adjusts the background color for chat lines by applying custom
+     * highlight colors when applicable.
+     *
+     * @param drawContext the {@link DrawContext} used for rendering, provided by the redirected invocation.
+     * @param x1          the x-coordinate of the first corner of the rectangle to fill.
+     * @param y1          the y-coordinate of the first corner of the rectangle to fill.
+     * @param x2          the x-coordinate of the opposite corner of the rectangle to fill.
+     * @param y2          the y-coordinate of the opposite corner of the rectangle to fill.
+     * @param color       the original color to use for the background of the rectangle.
+     * @param line        the {@link ChatHudLine.Visible} instance containing the content of the current chat line being rendered.
+     */
     @Redirect(method = "method_71992",
               at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;fill(IIIII)V", ordinal = 0))
     public void trc$method_71992Invoke(DrawContext drawContext,
@@ -53,11 +67,46 @@ public abstract class ChatHudMixin {
         drawContext.fill(x1, y1, x2, y2, backgroundColor);
     }
 
-    @ModifyExpressionValue(method = { "addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V", "addVisibleMessage" }, at = @At(value = "CONSTANT", args = "intValue=100"))
-    public int trc$addMessageConstant(int value) {
-        return MAX_VALUE;
+    /**
+     * Intercepts the {@code clear} method at the HEAD position to determine whether the chat history should be cleared based on the
+     * current configuration. If the configuration specifies that messages should be kept on disconnect and {@code clearHistory} is
+     * true, the method execution is canceled.
+     *
+     * @param clearHistory specifies whether the chat history should be cleared. If true, the operation was triggered by changing
+     *                     worlds or disconnecting. If false, it was manually triggered by the player.
+     * @param ci           a {@link CallbackInfo} instance that allows canceling the method execution if specific conditions are met.
+     */
+    @Inject(method = "clear", at = @At("HEAD"), cancellable = true)
+    public void trc$clearHead(boolean clearHistory, CallbackInfo ci) {
+        if (configuration.chat().isKeepMessagesOnDisconnect() && clearHistory) {
+            ci.cancel();
+        }
     }
 
+    /**
+     * Modifies the integer constant value used in the {@code addMessage} and {@code addVisibleMessage} methods to allow for dynamic
+     * adjustments based on the current chat configuration. If the configuration permits more messages to be displayed, a maximum value
+     * is returned; otherwise, the default value of 100 is used.
+     *
+     * @param value the original integer constant value passed to the method. This is typically 100.
+     *
+     * @return the modified integer value based on the chat configuration. Returns a maximum value if the configuration allows more
+     *         messages, otherwise returns 100.
+     */
+    @ModifyExpressionValue(method = { "addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V", "addVisibleMessage" },
+                           at = @At(value = "CONSTANT", args = "intValue=100"))
+    public int trc$addMessageConstant(int value) {
+        return configuration.chat().isMoreMessages() ? MAX_VALUE : 100;
+    }
+
+    /**
+     * Modifies the return value of the {@code getWidth()} method to dynamically adjust the width based on specific conditions. The
+     * width is optimized if the chat size optimization is enabled; otherwise, the original width is returned.
+     *
+     * @param width the original width value returned by the {@code getWidth()} method.
+     *
+     * @return the modified width value if chat size optimization is enabled, otherwise the original width.
+     */
     @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))
     private int trc$getWidthReturn(int width) {
         if (!configuration.chat().isOptimizedChatSize()) {
@@ -71,6 +120,14 @@ public abstract class ChatHudMixin {
         return (int) max(chatWidth, minecraftChatWidth);
     }
 
+    /**
+     * Modifies the return value of the {@code getHeight()} method to dynamically adjust the height based on specific conditions. The
+     * height is optimized if the chat size optimization is enabled; otherwise, the original height is returned.
+     *
+     * @param height the original height value returned by the {@code getHeight()} method.
+     *
+     * @return the modified height value if chat size optimization is enabled, otherwise the original height.
+     */
     @ModifyReturnValue(method = "getHeight()I", at = @At("RETURN"))
     private int trc$getHeightReturn(int height) {
         if (!configuration.chat().isOptimizedChatSize()) {
