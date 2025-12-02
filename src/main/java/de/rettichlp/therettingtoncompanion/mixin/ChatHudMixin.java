@@ -68,32 +68,35 @@ public abstract class ChatHudMixin {
     }
 
     /**
-     * Prevents the chat history from being cleared unless explicitly triggered by the player using F3 + D. The method intercepts the
-     * clear operation and cancels it based on the provided conditions.
+     * Intercepts the {@code clear} method at the HEAD position to determine whether the chat history should be cleared based on the
+     * current configuration. If the configuration specifies that messages should be kept on disconnect and {@code clearHistory} is
+     * true, the method execution is canceled.
      *
-     * @param clearHistory Specifies whether the chat history should be cleared. If true, the operation was triggered by changing
+     * @param clearHistory specifies whether the chat history should be cleared. If true, the operation was triggered by changing
      *                     worlds or disconnecting. If false, it was manually triggered by the player.
-     * @param ci           A {@link CallbackInfo} instance used to control whether the operation should proceed or be canceled.
+     * @param ci           a {@link CallbackInfo} instance that allows canceling the method execution if specific conditions are met.
      */
     @Inject(method = "clear", at = @At("HEAD"), cancellable = true)
     public void trc$clearHead(boolean clearHistory, CallbackInfo ci) {
-        if (clearHistory) {
+        if (configuration.chat().isKeepMessagesOnDisconnect() && clearHistory) {
             ci.cancel();
         }
     }
 
     /**
-     * Modifies the value of a specific constant used during the execution of methods related to adding messages to the chat HUD. The
-     * modified constant value is applied to customize the behavior or a specific limit during the execution of these methods.
+     * Modifies the integer constant value used in the {@code addMessage} and {@code addVisibleMessage} methods to allow for dynamic
+     * adjustments based on the current chat configuration. If the configuration permits more messages to be displayed, a maximum value
+     * is returned; otherwise, the default value of 100 is used.
      *
-     * @param value the original constant value passed to the method.
+     * @param value the original integer constant value passed to the method. This is typically 100.
      *
-     * @return the modified constant value, specified as {@code MAX_VALUE}.
+     * @return the modified integer value based on the chat configuration. Returns a maximum value if the configuration allows more
+     *         messages, otherwise returns 100.
      */
     @ModifyExpressionValue(method = { "addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V", "addVisibleMessage" },
                            at = @At(value = "CONSTANT", args = "intValue=100"))
     public int trc$addMessageConstant(int value) {
-        return MAX_VALUE;
+        return configuration.chat().isMoreMessages() ? MAX_VALUE : 100;
     }
 
     /**
