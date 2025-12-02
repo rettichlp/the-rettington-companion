@@ -45,6 +45,14 @@ public class VisualsOptionTab extends AbstractOptionTab {
                 VisualsConfiguration.EquipmentModelVisibility::getDisplayName,
                 equipmentModelVisibility -> configuration.visuals().setEquipmentModelVisibility(equipmentModelVisibility));
 
-        return List.of(showArmorHudEntry, showArrowHudEntry, visibleEquipmentModelEntry);
+        CyclingButtonEntry<VisualsConfiguration.DayTimeValue> dayTimeValueEntry = new CyclingButtonEntry<VisualsConfiguration.DayTimeValue>(
+                translatable("trc.option.visuals.day_time_value.title"),
+                translatable("trc.option.visuals.day_time_value.description"),
+                configuration.visuals().getDayTimeValue(),
+                List.of(VisualsConfiguration.DayTimeValue.values()),
+                VisualsConfiguration.DayTimeValue::getDisplayName,
+                dayTimeValue -> configuration.visuals().setDayTimeValue(dayTimeValue));
+
+        return List.of(showArmorHudEntry, showArrowHudEntry, visibleEquipmentModelEntry, dayTimeValueEntry);
     }
 }
