@@ -24,10 +24,6 @@ import static org.spongepowered.asm.mixin.injection.callback.LocalCapture.CAPTUR
 @Mixin(GameMenuScreen.class)
 public abstract class GameMenuScreenMixin extends Screen {
 
-    @Shadow
-    @Final
-    private static Text RETURN_TO_GAME_TEXT;
-
     @Unique
     private int settingsButtonX = 0;
 
@@ -51,9 +47,10 @@ public abstract class GameMenuScreenMixin extends Screen {
     }
 
     /**
-     * Modifies the behavior of the {@code initWidgets} method to calculate and store the position for a custom settings button related
-     * to the mod when the "Return to Game" button is located. This ensures the settings button is properly aligned based on the
-     * existing UI layout.
+     * Injects additional functionality into the {@code initWidgets} method of the game menu screen. This method is executed at the
+     * "TAIL" point of the original {@code initWidgets} method, allowing for modifications to the widget layout after the base method
+     * execution has completed. Specifically, it identifies a button widget that spans two columns of the grid (with a width of 204
+     * units) and calculates the position for a secondary settings button, storing its coordinates.
      *
      * @param ci         The {@code CallbackInfo} instance used to control the continuation of the method execution.
      * @param gridWidget The {@code GridWidget} instance that represents the container for UI widgets in the game menu.
@@ -63,8 +60,8 @@ public abstract class GameMenuScreenMixin extends Screen {
             at = @At("TAIL"), locals = CAPTURE_FAILHARD)
     private void trc$initWidgetsTail(CallbackInfo ci, GridWidget gridWidget, GridWidget.Adder adder) {
         gridWidget.forEachChild(clickableWidget -> {
-            if (clickableWidget instanceof ButtonWidget buttonWidget && buttonWidget.getMessage().equals(RETURN_TO_GAME_TEXT)) {
-                // calculate positions for the settings button of this mod
+            if (clickableWidget instanceof ButtonWidget buttonWidget && buttonWidget.getWidth() == 204 && this.settingsButtonX == 0 && this.settingsButtonY == 0) {
+                // calculate positions for a button that occupies two columns (204 width) of the grid
                 this.settingsButtonX = clickableWidget.getX() + clickableWidget.getWidth() + 4;
                 this.settingsButtonY = clickableWidget.getY();
             }
