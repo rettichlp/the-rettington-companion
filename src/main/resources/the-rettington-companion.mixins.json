@@ -18,6 +18,7 @@
     "GameMenuScreenMixin",
     "HandledScreenMixin",
     "InGameHudMixin",
+    "LightmapTextureManagerMixin",
     "SimpleOptionMixin",
     "TitleScreenMixin"
   ]
