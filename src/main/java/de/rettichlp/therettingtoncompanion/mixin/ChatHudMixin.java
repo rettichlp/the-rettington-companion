@@ -7,22 +7,32 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.time.LocalDateTime;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getHighlightColor;
 import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getString;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Math.max;
+import static java.time.format.DateTimeFormatter.ofPattern;
 import static net.minecraft.client.gui.hud.ChatHud.getHeight;
 import static net.minecraft.client.gui.hud.ChatHud.getWidth;
+import static net.minecraft.text.Text.empty;
+import static net.minecraft.text.Text.literal;
+import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.math.ColorHelper.withAlpha;
 
 @Mixin(ChatHud.class)
@@ -34,6 +44,36 @@ public abstract class ChatHudMixin {
 
     @Shadow
     public abstract boolean isChatFocused();
+
+    /**
+     * Modifies the {@code addMessage} method by intercepting at the HEAD position to prepend a timestamp to the beginning of the chat
+     * message. The timestamp is formatted in "HH:mm:ss" and styled in dark gray.
+     *
+     * @param originalMessage the original {@link Text} object representing the message being added. This parameter will have its style
+     *                        applied to the resulting modified {@link Text}.
+     *
+     * @return a new {@link Text} object that includes the formatted timestamp followed by the original message, maintaining the style
+     *         of the original message.
+     */
+    @ModifyVariable(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;Lnet/minecraft/client/gui/hud/MessageIndicator;)V",
+                    at = @At("HEAD"),
+                    argsOnly = true,
+                    ordinal = 0)
+    private Text trc$addMessageHead(@NotNull Text originalMessage) {
+        if (!configuration.chat().isChatTime()) {
+            return originalMessage;
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        String timeString = now.format(ofPattern("HH:mm:ss "));
+        String dateString = now.format(ofPattern("dd.MM.yyyy"));
+
+        return empty().setStyle(originalMessage.getStyle())
+                .append(literal(timeString).styled(style -> style
+                        .withFormatting(DARK_GRAY)
+                        .withHoverEvent(new HoverEvent.ShowText(literal(dateString)))))
+                .append(originalMessage);
+    }
 
     /**
      * Redirects the invocation of the {@code fill} method in the {@link DrawContext} class during the execution of the
