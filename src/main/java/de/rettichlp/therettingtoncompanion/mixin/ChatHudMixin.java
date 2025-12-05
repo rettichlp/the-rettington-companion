@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.NotNull;
@@ -19,12 +20,13 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.time.LocalDateTime;
+
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getHighlightColor;
 import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getString;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Math.max;
-import static java.time.LocalTime.now;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static net.minecraft.client.gui.hud.ChatHud.getHeight;
 import static net.minecraft.client.gui.hud.ChatHud.getWidth;
@@ -58,9 +60,14 @@ public abstract class ChatHudMixin {
                     argsOnly = true,
                     ordinal = 0)
     private Text trc$addMessageHead(@NotNull Text originalMessage) {
-        String timeString = now().format(ofPattern("HH:mm:ss "));
+        LocalDateTime now = LocalDateTime.now();
+        String timeString = now.format(ofPattern("HH:mm:ss "));
+        String dateString = now.format(ofPattern("dd.MM.yyyy"));
+
         return empty().setStyle(originalMessage.getStyle())
-                .append(literal(timeString).formatted(DARK_GRAY))
+                .append(literal(timeString).styled(style -> style
+                        .withFormatting(DARK_GRAY)
+                        .withHoverEvent(new HoverEvent.ShowText(literal(dateString)))))
                 .append(originalMessage);
     }
 
