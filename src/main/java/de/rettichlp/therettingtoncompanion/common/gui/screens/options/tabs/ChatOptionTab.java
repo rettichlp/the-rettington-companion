@@ -44,6 +44,9 @@ public class ChatOptionTab extends AbstractOptionTab {
         ToggleButtonEntry toggleButtonEntry2 = new ToggleButtonEntry(translatable("trc.option.chat.keep_messages_on_disconnect.title"), translatable("trc.option.chat.keep_messages_on_disconnect.description"), configuration.chat().isKeepMessagesOnDisconnect(), value -> configuration.chat().setKeepMessagesOnDisconnect(value));
         scrollableListEntries.add(toggleButtonEntry2);
 
+        ToggleButtonEntry toggleButtonEntry3 = new ToggleButtonEntry(translatable("trc.option.chat.chat_time.title"), translatable("trc.option.chat.chat_time.description"), configuration.chat().isChatTime(), value -> configuration.chat().setChatTime(value));
+        scrollableListEntries.add(toggleButtonEntry3);
+
         SectionEntry sectionEntry2 = new SectionEntry(translatable("trc.option.chat.section.message_patterns.title"));
         scrollableListEntries.add(sectionEntry2);
 

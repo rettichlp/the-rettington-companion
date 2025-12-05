@@ -18,6 +18,7 @@ public class ChatConfiguration {
     private boolean optimizedChatSize = true;
     private boolean moreMessages = true;
     private boolean keepMessagesOnDisconnect = true;
+    private boolean chatTime = false;
 
     @Data
     public static class ChatRegexConfiguration {

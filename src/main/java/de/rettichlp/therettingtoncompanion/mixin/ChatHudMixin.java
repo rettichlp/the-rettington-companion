@@ -60,6 +60,10 @@ public abstract class ChatHudMixin {
                     argsOnly = true,
                     ordinal = 0)
     private Text trc$addMessageHead(@NotNull Text originalMessage) {
+        if (!configuration.chat().isChatTime()) {
+            return originalMessage;
+        }
+
         LocalDateTime now = LocalDateTime.now();
         String timeString = now.format(ofPattern("HH:mm:ss "));
         String dateString = now.format(ofPattern("dd.MM.yyyy"));
