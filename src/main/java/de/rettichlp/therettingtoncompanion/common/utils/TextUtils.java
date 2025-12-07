@@ -3,7 +3,6 @@ package de.rettichlp.therettingtoncompanion.common.utils;
 import com.mojang.brigadier.Message;
 import de.rettichlp.therettingtoncompanion.common.models.ChatRegex;
 import net.minecraft.text.OrderedText;
-import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -14,6 +13,7 @@ import java.util.regex.Pattern;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
+import static de.rettichlp.therettingtoncompanion.common.models.ChatRegex.DEFAULT_CHAT_REGEX;
 import static java.lang.Character.toChars;
 import static java.util.Comparator.comparingInt;
 
@@ -45,21 +45,21 @@ public class TextUtils {
     }
 
     /**
-     * Determines the highlight color for a given message based on default or custom chat regex rules. If the message matches the
-     * default regex configuration, the corresponding default highlight color is returned. Otherwise, if the message matches custom
-     * regex rules, the highlight color of the highest-priority matching rule is returned.
+     * Retrieves the highest-priority {@link ChatRegex} that matches the given message. If the message matches the default chat regex
+     * configuration, the default {@link ChatRegex} is returned. Otherwise, it searches for matching custom regex rules and returns the
+     * one with the highest priority (lowest priority value). If no matches are found, returns {@code null}.
      *
-     * @param message the message to evaluate for highlight color determination; must not be null.
+     * @param message the input message to be checked for matching regexes; must not be null.
      *
-     * @return the {@link Formatting} representing the highlight color if a matching rule is found; {@code null} if no match is found.
+     * @return the highest-priority {@link ChatRegex} that matches the input message, or {@code null} if no matches are found.
      */
-    public static @Nullable Formatting getHighlightColor(String message) {
+    public static @Nullable ChatRegex getHighestPriorityMatchingChatRegex(String message) {
         if (matchesDefaultRegex(message)) {
-            return configuration.chat().regex().getDefaultChatRegexColor();
+            return DEFAULT_CHAT_REGEX;
         }
 
         List<ChatRegex> matchingCustomRegexes = getMatchingCustomRegexes(message);
-        return matchingCustomRegexes.isEmpty() ? null : matchingCustomRegexes.getFirst().getColor();
+        return matchingCustomRegexes.isEmpty() ? null : matchingCustomRegexes.getFirst();
     }
 
     /**
