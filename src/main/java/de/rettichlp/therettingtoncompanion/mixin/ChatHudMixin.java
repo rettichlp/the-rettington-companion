@@ -3,6 +3,7 @@ package de.rettichlp.therettingtoncompanion.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import de.rettichlp.therettingtoncompanion.common.models.ChatRegex;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
@@ -22,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.time.LocalDateTime;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getHighlightColor;
+import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getHighestPriorityMatchingChatRegex;
 import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getString;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Math.max;
@@ -99,7 +100,8 @@ public abstract class ChatHudMixin {
                                                @Local(argsOnly = true) ChatHudLine.Visible line) {
         int backgroundColor = color;
 
-        Formatting highlightColor = getHighlightColor(getString(line.content()));
+        ChatRegex highestPriorityMatchingChatRegex = getHighestPriorityMatchingChatRegex(getString(line.content()));
+        Formatting highlightColor = highestPriorityMatchingChatRegex != null ? highestPriorityMatchingChatRegex.getColor() : null;
         if (highlightColor != null && highlightColor.getColorValue() != null) {
             backgroundColor = withAlpha(100, 0xFF000000 | highlightColor.getColorValue());
         }

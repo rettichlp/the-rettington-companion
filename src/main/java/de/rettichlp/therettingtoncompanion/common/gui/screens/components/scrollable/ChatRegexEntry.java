@@ -161,7 +161,10 @@ public class ChatRegexEntry extends ScrollableListEntry {
         }
 
         if (this.soundTextWidget != null && this.soundTextWidget.keyPressed(input)) {
-            // TODO
+            Identifier identifier = Identifier.of(this.soundTextWidget.getText());
+            if (SOUND_EVENT.containsId(identifier)) {
+                this.chatRegex.setSoundIdentifier(identifier);
+            }
             return true;
         }
 
@@ -176,7 +179,10 @@ public class ChatRegexEntry extends ScrollableListEntry {
         }
 
         if (this.soundTextWidget.keyReleased(input)) {
-            // TODO
+            Identifier identifier = Identifier.of(this.soundTextWidget.getText());
+            if (SOUND_EVENT.containsId(identifier)) {
+                this.chatRegex.setSoundIdentifier(identifier);
+            }
             return true;
         }
 
@@ -191,7 +197,10 @@ public class ChatRegexEntry extends ScrollableListEntry {
         }
 
         if (this.soundTextWidget.charTyped(input)) {
-            // TODO
+            Identifier identifier = Identifier.of(this.soundTextWidget.getText());
+            if (SOUND_EVENT.containsId(identifier)) {
+                this.chatRegex.setSoundIdentifier(identifier);
+            }
             return true;
         }
 
