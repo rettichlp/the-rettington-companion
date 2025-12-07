@@ -202,6 +202,8 @@ public class ChatRegexEntry extends ScrollableListEntry {
         this.textFieldWidget = new TextFieldWidget(this.client.textRenderer, 0, 0, this.editable ? 136 : 280, 20, empty());
         this.textFieldWidget.setText(this.chatRegex.getPattern());
         this.textFieldWidget.setEditable(this.editable);
+
+        this.children.add(this.textFieldWidget);
     }
 
     private void createSoundTextWidget() {
@@ -212,6 +214,8 @@ public class ChatRegexEntry extends ScrollableListEntry {
                 .toList();
 
         this.soundTextWidget = new CompletingTextFieldWidget<>(136, 20, soundEvents, Identifier::toString);
+
+        this.children.add(this.soundTextWidget);
     }
 
     private void createButtonWidget() {
@@ -228,6 +232,8 @@ public class ChatRegexEntry extends ScrollableListEntry {
         }
 
         this.buttonWidget.setWidth(30);
+
+        this.children.add(this.buttonWidget);
     }
 
     private void createColorSelectWidget() {
@@ -235,12 +241,16 @@ public class ChatRegexEntry extends ScrollableListEntry {
                 ? new ColorSelectWidget(20, 20, this.chatRegex.getColor(), this.chatRegex::setColor)
                 : new ColorSelectWidget(20, 20, configuration.chat().regex().getDefaultChatRegexColor(), formatting -> configuration.chat().regex().setDefaultChatRegexColor(formatting));
         this.colorSelectWidget.setWidth(30);
+
+        this.children.add(this.colorSelectWidget);
     }
 
     private void createTextWidget() {
         MutableText priorityLabel = literal(PRIO_LITERAL + this.chatRegex.getPriority());
         this.textWidget = new TextWidget(priorityLabel, this.client.textRenderer);
         this.client.textRenderer.getWidth(priorityLabel);
+
+        this.children.add(this.textWidget);
     }
 
     private void createIncreasePriorityButton() {
@@ -250,6 +260,8 @@ public class ChatRegexEntry extends ScrollableListEntry {
         }).build();
         this.increasePriorityButton.setWidth(20);
         this.increasePriorityButton.setHeight(10);
+
+        this.children.add(this.increasePriorityButton);
     }
 
     private void createDecreasePriorityButton() {
@@ -259,6 +271,8 @@ public class ChatRegexEntry extends ScrollableListEntry {
         }).build();
         this.decreasePriorityButton.setWidth(20);
         this.decreasePriorityButton.setHeight(10);
+
+        this.children.add(this.decreasePriorityButton);
     }
 
     private void createDeleteButtonWidget() {
@@ -267,5 +281,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
             this.client.execute(() -> this.client.setScreen(new ModOptionScreen("chat")));
         }).build();
         this.deleteButtonWidget.setWidth(20);
+
+        this.children.add(this.deleteButtonWidget);
     }
 }

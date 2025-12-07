@@ -13,6 +13,8 @@ public class SectionEntry extends ScrollableListEntry {
     public SectionEntry(Text text) {
         this.text = text;
         this.textWidget = new TextWidget(text, MinecraftClient.getInstance().textRenderer);
+
+        this.children.add(this.textWidget);
     }
 
     @Override
