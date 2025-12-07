@@ -86,8 +86,7 @@ public class CompletingTextFieldWidget<T> extends TextFieldWidget {
         return super.keyPressed(input);
     }
 
-    @Override
-    public void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    public void renderSuggestions(DrawContext context) {
         if (isFocused()) {
             List<String> suggestionsForInput = new ArrayList<>(getSuggestionsForInput());
             int suggestionItemHeight = TEXT_RENDERER.fontHeight + 4;
@@ -105,8 +104,6 @@ public class CompletingTextFieldWidget<T> extends TextFieldWidget {
                 context.drawText(TEXT_RENDERER, literal(suggestionItem), getX() + 2, getY() + getHeight() + 2 + yOffset, (isHighlighted ? YELLOW : WHITE).getRGB(), false);
             });
         }
-
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
     }
 
     private int calculateSuggestionBoxWidth() {

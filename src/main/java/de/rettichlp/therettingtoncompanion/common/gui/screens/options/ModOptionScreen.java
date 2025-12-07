@@ -1,12 +1,14 @@
 package de.rettichlp.therettingtoncompanion.common.gui.screens.options;
 
 import de.rettichlp.therettingtoncompanion.common.gui.screens.AbstractModScreen;
+import de.rettichlp.therettingtoncompanion.common.gui.screens.components.CompletingTextFieldWidget;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ScrollableListEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.AbstractOptionTab;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.ChatOptionTab;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.GeneralOptionTab;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.InventoryOptionTab;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs.VisualsOptionTab;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.widget.AxisGridWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -104,5 +106,20 @@ public class ModOptionScreen extends AbstractModScreen {
         directionalLayoutWidget.add(ButtonWidget.builder(DONE, button -> close()).width(200).build());
         directionalLayoutWidget.add(ButtonWidget.builder(of("Discord").copy().withColor(DISCORD_COLOR), opening(this, DISCORD_INVITE)).width(56).build());
         directionalLayoutWidget.add(ButtonWidget.builder(of("Modrinth").copy().withColor(MODRINTH_COLOR), opening(this, MODRINTH)).width(56).build());
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+
+        OPTION_TABS.stream()
+                .filter(abstractOptionTab -> abstractOptionTab.getId().equals(this.activeOptionTabId))
+                .flatMap(abstractOptionTab -> abstractOptionTab.getContent().stream())
+                .flatMap(scrollableListEntry -> scrollableListEntry.children().stream())
+                .forEach(element -> {
+                    if (element instanceof CompletingTextFieldWidget<?> completingTextFieldWidget) {
+                        completingTextFieldWidget.renderSuggestions(context);
+                    }
+                });
     }
 }
