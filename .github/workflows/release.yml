@@ -50,19 +50,19 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build --full-stacktrace
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v5
-      with:
-        name: Artifacts
-        path: build/libs/
-
     - name: Create release notes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         tag: ${{ inputs.version }}
       run: |
+        mkdir -p release_assets
+
+        find . -path "*version-1-*/build/libs/*.jar" -exec cp {} release_assets/ \;
+
         gh release create "$tag" \
             --target main \
             --repo="$GITHUB_REPOSITORY" \
             --title="The Rettington Companion $tag" \
             --generate-notes
+
+        gh release upload "$tag" release_assets/* --repo="$GITHUB_REPOSITORY"

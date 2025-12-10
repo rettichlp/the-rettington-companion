@@ -35,9 +35,3 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew build --full-stacktrace
-
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v5
-      with:
-        name: Artifacts
-        path: build/libs/
