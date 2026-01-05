@@ -45,7 +45,7 @@ dependencies {
     annotationProcessor('org.atteo.classindex:classindex:3.13')
 
     // https://github.com/TerraformersMC/ModMenu
-    modImplementation("com.terraformersmc:modmenu:16.0.0-rc.2")
+    // FIXME modImplementation("com.terraformersmc:modmenu:16.0.0-rc.2")
 }
 
 processResources {
