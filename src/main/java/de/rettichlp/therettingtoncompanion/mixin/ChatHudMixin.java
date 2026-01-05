@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.text.HoverEvent;
@@ -76,27 +75,28 @@ public abstract class ChatHudMixin {
     }
 
     /**
-     * Redirects the invocation of the {@code fill} method in the {@link DrawContext} class during the execution of the
-     * {@code method_71992} in the {@link ChatHud} class. This method adjusts the background color for chat lines by applying custom
-     * highlight colors when applicable.
+     * Redirects the call to the original {@code fill} method in {@link ChatHud.Backend}, modifying the background color based on the
+     * highlight information from the provided chat line. If a highlight color is determined for the message, it is applied with a
+     * specific transparency; otherwise, the original color is used.
      *
-     * @param drawContext the {@link DrawContext} used for rendering, provided by the redirected invocation.
-     * @param x1          the x-coordinate of the first corner of the rectangle to fill.
-     * @param y1          the y-coordinate of the first corner of the rectangle to fill.
-     * @param x2          the x-coordinate of the opposite corner of the rectangle to fill.
-     * @param y2          the y-coordinate of the opposite corner of the rectangle to fill.
-     * @param color       the original color to use for the background of the rectangle.
-     * @param line        the {@link ChatHudLine.Visible} instance containing the content of the current chat line being rendered.
+     * @param instance the {@link ChatHud.Backend} instance on which the {@code fill} method is called.
+     * @param x1       the x-coordinate of the top-left corner of the rectangle.
+     * @param y1       the y-coordinate of the top-left corner of the rectangle.
+     * @param x2       the x-coordinate of the bottom-right corner of the rectangle.
+     * @param y2       the y-coordinate of the bottom-right corner of the rectangle.
+     * @param color    the original background color passed to the {@code fill} method.
+     * @param line     the visible chat line being rendered, from which the message content is extracted to determine the background
+     *                 color.
      */
-    @Redirect(method = "method_71992",
-              at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;fill(IIIII)V", ordinal = 0))
-    public void trc$method_71992Invoke(DrawContext drawContext,
-                                       int x1,
-                                       int y1,
-                                       int x2,
-                                       int y2,
-                                       int color,
-                                       @Local(argsOnly = true) ChatHudLine.Visible line) {
+    @Redirect(method = "method_75802",
+              at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud$Backend;fill(IIIII)V", ordinal = 0))
+    private static void trc$method_75802Invoke(ChatHud.Backend instance,
+                                               int x1,
+                                               int y1,
+                                               int x2,
+                                               int y2,
+                                               int color,
+                                               @Local(argsOnly = true) ChatHudLine.Visible line) {
         int backgroundColor = color;
 
         Formatting highlightColor = getHighlightColor(getString(line.content()));
@@ -104,7 +104,7 @@ public abstract class ChatHudMixin {
             backgroundColor = withAlpha(100, 0xFF000000 | highlightColor.getColorValue());
         }
 
-        drawContext.fill(x1, y1, x2, y2, backgroundColor);
+        instance.fill(x1, y1, x2, y2, backgroundColor);
     }
 
     /**
