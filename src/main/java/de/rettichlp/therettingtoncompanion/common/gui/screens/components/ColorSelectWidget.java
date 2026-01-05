@@ -61,8 +61,8 @@ public class ColorSelectWidget extends ButtonWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+    protected void drawIcon(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        drawButton(context);
 
         assert this.currentFormatting.getColorValue() != null;
         context.fill(getX() + 2, getY() + 2, getX() + getWidth() - 2, getY() + getHeight() - 2, 0xFF000000 | this.currentFormatting.getColorValue());

@@ -32,8 +32,8 @@ public class IconButtonWidget extends ButtonWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+    protected void drawIcon(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        drawButton(context);
 
         int iconX = getX() + (getWidth() - this.iconWidth) / 2;
         int iconY = getY() + (getHeight() - this.iconHeight) / 2;
