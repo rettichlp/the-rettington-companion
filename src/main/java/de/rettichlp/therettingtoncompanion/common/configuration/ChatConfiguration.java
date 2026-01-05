@@ -16,6 +16,9 @@ public class ChatConfiguration {
     @Accessors(fluent = true)
     private ChatRegexConfiguration regex = new ChatRegexConfiguration();
     private boolean optimizedChatSize = true;
+    private boolean moreMessages = true;
+    private boolean keepMessagesOnDisconnect = true;
+    private boolean chatTime = false;
 
     @Data
     public static class ChatRegexConfiguration {

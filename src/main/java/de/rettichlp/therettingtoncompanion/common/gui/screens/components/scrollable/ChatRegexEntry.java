@@ -220,7 +220,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
 
     private void createDeleteButtonWidget() {
         this.deleteButtonWidget = ButtonWidget.builder(literal("X").copy().formatted(RED), button -> {
-            configuration.chat().regex().getChatRegexes().remove(this.chatRegex);
+            configuration.chat().regex().getChatRegexes().removeIf(cr -> cr.equals(this.chatRegex));
             this.client.execute(() -> this.client.setScreen(new ModOptionScreen("chat")));
         }).build();
         this.deleteButtonWidget.setWidth(20);

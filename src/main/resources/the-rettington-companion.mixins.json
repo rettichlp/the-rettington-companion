@@ -13,10 +13,12 @@
   },
   "client": [
     "ChatHudMixin",
+    "ClientWorldMixin",
     "EquipmentRendererMixin",
     "GameMenuScreenMixin",
     "HandledScreenMixin",
     "InGameHudMixin",
+    "LightmapTextureManagerMixin",
     "SimpleOptionMixin",
     "TitleScreenMixin"
   ]
