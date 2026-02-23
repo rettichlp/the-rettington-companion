@@ -51,7 +51,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
         ChatRegex defaultChatRegex = configuration.chat().regex().getDefaulChatRegex();
 
         // TextFieldWidget: Regex
-        this.textFieldWidgetRegex = new TextFieldWidget(this.client.textRenderer, 0, 0, 172, 20, empty());
+        this.textFieldWidgetRegex = new TextFieldWidget(this.client.textRenderer, 0, 0, 176, 20, empty());
         this.textFieldWidgetRegex.setText(this.editable ? this.chatRegex.getPattern() : this.client.getGameProfile().name());
         this.textFieldWidgetRegex.setEditable(this.editable);
 
@@ -177,39 +177,39 @@ public class ChatRegexEntry extends ScrollableListEntry {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
-        if (this.textFieldWidgetRegex != null) { // width = 136
+        if (this.textFieldWidgetRegex != null) { // width = 172
             this.textFieldWidgetRegex.setPosition(getContentX(), getContentY());
             this.textFieldWidgetRegex.render(context, mouseX, mouseY, deltaTicks);
             this.textFieldWidgetRegex.setEditableColor(this.chatRegex.isValidPattern() ? Color.WHITE.getRGB() : Color.RED.getRGB());
         }
 
         if (this.buttonWidgetEnabled != null) { // width = 30
-            this.buttonWidgetEnabled.setPosition(getContentX() + 172 + 8, getContentY());
+            this.buttonWidgetEnabled.setPosition(getContentX() + 176 + 8, getContentY());
             this.buttonWidgetEnabled.render(context, mouseX, mouseY, deltaTicks);
         }
 
         if (this.buttonWidgetColour != null) { // width = 20
-            this.buttonWidgetColour.setPosition(getContentX() + 204 + 8, getContentY());
+            this.buttonWidgetColour.setPosition(getContentX() + 208 + 8, getContentY());
             this.buttonWidgetColour.render(context, mouseX, mouseY, deltaTicks);
         }
 
         if (this.buttonWidgetSoundIdentifier != null) { // width = 20
-            this.buttonWidgetSoundIdentifier.setPosition(getContentX() + 232 + 2, getContentY());
+            this.buttonWidgetSoundIdentifier.setPosition(getContentX() + 236 + 2, getContentY());
             this.buttonWidgetSoundIdentifier.render(context, mouseX, mouseY, deltaTicks);
         }
 
-        if (this.buttonWidgetPriorityIncrease != null) { // width = 20 (calculated from right)
-            this.buttonWidgetPriorityIncrease.setPosition(getContentRightEnd() - 48, getContentY());
+        if (this.buttonWidgetPriorityIncrease != null) { // width = 20
+            this.buttonWidgetPriorityIncrease.setPosition(getContentX() + 258 + 8, getContentY());
             this.buttonWidgetPriorityIncrease.render(context, mouseX, mouseY, deltaTicks);
         }
 
-        if (this.buttonWidgetPriorityDecrease != null) { // width = 20 (calculated from right)
-            this.buttonWidgetPriorityDecrease.setPosition(getContentRightEnd() - 48, getContentY() + 10);
+        if (this.buttonWidgetPriorityDecrease != null) { // width = 20
+            this.buttonWidgetPriorityDecrease.setPosition(getContentX() + 258 + 8, getContentY() + 10);
             this.buttonWidgetPriorityDecrease.render(context, mouseX, mouseY, deltaTicks);
         }
 
-        if (this.textWidgetPriority != null) { // width = variable (calculated from right)
-            this.textWidgetPriority.setPosition(getContentRightEnd() - this.client.textRenderer.getWidth(this.textWidgetPriority.getMessage()) - 56, getContentMiddleY() - (this.client.textRenderer.fontHeight / 2));
+        if (this.textWidgetPriority != null) { // width = variable
+            this.textWidgetPriority.setPosition(getContentX() + 286 + 4, getContentMiddleY() - (this.client.textRenderer.fontHeight / 2));
             this.textWidgetPriority.render(context, mouseX, mouseY, deltaTicks);
         }
 
