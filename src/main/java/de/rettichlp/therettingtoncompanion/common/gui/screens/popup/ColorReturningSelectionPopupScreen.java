@@ -8,11 +8,12 @@ import net.minecraft.util.Formatting;
 import java.util.function.Consumer;
 
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
+import static net.minecraft.text.Text.translatable;
 
 public class ColorReturningSelectionPopupScreen extends AbstractReturningSelectionPopupScreen<Formatting> {
 
     public ColorReturningSelectionPopupScreen(Screen parent, Consumer<Formatting> onClose) {
-        super(parent, onClose);
+        super(parent, onClose, translatable("trc.option.chat.message_patterns.popup.color.title"));
     }
 
     @Override

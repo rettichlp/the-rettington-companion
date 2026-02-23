@@ -2,6 +2,7 @@ package de.rettichlp.therettingtoncompanion.common.gui.screens.popup;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
 
@@ -10,8 +11,8 @@ import static net.minecraft.screen.ScreenTexts.DONE;
 
 public abstract class AbstractReturningConfirmationPopupScreen<T> extends AbstractReturningPopupScreen<T> {
 
-    public AbstractReturningConfirmationPopupScreen(Screen parent, Consumer<T> onClose) {
-        super(parent, onClose);
+    public AbstractReturningConfirmationPopupScreen(Screen parent, Consumer<T> onClose, Text title) {
+        super(parent, onClose, title);
     }
 
     public abstract T done();

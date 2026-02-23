@@ -24,6 +24,8 @@
   "trc.option.chat.keep_messages_on_disconnect.description": "Keeps chat messages in the chat box when you switch servers or singleplayer worlds.",
   "trc.option.chat.chat_time.title": "Chat time",
   "trc.option.chat.chat_time.description": "Adds a timestamp to each chat message.",
+  "trc.option.chat.message_patterns.popup.color.title": "Colour",
+  "trc.option.chat.message_patterns.popup.sound.title": "Sound",
   "trc.option.general.gamma_preset.description": "Select a gamma value or choose 'Settings' for the Minecraft gamma setting.",
   "trc.option.general.gamma_preset.title": "Gamma preset",
   "trc.option.general.title": "General",

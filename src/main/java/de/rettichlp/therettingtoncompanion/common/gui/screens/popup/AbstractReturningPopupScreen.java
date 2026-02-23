@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.gui.widget.SimplePositioningWidget;
 import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.util.function.Consumer;
@@ -12,7 +13,6 @@ import java.util.function.Consumer;
 import static net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.vertical;
-import static net.minecraft.text.Text.empty;
 import static net.minecraft.util.Formatting.BOLD;
 import static net.minecraft.util.Identifier.ofVanilla;
 
@@ -26,8 +26,8 @@ public abstract class AbstractReturningPopupScreen<T> extends Screen {
 
     private final Screen parent;
 
-    public AbstractReturningPopupScreen(Screen parent, Consumer<T> onClose) {
-        super(empty());
+    public AbstractReturningPopupScreen(Screen parent, Consumer<T> onClose, Text title) {
+        super(title);
         this.parent = parent;
         this.onClose = onClose;
     }
