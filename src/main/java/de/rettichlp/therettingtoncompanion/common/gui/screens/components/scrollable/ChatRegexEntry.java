@@ -51,12 +51,12 @@ public class ChatRegexEntry extends ScrollableListEntry {
         this.editable = editable;
 
         createTextFieldWidget();
+        createSoundTextWidget();
         createButtonWidget();
         createColorSelectWidget();
         createTextWidget();
 
         if (editable) {
-            createSoundTextWidget();
             createIncreasePriorityButton();
             createDecreasePriorityButton();
             createDeleteButtonWidget();
@@ -208,8 +208,8 @@ public class ChatRegexEntry extends ScrollableListEntry {
     }
 
     private void createTextFieldWidget() {
-        this.textFieldWidget = new TextFieldWidget(this.client.textRenderer, 0, 0, this.editable ? 136 : 280, 20, empty());
         this.textFieldWidget.setText(this.chatRegex.getPattern());
+        this.textFieldWidget = new TextFieldWidget(this.client.textRenderer, 0, 0, 136, 20, empty());
         this.textFieldWidget.setEditable(this.editable);
 
         this.children.add(this.textFieldWidget);
@@ -222,7 +222,8 @@ public class ChatRegexEntry extends ScrollableListEntry {
                 .map(soundEventRegistryKey -> soundEventRegistryKey.get().getValue())
                 .toList();
 
-        this.soundTextWidget = new CompletingTextFieldWidget<>(136, 20, soundEvents, Identifier::toString);
+        Identifier currentValue = this.editable ? this.chatRegex.getSoundIdentifier() : configuration.chat().regex().getDefaulChatRegex().getSoundIdentifier();
+        this.soundTextWidget = new CompletingTextFieldWidget<>(136, 20, soundEvents, Identifier::toString, currentValue);
 
         this.children.add(this.soundTextWidget);
     }
