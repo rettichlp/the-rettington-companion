@@ -42,10 +42,10 @@ dependencies {
     // https://github.com/atteo/classindex
     include("org.atteo.classindex:classindex:3.13")
     implementation("org.atteo.classindex:classindex:3.13")
-    annotationProcessor('org.atteo.classindex:classindex:3.13')
+    annotationProcessor("org.atteo.classindex:classindex:3.13")
 
     // https://github.com/TerraformersMC/ModMenu
-    // FIXME modImplementation("com.terraformersmc:modmenu:16.0.0-rc.2")
+    modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 }
 
 processResources {
