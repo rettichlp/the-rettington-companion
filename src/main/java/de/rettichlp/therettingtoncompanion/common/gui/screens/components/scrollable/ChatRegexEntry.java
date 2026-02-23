@@ -1,7 +1,8 @@
 package de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable;
 
-import de.rettichlp.therettingtoncompanion.common.gui.screens.components.ColorSelectWidget;
+import de.rettichlp.therettingtoncompanion.common.gui.screens.components.ColorButtonWidget;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.ModOptionScreen;
+import de.rettichlp.therettingtoncompanion.common.gui.screens.popup.ColorReturningSelectionPopupScreen;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.popup.SoundReturningConfirmationPopupScreen;
 import de.rettichlp.therettingtoncompanion.common.models.ChatRegex;
 import net.minecraft.client.gui.Click;
@@ -34,62 +35,140 @@ public class ChatRegexEntry extends ScrollableListEntry {
     private final ChatRegex chatRegex;
     private final boolean editable;
 
-    private TextFieldWidget textFieldWidget; // regex input
-    private ButtonWidget buttonWidget; // activate/deactivate
-    private ColorSelectWidget colorSelectWidget; // color select
-    private ButtonWidget buttonSoundWidget;
-    private TextWidget textWidget; // priority display
-    private ButtonWidget increasePriorityButton; // increase priority
-    private ButtonWidget decreasePriorityButton; // decrease priority
-    private ButtonWidget deleteButtonWidget; // delete
+    private final TextFieldWidget textFieldWidgetRegex; // regex input
+    private final ButtonWidget buttonWidgetEnabled; // activate/deactivate
+    private final ColorButtonWidget buttonWidgetColour; // colour select
+    private final ButtonWidget buttonWidgetSoundIdentifier;
+    private final TextWidget textWidgetPriority; // priority display
+    private final ButtonWidget buttonWidgetPriorityIncrease; // increase priority
+    private final ButtonWidget buttonWidgetPriorityDecrease; // decrease priority
+    private final ButtonWidget buttonWidgetDelete; // delete
 
     public ChatRegexEntry(ChatRegex chatRegex, boolean editable) {
         this.chatRegex = chatRegex;
         this.editable = editable;
 
-        createTextFieldWidget();
-        createButtonWidget();
-        createColorSelectWidget();
-        createButtonSoundWidget();
-        createTextWidget();
+        ChatRegex defaultChatRegex = configuration.chat().regex().getDefaulChatRegex();
 
-        if (editable) {
-            createIncreasePriorityButton();
-            createDecreasePriorityButton();
-            createDeleteButtonWidget();
-        }
+        // TextFieldWidget: Regex
+        this.textFieldWidgetRegex = new TextFieldWidget(this.client.textRenderer, 0, 0, 172, 20, empty());
+        this.textFieldWidgetRegex.setText(this.editable ? this.chatRegex.getPattern() : this.client.getGameProfile().name());
+        this.textFieldWidgetRegex.setEditable(this.editable);
+
+        // Button: Enabled
+        boolean enabled = this.editable ? this.chatRegex.isActive() : defaultChatRegex.isActive();
+        this.buttonWidgetEnabled = ButtonWidget.builder(enabled ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED), button -> {
+            if (this.editable) {
+                this.chatRegex.setActive(!enabled);
+            } else {
+                defaultChatRegex.setActive(!enabled);
+            }
+
+            button.setMessage(enabled ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED));
+        }).build();
+        this.buttonWidgetEnabled.setWidth(30);
+
+        // Button: Colour
+        Formatting currentColourValue = this.editable ? this.chatRegex.getColor() : defaultChatRegex.getColor();
+        this.buttonWidgetColour = new ColorButtonWidget(20, 20, currentColourValue, formatting -> {
+            ColorReturningSelectionPopupScreen colorSelectionPopupScreen = new ColorReturningSelectionPopupScreen(this.client.currentScreen, color -> {
+                if (this.editable) {
+                    this.chatRegex.setColor(color);
+                } else {
+                    defaultChatRegex.setColor(color);
+                }
+            });
+
+            this.client.setScreen(colorSelectionPopupScreen);
+        });
+
+        // Button: Sound Identifier
+        Identifier currentSoundIdentifierValue = this.editable ? this.chatRegex.getSoundIdentifier() : defaultChatRegex.getSoundIdentifier();
+        this.buttonWidgetSoundIdentifier = ButtonWidget.builder(literal("🔊"), button -> {
+            SoundReturningConfirmationPopupScreen soundReturningConfirmationPopupScreen = new SoundReturningConfirmationPopupScreen(this.client.currentScreen, identifier -> {
+                if (this.editable) {
+                    this.chatRegex.setSoundIdentifier(identifier);
+                } else {
+                    defaultChatRegex.setSoundIdentifier(identifier);
+                }
+            }, currentSoundIdentifierValue);
+
+            this.client.setScreen(soundReturningConfirmationPopupScreen);
+        }).build();
+        this.buttonWidgetSoundIdentifier.setWidth(20);
+
+        // Text: Priority
+        MutableText priorityLabel = literal(PRIO_LITERAL + this.chatRegex.getPriority());
+        this.textWidgetPriority = new TextWidget(priorityLabel, this.client.textRenderer);
+        this.client.textRenderer.getWidth(priorityLabel);
+
+        // Button: Priority Increase
+        this.buttonWidgetPriorityIncrease = ButtonWidget.builder(literal("+"), button -> {
+            this.chatRegex.setPriority(min(9, this.chatRegex.getPriority() + 1));
+            this.textWidgetPriority.setMessage(literal(PRIO_LITERAL + this.chatRegex.getPriority()));
+        }).build();
+        this.buttonWidgetPriorityIncrease.setWidth(20);
+        this.buttonWidgetPriorityIncrease.setHeight(10);
+        this.buttonWidgetPriorityIncrease.active = this.editable;
+
+        // Button: Priority Decrease
+        this.buttonWidgetPriorityDecrease = ButtonWidget.builder(literal("-"), button -> {
+            this.chatRegex.setPriority(max(0, this.chatRegex.getPriority() - 1));
+            this.textWidgetPriority.setMessage(literal(PRIO_LITERAL + this.chatRegex.getPriority()));
+        }).build();
+        this.buttonWidgetPriorityDecrease.setWidth(20);
+        this.buttonWidgetPriorityDecrease.setHeight(10);
+        this.buttonWidgetPriorityDecrease.active = this.editable;
+
+        // Button: Delete
+        this.buttonWidgetDelete = ButtonWidget.builder(literal("X").copy().formatted(RED), button -> {
+            configuration.chat().regex().getChatRegexes().removeIf(cr -> cr.equals(this.chatRegex));
+            this.client.execute(() -> this.client.setScreen(new ModOptionScreen("chat")));
+        }).build();
+        this.buttonWidgetDelete.setWidth(20);
+        this.buttonWidgetDelete.active = this.editable;
+
+        // Add widgets as children
+        this.children.add(this.textFieldWidgetRegex);
+        this.children.add(this.buttonWidgetEnabled);
+        this.children.add(this.buttonWidgetColour);
+        this.children.add(this.buttonWidgetSoundIdentifier);
+        this.children.add(this.textWidgetPriority);
+        this.children.add(this.buttonWidgetPriorityIncrease);
+        this.children.add(this.buttonWidgetPriorityDecrease);
+        this.children.add(this.buttonWidgetDelete);
     }
 
     @Override
     public boolean mouseClicked(Click click, boolean doubled) {
         setFocused(null);
 
-        if (this.textFieldWidget != null && this.editable && this.textFieldWidget.mouseClicked(click, doubled)) {
-            setFocused(this.textFieldWidget);
+        if (this.textFieldWidgetRegex != null && this.editable && this.textFieldWidgetRegex.mouseClicked(click, doubled)) {
+            setFocused(this.textFieldWidgetRegex);
             return true;
         }
 
-        if (this.buttonWidget != null && this.buttonWidget.mouseClicked(click, doubled)) {
+        if (this.buttonWidgetEnabled != null && this.buttonWidgetEnabled.mouseClicked(click, doubled)) {
             return true;
         }
 
-        if (this.colorSelectWidget != null && this.colorSelectWidget.mouseClicked(click, doubled)) {
+        if (this.buttonWidgetColour != null && this.buttonWidgetColour.mouseClicked(click, doubled)) {
             return true;
         }
 
-        if (this.buttonSoundWidget != null && this.buttonSoundWidget.mouseClicked(click, doubled)) {
+        if (this.buttonWidgetSoundIdentifier != null && this.buttonWidgetSoundIdentifier.mouseClicked(click, doubled)) {
             return true;
         }
 
-        if (this.increasePriorityButton != null && this.increasePriorityButton.mouseClicked(click, doubled)) {
+        if (this.buttonWidgetPriorityIncrease != null && this.buttonWidgetPriorityIncrease.mouseClicked(click, doubled)) {
             return true;
         }
 
-        if (this.decreasePriorityButton != null && this.decreasePriorityButton.mouseClicked(click, doubled)) {
+        if (this.buttonWidgetPriorityDecrease != null && this.buttonWidgetPriorityDecrease.mouseClicked(click, doubled)) {
             return true;
         }
 
-        if (this.deleteButtonWidget != null && this.deleteButtonWidget.mouseClicked(click, doubled)) {
+        if (this.buttonWidgetDelete != null && this.buttonWidgetDelete.mouseClicked(click, doubled)) {
             return true;
         }
 
@@ -98,61 +177,52 @@ public class ChatRegexEntry extends ScrollableListEntry {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
-        if (this.textFieldWidget != null) { // width = 136
-            this.textFieldWidget.setPosition(getContentX(), getContentY());
-            this.textFieldWidget.render(context, mouseX, mouseY, deltaTicks);
-            this.textFieldWidget.setEditableColor(this.chatRegex.isValidPattern() ? Color.WHITE.getRGB() : Color.RED.getRGB());
+        if (this.textFieldWidgetRegex != null) { // width = 136
+            this.textFieldWidgetRegex.setPosition(getContentX(), getContentY());
+            this.textFieldWidgetRegex.render(context, mouseX, mouseY, deltaTicks);
+            this.textFieldWidgetRegex.setEditableColor(this.chatRegex.isValidPattern() ? Color.WHITE.getRGB() : Color.RED.getRGB());
         }
 
-        if (this.buttonWidget != null) { // width = 30
-            this.buttonWidget.setPosition(getContentX() + 172 + 8, getContentY());
-            this.buttonWidget.render(context, mouseX, mouseY, deltaTicks);
+        if (this.buttonWidgetEnabled != null) { // width = 30
+            this.buttonWidgetEnabled.setPosition(getContentX() + 172 + 8, getContentY());
+            this.buttonWidgetEnabled.render(context, mouseX, mouseY, deltaTicks);
         }
 
-        if (this.colorSelectWidget != null) { // width = 30
-            this.colorSelectWidget.setPosition(getContentX() + 268 + 8, getContentY());
-            this.colorSelectWidget.render(context, mouseX, mouseY, deltaTicks);
+        if (this.buttonWidgetColour != null) { // width = 20
+            this.buttonWidgetColour.setPosition(getContentX() + 204 + 8, getContentY());
+            this.buttonWidgetColour.render(context, mouseX, mouseY, deltaTicks);
         }
 
-        if (this.buttonSoundWidget != null) { // width = 20
-            this.buttonSoundWidget.setPosition(getContentX() + 232 + 2, getContentY());
-            this.buttonSoundWidget.render(context, mouseX, mouseY, deltaTicks);
+        if (this.buttonWidgetSoundIdentifier != null) { // width = 20
+            this.buttonWidgetSoundIdentifier.setPosition(getContentX() + 232 + 2, getContentY());
+            this.buttonWidgetSoundIdentifier.render(context, mouseX, mouseY, deltaTicks);
         }
 
-        if (this.textWidget != null) { // width = variable (calculated from right)
-            this.textWidget.setPosition(getContentRightEnd() - this.client.textRenderer.getWidth(this.textWidget.getMessage()) - 56, getContentMiddleY() - (this.client.textRenderer.fontHeight / 2));
-            this.textWidget.render(context, mouseX, mouseY, deltaTicks);
+        if (this.buttonWidgetPriorityIncrease != null) { // width = 20 (calculated from right)
+            this.buttonWidgetPriorityIncrease.setPosition(getContentRightEnd() - 48, getContentY());
+            this.buttonWidgetPriorityIncrease.render(context, mouseX, mouseY, deltaTicks);
         }
 
-        if (this.increasePriorityButton != null) { // width = 20 (calculated from right)
-            this.increasePriorityButton.setPosition(getContentRightEnd() - 48, getContentY());
-            this.increasePriorityButton.render(context, mouseX, mouseY, deltaTicks);
+        if (this.buttonWidgetPriorityDecrease != null) { // width = 20 (calculated from right)
+            this.buttonWidgetPriorityDecrease.setPosition(getContentRightEnd() - 48, getContentY() + 10);
+            this.buttonWidgetPriorityDecrease.render(context, mouseX, mouseY, deltaTicks);
         }
 
-        if (this.decreasePriorityButton != null) { // width = 20 (calculated from right)
-            this.decreasePriorityButton.setPosition(getContentRightEnd() - 48, getContentY() + 10);
-            this.decreasePriorityButton.render(context, mouseX, mouseY, deltaTicks);
+        if (this.textWidgetPriority != null) { // width = variable (calculated from right)
+            this.textWidgetPriority.setPosition(getContentRightEnd() - this.client.textRenderer.getWidth(this.textWidgetPriority.getMessage()) - 56, getContentMiddleY() - (this.client.textRenderer.fontHeight / 2));
+            this.textWidgetPriority.render(context, mouseX, mouseY, deltaTicks);
         }
 
-        if (this.deleteButtonWidget != null) { // width = 20 (calculated from right)
-            this.deleteButtonWidget.setPosition(getContentRightEnd() - 20, getContentY());
-            this.deleteButtonWidget.render(context, mouseX, mouseY, deltaTicks);
+        if (this.buttonWidgetDelete != null) { // width = 20 (calculated from right)
+            this.buttonWidgetDelete.setPosition(getContentRightEnd() - 20, getContentY());
+            this.buttonWidgetDelete.render(context, mouseX, mouseY, deltaTicks);
         }
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        if (this.colorSelectWidget.isHovered() && this.colorSelectWidget.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
-            return true;
-        }
-
-        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 
     @Override
     public boolean keyPressed(KeyInput input) {
-        if (this.textFieldWidget != null && this.textFieldWidget.keyPressed(input)) {
-            this.chatRegex.setPattern(this.textFieldWidget.getText());
+        if (this.textFieldWidgetRegex != null && this.textFieldWidgetRegex.keyPressed(input)) {
+            this.chatRegex.setPattern(this.textFieldWidgetRegex.getText());
             return true;
         }
 
@@ -161,8 +231,8 @@ public class ChatRegexEntry extends ScrollableListEntry {
 
     @Override
     public boolean keyReleased(KeyInput input) {
-        if (this.textFieldWidget.keyReleased(input)) {
-            this.chatRegex.setPattern(this.textFieldWidget.getText());
+        if (this.textFieldWidgetRegex.keyReleased(input)) {
+            this.chatRegex.setPattern(this.textFieldWidgetRegex.getText());
             return true;
         }
 
@@ -171,110 +241,11 @@ public class ChatRegexEntry extends ScrollableListEntry {
 
     @Override
     public boolean charTyped(CharInput input) {
-        if (this.textFieldWidget.charTyped(input)) {
-            this.chatRegex.setPattern(this.textFieldWidget.getText());
+        if (this.textFieldWidgetRegex.charTyped(input)) {
+            this.chatRegex.setPattern(this.textFieldWidgetRegex.getText());
             return true;
         }
 
         return super.charTyped(input);
-    }
-
-    private void createTextFieldWidget() {
-        this.textFieldWidget = new TextFieldWidget(this.client.textRenderer, 0, 0, 172, 20, empty());
-        this.textFieldWidget.setText(this.editable ? this.chatRegex.getPattern() : this.client.getGameProfile().name());
-        this.textFieldWidget.setEditable(this.editable);
-
-        this.children.add(this.textFieldWidget);
-    }
-
-    private void createButtonWidget() {
-        if (this.editable) {
-            this.buttonWidget = ButtonWidget.builder(this.chatRegex.isActive() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED), button -> {
-                this.chatRegex.setActive(!this.chatRegex.isActive());
-                button.setMessage(this.chatRegex.isActive() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED));
-            }).build();
-        } else {
-            ChatRegex defaulChatRegex = configuration.chat().regex().getDefaulChatRegex();
-            boolean defaultChatRegexActive = defaulChatRegex.isActive();
-            this.buttonWidget = ButtonWidget.builder(defaultChatRegexActive ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED), button -> {
-                defaulChatRegex.setActive(!defaultChatRegexActive);
-                button.setMessage(defaultChatRegexActive ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED));
-            }).build();
-        }
-
-        this.buttonWidget.setWidth(30);
-
-        this.children.add(this.buttonWidget);
-    }
-
-    private void createColorSelectWidget() {
-        ChatRegex defaulChatRegex = configuration.chat().regex().getDefaulChatRegex();
-        this.colorSelectWidget = this.editable
-                ? new ColorSelectWidget(20, 20, this.chatRegex.getColor(), this.chatRegex::setColor)
-                : new ColorSelectWidget(20, 20, defaulChatRegex.getColor(), defaulChatRegex::setColor);
-        this.colorSelectWidget.setWidth(30);
-
-        this.children.add(this.colorSelectWidget);
-    }
-
-    private void createButtonSoundWidget() {
-        ChatRegex defaulChatRegex = configuration.chat().regex().getDefaulChatRegex();
-        Identifier currentValue = this.editable ? this.chatRegex.getSoundIdentifier() : defaulChatRegex.getSoundIdentifier();
-
-        this.buttonSoundWidget = ButtonWidget.builder(literal("🔊"), button -> {
-            SoundReturningConfirmationPopupScreen soundReturningConfirmationPopupScreen = new SoundReturningConfirmationPopupScreen(this.client.currentScreen, identifier -> {
-                if (this.editable) {
-                    this.chatRegex.setSoundIdentifier(identifier);
-                } else {
-                    defaulChatRegex.setSoundIdentifier(identifier);
-                }
-            }, currentValue);
-
-            this.client.setScreen(soundReturningConfirmationPopupScreen);
-        }).build();
-
-        this.buttonSoundWidget.setWidth(20);
-
-        this.children.add(this.buttonSoundWidget);
-    }
-
-    private void createTextWidget() {
-        MutableText priorityLabel = literal(PRIO_LITERAL + this.chatRegex.getPriority());
-        this.textWidget = new TextWidget(priorityLabel, this.client.textRenderer);
-        this.client.textRenderer.getWidth(priorityLabel);
-
-        this.children.add(this.textWidget);
-    }
-
-    private void createIncreasePriorityButton() {
-        this.increasePriorityButton = ButtonWidget.builder(literal("+"), button -> {
-            this.chatRegex.setPriority(min(9, this.chatRegex.getPriority() + 1));
-            this.textWidget.setMessage(literal(PRIO_LITERAL + this.chatRegex.getPriority()));
-        }).build();
-        this.increasePriorityButton.setWidth(20);
-        this.increasePriorityButton.setHeight(10);
-
-        this.children.add(this.increasePriorityButton);
-    }
-
-    private void createDecreasePriorityButton() {
-        this.decreasePriorityButton = ButtonWidget.builder(literal("-"), button -> {
-            this.chatRegex.setPriority(max(0, this.chatRegex.getPriority() - 1));
-            this.textWidget.setMessage(literal(PRIO_LITERAL + this.chatRegex.getPriority()));
-        }).build();
-        this.decreasePriorityButton.setWidth(20);
-        this.decreasePriorityButton.setHeight(10);
-
-        this.children.add(this.decreasePriorityButton);
-    }
-
-    private void createDeleteButtonWidget() {
-        this.deleteButtonWidget = ButtonWidget.builder(literal("X").copy().formatted(RED), button -> {
-            configuration.chat().regex().getChatRegexes().removeIf(cr -> cr.equals(this.chatRegex));
-            this.client.execute(() -> this.client.setScreen(new ModOptionScreen("chat")));
-        }).build();
-        this.deleteButtonWidget.setWidth(20);
-
-        this.children.add(this.deleteButtonWidget);
     }
 }
