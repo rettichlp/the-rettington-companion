@@ -37,16 +37,16 @@ public class ChatRegex {
     }
 
     @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
     public boolean equals(Object object) {
         return object instanceof ChatRegex chatRegex
                 && Objects.equals(this.pattern, chatRegex.pattern)
                 && this.active == chatRegex.active
                 && this.color == chatRegex.color
                 && this.priority == chatRegex.priority;
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
     }
 }

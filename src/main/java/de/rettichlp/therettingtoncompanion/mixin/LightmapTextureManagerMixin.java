@@ -26,7 +26,8 @@ public class LightmapTextureManagerMixin {
     }
 
     @Inject(method = "getStatusEffect", at = @At("HEAD"), cancellable = true)
-    private void trc$getStatusEffectHead(@NotNull RegistryEntry<StatusEffect> effect, CallbackInfoReturnable<StatusEffectInstance> cir) {
+    private void trc$getStatusEffectHead(@NotNull RegistryEntry<StatusEffect> effect,
+                                         CallbackInfoReturnable<StatusEffectInstance> cir) {
         if (effect.equals(NIGHT_VISION) && configuration.getGammaPreset() == FULLBRIGHT) {
             cir.setReturnValue(new StatusEffectInstance(NIGHT_VISION, MAX_VALUE, 0, false, false));
         }

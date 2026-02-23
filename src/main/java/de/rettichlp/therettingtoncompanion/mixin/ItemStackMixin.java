@@ -35,14 +35,14 @@ import static net.minecraft.util.Formatting.RED;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 
+    @Unique
+    private MinecraftClient client = MinecraftClient.getInstance();
+
     @Shadow
     public abstract int getMaxDamage();
 
     @Shadow
     public abstract Item getItem();
-
-    @Unique
-    private MinecraftClient client = MinecraftClient.getInstance();
 
     @Inject(method = "useOnBlock", at = @At("RETURN"))
     private void trc$useOnBlockReturn(@NotNull ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
