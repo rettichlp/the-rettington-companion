@@ -7,7 +7,8 @@ import net.minecraft.util.Identifier;
 
 import java.util.function.Consumer;
 
-import static java.awt.Color.*;
+import static java.awt.Color.RED;
+import static java.awt.Color.WHITE;
 import static net.minecraft.registry.Registries.SOUND_EVENT;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.translatable;

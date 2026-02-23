@@ -56,6 +56,38 @@ public abstract class ChatHudMixin {
     public abstract boolean isChatFocused();
 
     /**
+     * Intercepts the {@code clear} method at the HEAD position to determine whether the chat history should be cleared based on the
+     * current configuration. If the configuration specifies that messages should be kept on disconnect and {@code clearHistory} is
+     * true, the method execution is canceled.
+     *
+     * @param clearHistory specifies whether the chat history should be cleared. If true, the operation was triggered by changing
+     *                     worlds or disconnecting. If false, it was manually triggered by the player.
+     * @param ci           a {@link CallbackInfo} instance that allows canceling the method execution if specific conditions are met.
+     */
+    @Inject(method = "clear", at = @At("HEAD"), cancellable = true)
+    public void trc$clearHead(boolean clearHistory, CallbackInfo ci) {
+        if (configuration.chat().isKeepMessagesOnDisconnect() && clearHistory) {
+            ci.cancel();
+        }
+    }
+
+    /**
+     * Modifies the integer constant value used in the {@code addMessage} and {@code addVisibleMessage} methods to allow for dynamic
+     * adjustments based on the current chat configuration. If the configuration permits more messages to be displayed, a maximum value
+     * is returned; otherwise, the default value of 100 is used.
+     *
+     * @param value the original integer constant value passed to the method. This is typically 100.
+     *
+     * @return the modified integer value based on the chat configuration. Returns a maximum value if the configuration allows more
+     *         messages, otherwise returns 100.
+     */
+    @ModifyExpressionValue(method = { "addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V", "addVisibleMessage" },
+                           at = @At(value = "CONSTANT", args = "intValue=100"))
+    public int trc$addMessageConstant(int value) {
+        return configuration.chat().isMoreMessages() ? MAX_VALUE : 100;
+    }
+
+    /**
      * Modifies the {@code addMessage} method by intercepting at the HEAD position to prepend a timestamp to the beginning of the chat
      * message. The timestamp is formatted in "HH:mm:ss" and styled in dark gray.
      *
@@ -83,6 +115,48 @@ public abstract class ChatHudMixin {
                         .withFormatting(DARK_GRAY)
                         .withHoverEvent(new HoverEvent.ShowText(literal(dateString)))))
                 .append(originalMessage);
+    }
+
+    /**
+     * Modifies the return value of the {@code getWidth()} method to dynamically adjust the width based on specific conditions. The
+     * width is optimized if the chat size optimization is enabled; otherwise, the original width is returned.
+     *
+     * @param width the original width value returned by the {@code getWidth()} method.
+     *
+     * @return the modified width value if chat size optimization is enabled, otherwise the original width.
+     */
+    @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))
+    private int trc$getWidthReturn(int width) {
+        if (!configuration.chat().isOptimizedChatSize()) {
+            return width;
+        }
+
+        // from x = 0 to hotbar (length = 182)
+        int chatWidth = this.client.getWindow().getScaledWidth() / 2 - 91 - 12; // for some reason there is a 12px offset
+        double minecraftChatWidth = getWidth(this.client.options.getChatWidth().getValue());
+
+        return (int) max(chatWidth, minecraftChatWidth);
+    }
+
+    /**
+     * Modifies the return value of the {@code getHeight()} method to dynamically adjust the height based on specific conditions. The
+     * height is optimized if the chat size optimization is enabled; otherwise, the original height is returned.
+     *
+     * @param height the original height value returned by the {@code getHeight()} method.
+     *
+     * @return the modified height value if chat size optimization is enabled, otherwise the original height.
+     */
+    @ModifyReturnValue(method = "getHeight()I", at = @At("RETURN"))
+    private int trc$getHeightReturn(int height) {
+        if (!configuration.chat().isOptimizedChatSize()) {
+            return height;
+        }
+
+        // half of the screen height
+        int chatHeight = this.client.getWindow().getScaledHeight() / 2;
+        double minecraftChatHeight = getHeight(this.client.options.getChatHeightFocused().getValue());
+
+        return isChatFocused() ? ((int) max(chatHeight, minecraftChatHeight)) : height;
     }
 
     /**
@@ -128,79 +202,5 @@ public abstract class ChatHudMixin {
         }
 
         instance.fill(x1, y1, x2, y2, backgroundColor);
-    }
-
-    /**
-     * Intercepts the {@code clear} method at the HEAD position to determine whether the chat history should be cleared based on the
-     * current configuration. If the configuration specifies that messages should be kept on disconnect and {@code clearHistory} is
-     * true, the method execution is canceled.
-     *
-     * @param clearHistory specifies whether the chat history should be cleared. If true, the operation was triggered by changing
-     *                     worlds or disconnecting. If false, it was manually triggered by the player.
-     * @param ci           a {@link CallbackInfo} instance that allows canceling the method execution if specific conditions are met.
-     */
-    @Inject(method = "clear", at = @At("HEAD"), cancellable = true)
-    public void trc$clearHead(boolean clearHistory, CallbackInfo ci) {
-        if (configuration.chat().isKeepMessagesOnDisconnect() && clearHistory) {
-            ci.cancel();
-        }
-    }
-
-    /**
-     * Modifies the integer constant value used in the {@code addMessage} and {@code addVisibleMessage} methods to allow for dynamic
-     * adjustments based on the current chat configuration. If the configuration permits more messages to be displayed, a maximum value
-     * is returned; otherwise, the default value of 100 is used.
-     *
-     * @param value the original integer constant value passed to the method. This is typically 100.
-     *
-     * @return the modified integer value based on the chat configuration. Returns a maximum value if the configuration allows more
-     *         messages, otherwise returns 100.
-     */
-    @ModifyExpressionValue(method = { "addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V", "addVisibleMessage" },
-                           at = @At(value = "CONSTANT", args = "intValue=100"))
-    public int trc$addMessageConstant(int value) {
-        return configuration.chat().isMoreMessages() ? MAX_VALUE : 100;
-    }
-
-    /**
-     * Modifies the return value of the {@code getWidth()} method to dynamically adjust the width based on specific conditions. The
-     * width is optimized if the chat size optimization is enabled; otherwise, the original width is returned.
-     *
-     * @param width the original width value returned by the {@code getWidth()} method.
-     *
-     * @return the modified width value if chat size optimization is enabled, otherwise the original width.
-     */
-    @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))
-    private int trc$getWidthReturn(int width) {
-        if (!configuration.chat().isOptimizedChatSize()) {
-            return width;
-        }
-
-        // from x = 0 to hotbar (length = 182)
-        int chatWidth = this.client.getWindow().getScaledWidth() / 2 - 91 - 12; // for some reason there is a 12px offset
-        double minecraftChatWidth = getWidth(this.client.options.getChatWidth().getValue());
-
-        return (int) max(chatWidth, minecraftChatWidth);
-    }
-
-    /**
-     * Modifies the return value of the {@code getHeight()} method to dynamically adjust the height based on specific conditions. The
-     * height is optimized if the chat size optimization is enabled; otherwise, the original height is returned.
-     *
-     * @param height the original height value returned by the {@code getHeight()} method.
-     *
-     * @return the modified height value if chat size optimization is enabled, otherwise the original height.
-     */
-    @ModifyReturnValue(method = "getHeight()I", at = @At("RETURN"))
-    private int trc$getHeightReturn(int height) {
-        if (!configuration.chat().isOptimizedChatSize()) {
-            return height;
-        }
-
-        // half of the screen height
-        int chatHeight = this.client.getWindow().getScaledHeight() / 2;
-        double minecraftChatHeight = getHeight(this.client.options.getChatHeightFocused().getValue());
-
-        return isChatFocused() ? ((int) max(chatHeight, minecraftChatHeight)) : height;
     }
 }
