@@ -3,16 +3,20 @@ package de.rettichlp.therettingtoncompanion.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import de.rettichlp.therettingtoncompanion.common.models.ChatRegex;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -20,15 +24,19 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getHighlightColor;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
+import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getHighestPriorityMatchingChatRegex;
 import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getString;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Math.max;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static net.minecraft.client.gui.hud.ChatHud.getHeight;
 import static net.minecraft.client.gui.hud.ChatHud.getWidth;
+import static net.minecraft.registry.Registries.SOUND_EVENT;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.literal;
 import static net.minecraft.util.Formatting.DARK_GRAY;
@@ -36,6 +44,9 @@ import static net.minecraft.util.math.ColorHelper.withAlpha;
 
 @Mixin(ChatHud.class)
 public abstract class ChatHudMixin {
+
+    @Unique
+    private static final Collection<ChatHudLine.Visible> NOTIFIED_LINES = new ArrayList<>();
 
     @Shadow
     @Final
@@ -99,9 +110,21 @@ public abstract class ChatHudMixin {
                                                @Local(argsOnly = true) ChatHudLine.Visible line) {
         int backgroundColor = color;
 
-        Formatting highlightColor = getHighlightColor(getString(line.content()));
-        if (highlightColor != null && highlightColor.getColorValue() != null) {
-            backgroundColor = withAlpha(100, 0xFF000000 | highlightColor.getColorValue());
+        ChatRegex highestPriorityMatchingChatRegex = getHighestPriorityMatchingChatRegex(getString(line.content()));
+
+        if (highestPriorityMatchingChatRegex != null) {
+            // colour for chat line highlight
+            Formatting chatRegexColor = highestPriorityMatchingChatRegex.getColor();
+            assert chatRegexColor.getColorValue() != null;
+            backgroundColor = withAlpha(100, 0xFF000000 | chatRegexColor.getColorValue());
+
+            // play sound
+            if (!NOTIFIED_LINES.contains(line)) {
+                NOTIFIED_LINES.add(line);
+                Identifier chatRegexSoundIdentifier = highestPriorityMatchingChatRegex.getSoundIdentifier();
+                SoundEvent soundEvent = SOUND_EVENT.get(chatRegexSoundIdentifier);
+                player.playSound(soundEvent, 1, 1.5f);
+            }
         }
 
         instance.fill(x1, y1, x2, y2, backgroundColor);
