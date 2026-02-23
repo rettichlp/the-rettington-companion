@@ -1,8 +1,8 @@
 package de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable;
 
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.ColorSelectWidget;
-import de.rettichlp.therettingtoncompanion.common.gui.screens.components.CompletingTextFieldWidget;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.ModOptionScreen;
+import de.rettichlp.therettingtoncompanion.common.gui.screens.popup.SoundReturningConfirmationPopupScreen;
 import de.rettichlp.therettingtoncompanion.common.models.ChatRegex;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
@@ -11,18 +11,15 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.client.input.CharInput;
 import net.minecraft.client.input.KeyInput;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.MutableText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import java.awt.Color;
-import java.util.List;
-import java.util.Optional;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static net.minecraft.registry.Registries.SOUND_EVENT;
 import static net.minecraft.screen.ScreenTexts.OFF;
 import static net.minecraft.screen.ScreenTexts.ON;
 import static net.minecraft.text.Text.empty;
@@ -38,9 +35,9 @@ public class ChatRegexEntry extends ScrollableListEntry {
     private final boolean editable;
 
     private TextFieldWidget textFieldWidget; // regex input
-    private CompletingTextFieldWidget<Identifier> soundTextWidget; // sound input
     private ButtonWidget buttonWidget; // activate/deactivate
     private ColorSelectWidget colorSelectWidget; // color select
+    private ButtonWidget buttonSoundWidget;
     private TextWidget textWidget; // priority display
     private ButtonWidget increasePriorityButton; // increase priority
     private ButtonWidget decreasePriorityButton; // decrease priority
@@ -51,9 +48,9 @@ public class ChatRegexEntry extends ScrollableListEntry {
         this.editable = editable;
 
         createTextFieldWidget();
-        createSoundTextWidget();
         createButtonWidget();
         createColorSelectWidget();
+        createButtonSoundWidget();
         createTextWidget();
 
         if (editable) {
@@ -72,16 +69,15 @@ public class ChatRegexEntry extends ScrollableListEntry {
             return true;
         }
 
-        if (this.soundTextWidget != null && this.editable && this.soundTextWidget.mouseClicked(click, doubled)) {
-            setFocused(this.soundTextWidget);
-            return true;
-        }
-
         if (this.buttonWidget != null && this.buttonWidget.mouseClicked(click, doubled)) {
             return true;
         }
 
         if (this.colorSelectWidget != null && this.colorSelectWidget.mouseClicked(click, doubled)) {
+            return true;
+        }
+
+        if (this.buttonSoundWidget != null && this.buttonSoundWidget.mouseClicked(click, doubled)) {
             return true;
         }
 
@@ -102,19 +98,14 @@ public class ChatRegexEntry extends ScrollableListEntry {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
-        if (this.textFieldWidget != null) { // width = 136 (manipulate default with -> -50)
-            this.textFieldWidget.setPosition(getContentX() - 50, getContentY());
+        if (this.textFieldWidget != null) { // width = 136
+            this.textFieldWidget.setPosition(getContentX(), getContentY());
             this.textFieldWidget.render(context, mouseX, mouseY, deltaTicks);
             this.textFieldWidget.setEditableColor(this.chatRegex.isValidPattern() ? Color.WHITE.getRGB() : Color.RED.getRGB());
         }
 
-        if (this.soundTextWidget != null) { // width = 136
-            this.soundTextWidget.setPosition(getContentX() - 50 + 136 + 8, getContentY());
-            this.soundTextWidget.renderWidget(context, mouseX, mouseY, deltaTicks);
-        }
-
         if (this.buttonWidget != null) { // width = 30
-            this.buttonWidget.setPosition(getContentX() + 230 + 8, getContentY());
+            this.buttonWidget.setPosition(getContentX() + 172 + 8, getContentY());
             this.buttonWidget.render(context, mouseX, mouseY, deltaTicks);
         }
 
@@ -123,23 +114,28 @@ public class ChatRegexEntry extends ScrollableListEntry {
             this.colorSelectWidget.render(context, mouseX, mouseY, deltaTicks);
         }
 
+        if (this.buttonSoundWidget != null) { // width = 20
+            this.buttonSoundWidget.setPosition(getContentX() + 232 + 2, getContentY());
+            this.buttonSoundWidget.render(context, mouseX, mouseY, deltaTicks);
+        }
+
         if (this.textWidget != null) { // width = variable (calculated from right)
-            this.textWidget.setPosition(getContentRightEnd() - this.client.textRenderer.getWidth(this.textWidget.getMessage()) - 6, getContentMiddleY() - (this.client.textRenderer.fontHeight / 2));
+            this.textWidget.setPosition(getContentRightEnd() - this.client.textRenderer.getWidth(this.textWidget.getMessage()) - 56, getContentMiddleY() - (this.client.textRenderer.fontHeight / 2));
             this.textWidget.render(context, mouseX, mouseY, deltaTicks);
         }
 
         if (this.increasePriorityButton != null) { // width = 20 (calculated from right)
-            this.increasePriorityButton.setPosition(getContentRightEnd() + 2, getContentY());
+            this.increasePriorityButton.setPosition(getContentRightEnd() - 48, getContentY());
             this.increasePriorityButton.render(context, mouseX, mouseY, deltaTicks);
         }
 
         if (this.decreasePriorityButton != null) { // width = 20 (calculated from right)
-            this.decreasePriorityButton.setPosition(getContentRightEnd() + 2, getContentY() + 10);
+            this.decreasePriorityButton.setPosition(getContentRightEnd() - 48, getContentY() + 10);
             this.decreasePriorityButton.render(context, mouseX, mouseY, deltaTicks);
         }
 
         if (this.deleteButtonWidget != null) { // width = 20 (calculated from right)
-            this.deleteButtonWidget.setPosition(getContentRightEnd() + 30, getContentY());
+            this.deleteButtonWidget.setPosition(getContentRightEnd() - 20, getContentY());
             this.deleteButtonWidget.render(context, mouseX, mouseY, deltaTicks);
         }
     }
@@ -160,14 +156,6 @@ public class ChatRegexEntry extends ScrollableListEntry {
             return true;
         }
 
-        if (this.soundTextWidget != null && this.soundTextWidget.keyPressed(input)) {
-            Identifier identifier = Identifier.of(this.soundTextWidget.getText());
-            if (SOUND_EVENT.containsId(identifier)) {
-                this.chatRegex.setSoundIdentifier(identifier);
-            }
-            return true;
-        }
-
         return super.keyPressed(input);
     }
 
@@ -175,14 +163,6 @@ public class ChatRegexEntry extends ScrollableListEntry {
     public boolean keyReleased(KeyInput input) {
         if (this.textFieldWidget.keyReleased(input)) {
             this.chatRegex.setPattern(this.textFieldWidget.getText());
-            return true;
-        }
-
-        if (this.soundTextWidget.keyReleased(input)) {
-            Identifier identifier = Identifier.of(this.soundTextWidget.getText());
-            if (SOUND_EVENT.containsId(identifier)) {
-                this.chatRegex.setSoundIdentifier(identifier);
-            }
             return true;
         }
 
@@ -196,36 +176,15 @@ public class ChatRegexEntry extends ScrollableListEntry {
             return true;
         }
 
-        if (this.soundTextWidget.charTyped(input)) {
-            Identifier identifier = Identifier.of(this.soundTextWidget.getText());
-            if (SOUND_EVENT.containsId(identifier)) {
-                this.chatRegex.setSoundIdentifier(identifier);
-            }
-            return true;
-        }
-
         return super.charTyped(input);
     }
 
     private void createTextFieldWidget() {
-        this.textFieldWidget.setText(this.chatRegex.getPattern());
-        this.textFieldWidget = new TextFieldWidget(this.client.textRenderer, 0, 0, 136, 20, empty());
+        this.textFieldWidget = new TextFieldWidget(this.client.textRenderer, 0, 0, 172, 20, empty());
+        this.textFieldWidget.setText(this.editable ? this.chatRegex.getPattern() : this.client.getGameProfile().name());
         this.textFieldWidget.setEditable(this.editable);
 
         this.children.add(this.textFieldWidget);
-    }
-
-    private void createSoundTextWidget() {
-        List<Identifier> soundEvents = SOUND_EVENT.streamEntries()
-                .map(RegistryEntry.Reference::getKey)
-                .filter(Optional::isPresent)
-                .map(soundEventRegistryKey -> soundEventRegistryKey.get().getValue())
-                .toList();
-
-        Identifier currentValue = this.editable ? this.chatRegex.getSoundIdentifier() : configuration.chat().regex().getDefaulChatRegex().getSoundIdentifier();
-        this.soundTextWidget = new CompletingTextFieldWidget<>(136, 20, soundEvents, Identifier::toString, currentValue);
-
-        this.children.add(this.soundTextWidget);
     }
 
     private void createButtonWidget() {
@@ -256,6 +215,27 @@ public class ChatRegexEntry extends ScrollableListEntry {
         this.colorSelectWidget.setWidth(30);
 
         this.children.add(this.colorSelectWidget);
+    }
+
+    private void createButtonSoundWidget() {
+        ChatRegex defaulChatRegex = configuration.chat().regex().getDefaulChatRegex();
+        Identifier currentValue = this.editable ? this.chatRegex.getSoundIdentifier() : defaulChatRegex.getSoundIdentifier();
+
+        this.buttonSoundWidget = ButtonWidget.builder(literal("🔊"), button -> {
+            SoundReturningConfirmationPopupScreen soundReturningConfirmationPopupScreen = new SoundReturningConfirmationPopupScreen(this.client.currentScreen, identifier -> {
+                if (this.editable) {
+                    this.chatRegex.setSoundIdentifier(identifier);
+                } else {
+                    defaulChatRegex.setSoundIdentifier(identifier);
+                }
+            }, currentValue);
+
+            this.client.setScreen(soundReturningConfirmationPopupScreen);
+        }).build();
+
+        this.buttonSoundWidget.setWidth(20);
+
+        this.children.add(this.buttonSoundWidget);
     }
 
     private void createTextWidget() {
