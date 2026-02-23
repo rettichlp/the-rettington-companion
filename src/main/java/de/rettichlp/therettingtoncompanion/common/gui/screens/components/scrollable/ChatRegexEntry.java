@@ -234,9 +234,11 @@ public class ChatRegexEntry extends ScrollableListEntry {
                 button.setMessage(this.chatRegex.isActive() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED));
             }).build();
         } else {
-            this.buttonWidget = ButtonWidget.builder(configuration.chat().regex().isDefaultChatRegex() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED), button -> {
-                configuration.chat().regex().setDefaultChatRegex(!configuration.chat().regex().isDefaultChatRegex());
-                button.setMessage(configuration.chat().regex().isDefaultChatRegex() ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED));
+            ChatRegex defaulChatRegex = configuration.chat().regex().getDefaulChatRegex();
+            boolean defaultChatRegexActive = defaulChatRegex.isActive();
+            this.buttonWidget = ButtonWidget.builder(defaultChatRegexActive ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED), button -> {
+                defaulChatRegex.setActive(!defaultChatRegexActive);
+                button.setMessage(defaultChatRegexActive ? ON.copy().formatted(GREEN) : OFF.copy().formatted(RED));
             }).build();
         }
 
@@ -246,9 +248,10 @@ public class ChatRegexEntry extends ScrollableListEntry {
     }
 
     private void createColorSelectWidget() {
+        ChatRegex defaulChatRegex = configuration.chat().regex().getDefaulChatRegex();
         this.colorSelectWidget = this.editable
                 ? new ColorSelectWidget(20, 20, this.chatRegex.getColor(), this.chatRegex::setColor)
-                : new ColorSelectWidget(20, 20, configuration.chat().regex().getDefaultChatRegexColor(), formatting -> configuration.chat().regex().setDefaultChatRegexColor(formatting));
+                : new ColorSelectWidget(20, 20, defaulChatRegex.getColor(), defaulChatRegex::setColor);
         this.colorSelectWidget.setWidth(30);
 
         this.children.add(this.colorSelectWidget);

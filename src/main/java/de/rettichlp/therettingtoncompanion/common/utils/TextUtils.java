@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
-import static de.rettichlp.therettingtoncompanion.common.models.ChatRegex.DEFAULT_CHAT_REGEX;
 import static java.lang.Character.toChars;
 import static java.util.Comparator.comparingInt;
 
@@ -55,7 +54,7 @@ public class TextUtils {
      */
     public static @Nullable ChatRegex getHighestPriorityMatchingChatRegex(String message) {
         if (matchesDefaultRegex(message)) {
-            return DEFAULT_CHAT_REGEX;
+            return configuration.chat().regex().getDefaulChatRegex();
         }
 
         List<ChatRegex> matchingCustomRegexes = getMatchingCustomRegexes(message);
@@ -72,8 +71,8 @@ public class TextUtils {
      *         otherwise.
      */
     private static boolean matchesDefaultRegex(String message) {
-        return configuration.chat().regex().isDefaultChatRegex()
-                && message.toLowerCase().contains(player.getGameProfile().name().toLowerCase());
+        ChatRegex defaulChatRegex = configuration.chat().regex().getDefaulChatRegex();
+        return defaulChatRegex.isActive() && message.toLowerCase().contains(player.getGameProfile().name().toLowerCase());
     }
 
     /**
