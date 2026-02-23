@@ -26,8 +26,8 @@ public class SoundReturningConfirmationPopupScreen extends AbstractReturningConf
     @Override
     public void initBody() {
         this.textFieldWidget = new TextFieldWidget(this.client.textRenderer, 0, 0, 200, 20, empty());
-        this.textFieldWidget.setText(this.initialValue.toString());
         this.textFieldWidget.setMaxLength(200);
+        this.textFieldWidget.setText(this.initialValue.toString());
 
         this.layout.add(this.textFieldWidget);
     }
