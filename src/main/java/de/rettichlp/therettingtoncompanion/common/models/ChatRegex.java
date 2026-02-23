@@ -3,6 +3,7 @@ package de.rettichlp.therettingtoncompanion.common.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -17,6 +18,7 @@ import static java.util.regex.Pattern.compile;
 public class ChatRegex {
 
     private String pattern;
+    private Identifier soundIdentifier;
     private boolean active;
     private Formatting color;
     private int priority;
@@ -35,16 +37,16 @@ public class ChatRegex {
     }
 
     @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
     public boolean equals(Object object) {
         return object instanceof ChatRegex chatRegex
                 && Objects.equals(this.pattern, chatRegex.pattern)
                 && this.active == chatRegex.active
                 && this.color == chatRegex.color
                 && this.priority == chatRegex.priority;
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
     }
 }

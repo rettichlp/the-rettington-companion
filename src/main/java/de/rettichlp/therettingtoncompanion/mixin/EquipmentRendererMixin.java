@@ -36,7 +36,8 @@ public abstract class EquipmentRendererMixin {
                                     int k,
                                     CallbackInfo ci) {
         switch (configuration.visuals().getEquipmentModelVisibility()) {
-            case ALL -> {} // do nothing, render all equipment
+            case ALL -> {
+            } // do nothing, render all equipment
             case NONE -> ci.cancel(); // cancel rendering of all equipment
             case ONLY_WINGS -> {
                 // cancel rendering of non-wing equipment

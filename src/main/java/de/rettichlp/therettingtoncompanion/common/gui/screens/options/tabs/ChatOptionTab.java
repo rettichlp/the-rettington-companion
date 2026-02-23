@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static net.minecraft.sound.SoundEvents.BLOCK_NOTE_BLOCK_BELL;
 import static net.minecraft.text.Text.literal;
 import static net.minecraft.text.Text.translatable;
 import static net.minecraft.util.Formatting.GREEN;
@@ -51,7 +52,7 @@ public class ChatOptionTab extends AbstractOptionTab {
         scrollableListEntries.add(sectionEntry2);
 
         // default chat regex
-        ChatRegex defaultChatRegex = new ChatRegex(this.client.getGameProfile().name(), configuration.chat().regex().isDefaultChatRegex(), configuration.chat().regex().getDefaultChatRegexColor(), 0);
+        ChatRegex defaultChatRegex = configuration.chat().regex().getDefaulChatRegex();
         ChatRegexEntry defaultChatRegexEntry = new ChatRegexEntry(defaultChatRegex, false);
         scrollableListEntries.add(defaultChatRegexEntry);
 
@@ -61,7 +62,7 @@ public class ChatOptionTab extends AbstractOptionTab {
         });
 
         ButtonEntry buttonEntry = new ButtonEntry(literal("+"), button -> {
-            ChatRegex newChatRegex = new ChatRegex("", true, GREEN, 0);
+            ChatRegex newChatRegex = new ChatRegex("", BLOCK_NOTE_BLOCK_BELL.value().id(), true, GREEN, 0);
             configuration.chat().regex().getChatRegexes().add(newChatRegex);
             this.client.execute(() -> this.client.setScreen(new ModOptionScreen("chat")));
         });
