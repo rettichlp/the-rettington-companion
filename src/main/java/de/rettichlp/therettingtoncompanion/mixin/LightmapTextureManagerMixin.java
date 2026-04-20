@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.common.models.GammaPreset.FULLBRIGHT;
+import static de.rettichlp.therettingtoncompanion.common.models.GammaPreset.FULLBRIGHT_NIGHT_VISION;
 import static java.lang.Integer.MAX_VALUE;
 import static net.minecraft.entity.effect.StatusEffects.NIGHT_VISION;
 
@@ -20,7 +20,7 @@ public class LightmapTextureManagerMixin {
 
     @Inject(method = "hasStatusEffect", at = @At("HEAD"), cancellable = true)
     private void trc$hasStatusEffectHead(RegistryEntry<StatusEffect> effect, CallbackInfoReturnable<Boolean> cir) {
-        if (configuration.getGammaPreset() == FULLBRIGHT) {
+        if (configuration.getGammaPreset() == FULLBRIGHT_NIGHT_VISION) {
             cir.setReturnValue(effect.equals(NIGHT_VISION));
         }
     }
@@ -28,7 +28,7 @@ public class LightmapTextureManagerMixin {
     @Inject(method = "getStatusEffect", at = @At("HEAD"), cancellable = true)
     private void trc$getStatusEffectHead(@NotNull RegistryEntry<StatusEffect> effect,
                                          CallbackInfoReturnable<StatusEffectInstance> cir) {
-        if (effect.equals(NIGHT_VISION) && configuration.getGammaPreset() == FULLBRIGHT) {
+        if (effect.equals(NIGHT_VISION) && configuration.getGammaPreset() == FULLBRIGHT_NIGHT_VISION) {
             cir.setReturnValue(new StatusEffectInstance(NIGHT_VISION, MAX_VALUE, 0, false, false));
         }
     }

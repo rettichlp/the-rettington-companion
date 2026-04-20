@@ -11,6 +11,7 @@ import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.literal;
 import static net.minecraft.text.Text.translatable;
 import static net.minecraft.util.Formatting.AQUA;
+import static net.minecraft.util.Formatting.BLUE;
 import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.GOLD;
 import static net.minecraft.util.Formatting.GRAY;
@@ -26,7 +27,8 @@ public enum GammaPreset {
     MOODY(translatable("trc.gamma_preset.moody"), RED, 0.0),
     DEFAULT(translatable("trc.gamma_preset.default"), GOLD, 0.5),
     BRIGHT(translatable("trc.gamma_preset.bright"), YELLOW, 1.0),
-    FULLBRIGHT(translatable("trc.gamma_preset.fullbright"), AQUA, 15.0);
+    FULLBRIGHT_NIGHT_VISION(translatable("trc.gamma_preset.fullbright_night_vision"), AQUA, -1.0),
+    FULLBRIGHT_GAMMA(translatable("trc.gamma_preset.fullbright_gamma"), BLUE, 15.0);
 
     private final Text displayName;
     private final Formatting color;
