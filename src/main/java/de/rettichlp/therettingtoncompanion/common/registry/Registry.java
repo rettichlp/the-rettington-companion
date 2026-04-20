@@ -4,6 +4,7 @@ import de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfigura
 import de.rettichlp.therettingtoncompanion.common.models.GammaPreset;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -69,6 +70,8 @@ public class Registry {
                 newGammaPreset.sendMessage();
             }
         });
+
+        HudRenderCallback.EVENT.register((drawContext, tickCounter) -> getListenersImplementing(IHudRenderListener.class).forEach(iHudRenderListener -> iHudRenderListener.onHudRender(drawContext, tickCounter)));
 
         // prevent multiple registrations of listeners
         this.initialized = true;

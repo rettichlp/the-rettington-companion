@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
@@ -30,6 +32,7 @@ public class Configuration {
     @Accessors(fluent = true)
     private VisualsConfiguration visuals = new VisualsConfiguration();
 
+    private Map<String, Object> widgets = new HashMap<>();
     private double ownGammaValue = 0.5;
     private GammaPreset gammaPreset = OWN_SETTING;
 

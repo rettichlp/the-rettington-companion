@@ -2,6 +2,8 @@ package de.rettichlp.therettingtoncompanion;
 
 import de.rettichlp.therettingtoncompanion.common.configuration.Configuration;
 import de.rettichlp.therettingtoncompanion.common.registry.Registry;
+import de.rettichlp.therettingtoncompanion.common.services.NotificationService;
+import de.rettichlp.therettingtoncompanion.common.services.RenderService;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
@@ -22,6 +24,9 @@ public class TheRettingtonCompanion implements ModInitializer {
     // It is considered best practice to use your mod id as the logger's name.
     // That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+    public static final NotificationService notificationService = new NotificationService();
+    public static final RenderService renderService = new RenderService();
 
     public static final Configuration configuration = new Configuration().loadFromFile();
 
