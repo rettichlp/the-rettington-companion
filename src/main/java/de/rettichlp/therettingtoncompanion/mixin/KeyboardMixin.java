@@ -3,10 +3,13 @@ package de.rettichlp.therettingtoncompanion.mixin;
 import de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration;
 import de.rettichlp.therettingtoncompanion.common.models.GammaPreset;
 import net.minecraft.client.Keyboard;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.util.Identifier;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,20 +32,27 @@ public abstract class KeyboardMixin {
     @Unique
     private static final KeyBinding EQUIPMENT_MODEL_VISIBILITY_KEY = registerKeyBinding(new KeyBinding("trc.key.hide_armor", KEYSYM, GLFW_KEY_H, KEY_CATEGORY));
 
+    @Shadow
+    @Final
+    private MinecraftClient client;
+
     @Inject(method = "onKey", at = @At(value = "INVOKE",
                                        target = "Lnet/minecraft/client/option/KeyBinding;matchesKey(Lnet/minecraft/client/input/KeyInput;)Z",
                                        ordinal = 0))
     private void trc$onKeyInvoke(long window, int action, KeyInput input, CallbackInfo ci) {
-        if (EQUIPMENT_MODEL_VISIBILITY_KEY.wasPressed()) {
-            VisualsConfiguration.EquipmentModelVisibility equipmentModelVisibility = configuration.visuals().getEquipmentModelVisibility().next();
-            configuration.visuals().setEquipmentModelVisibility(equipmentModelVisibility);
-            equipmentModelVisibility.sendMessage();
-        }
+        // only with closed chat
+        if (!this.client.inGameHud.getChatHud().isChatFocused()) {
+            if (EQUIPMENT_MODEL_VISIBILITY_KEY.wasPressed()) {
+                VisualsConfiguration.EquipmentModelVisibility equipmentModelVisibility = configuration.visuals().getEquipmentModelVisibility().next();
+                configuration.visuals().setEquipmentModelVisibility(equipmentModelVisibility);
+                equipmentModelVisibility.sendMessage();
+            }
 
-        if (GAMMA_PRESET_KEY.wasPressed()) {
-            GammaPreset newGammaPreset = configuration.getGammaPreset().next();
-            configuration.setGammaPreset(newGammaPreset);
-            newGammaPreset.sendMessage();
+            if (GAMMA_PRESET_KEY.wasPressed()) {
+                GammaPreset newGammaPreset = configuration.getGammaPreset().next();
+                configuration.setGammaPreset(newGammaPreset);
+                newGammaPreset.sendMessage();
+            }
         }
     }
 }
