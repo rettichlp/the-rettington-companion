@@ -1,7 +1,6 @@
 package de.rettichlp.therettingtoncompanion;
 
 import de.rettichlp.therettingtoncompanion.common.configuration.Configuration;
-import de.rettichlp.therettingtoncompanion.common.registry.Registry;
 import de.rettichlp.therettingtoncompanion.common.services.NotificationService;
 import de.rettichlp.therettingtoncompanion.common.services.RenderService;
 import net.fabricmc.api.ModInitializer;
@@ -32,8 +31,6 @@ public class TheRettingtonCompanion implements ModInitializer {
 
     public static ClientPlayerEntity player;
 
-    private final Registry registry = new Registry();
-
     @Override
     public void onInitialize() {
         // This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -42,8 +39,6 @@ public class TheRettingtonCompanion implements ModInitializer {
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             player = client.player;
-
-            client.execute(this.registry::registerListeners);
 
             if (configuration.chat().isKeepMessagesOnDisconnect()) {
                 sendWorldInfoOnJoin(client);

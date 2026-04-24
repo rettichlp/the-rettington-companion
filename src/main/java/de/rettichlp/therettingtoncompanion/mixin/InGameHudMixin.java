@@ -1,5 +1,9 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
+import de.rettichlp.therettingtoncompanion.common.gui.widgets.NotificationWidget;
+import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.AbstractProgressTextWidget;
+import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.AbstractWidget;
+import de.rettichlp.therettingtoncompanion.common.models.Notification;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -25,6 +29,8 @@ import java.util.SequencedCollection;
 import java.util.function.Predicate;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.renderService;
 import static net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.entity.EquipmentSlot.CHEST;
 import static net.minecraft.entity.EquipmentSlot.FEET;
@@ -57,6 +63,24 @@ public abstract class InGameHudMixin {
                                              PlayerEntity player,
                                              ItemStack stack,
                                              int seed);
+
+    @Inject(method = "renderMainHud", at = @At("TAIL"))
+    private void trc$renderMainHudTail(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+        // render notification widgets
+        List<NotificationWidget> notificationWidgets = notificationService.getVisibleNotifications().stream()
+                .map(Notification::toWidget)
+                .toList();
+
+        for (int i = 0; i < notificationWidgets.size(); i++) {
+            AbstractProgressTextWidget<?> abstractProgressTextWidget = notificationWidgets.get(i);
+            int x = MinecraftClient.getInstance().getWindow().getScaledWidth() - abstractProgressTextWidget.getWidth() - 4;
+            int y = 19 * i + 4;
+            abstractProgressTextWidget.draw(context, x, y, AbstractWidget.Alignment.RIGHT);
+        }
+
+        // render widgets
+        renderService.getWidgets().forEach(abstractWidget -> abstractWidget.draw(context));
+    }
 
     @Inject(method = "renderHotbar", at = @At("TAIL"))
     private void trc$renderHotbarTail(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
