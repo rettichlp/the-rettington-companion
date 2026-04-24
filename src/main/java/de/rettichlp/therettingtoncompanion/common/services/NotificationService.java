@@ -64,29 +64,4 @@ public class NotificationService {
                 .sorted(Comparator.comparing(Notification::getTimestamp))
                 .toList();
     }
-
-    @Data
-    public static class Notification {
-
-        private final UUID id = randomUUID();
-        private final Supplier<Text> textSupplier;
-        private final long durationInMillis;
-        private final LocalDateTime timestamp = now();
-        private Color borderColor = WHITE;
-        private Color backgroundColor = renderService.getSecondaryColor(WHITE);
-
-        @Override
-        public int hashCode() {
-            return hash(this.id, this.textSupplier, this.durationInMillis, this.timestamp, this.borderColor, this.backgroundColor);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            return nonNull(o) && o instanceof Notification that && Objects.equals(this.id, that.id);
-        }
-
-        public NotificationWidget toWidget() {
-            return new NotificationWidget(this.getTextSupplier().get(), this.borderColor, this.timestamp, this.durationInMillis);
-        }
-    }
 }
