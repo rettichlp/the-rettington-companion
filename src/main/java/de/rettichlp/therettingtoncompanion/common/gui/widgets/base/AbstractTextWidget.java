@@ -36,12 +36,12 @@ public abstract class AbstractTextWidget<C extends WidgetConfiguration> extends 
         drawContext.drawText(getTextRenderer(), text(), x + TEXT_BOX_PADDING, y + TEXT_BOX_PADDING, 0xFFFFFFFF, false);
     }
 
-    public Color getBorderColor() {
+    public Color getColor() {
         return WHITE;
     }
 
     public Color getBackgroundColor() {
-        return renderService.getSecondaryColor(getBorderColor());
+        return renderService.getSecondaryColor(getColor());
     }
 
     protected MutableText keyValue(String key, String value) {

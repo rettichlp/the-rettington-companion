@@ -16,6 +16,7 @@
   "trc.message.auto_restock.tool_durability_warning": "%s has %d uses left",
   "trc.notification.screenshot_created": "Screenshot created! Uploading...",
   "trc.notification.screenshot_uploaded": "Screenshot uploaded! Link copied to clipboard.",
+  "trc.notification.configuration_not_loaded": "Could not load configuration for widget %s",
   "trc.option.chat.optimized_chat_size.description": "Increases the chat box size to better fit longer messages.",
   "trc.option.chat.optimized_chat_size.title": "Optimized chat size",
   "trc.option.chat.section.general.title": "General",
