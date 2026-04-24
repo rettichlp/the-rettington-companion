@@ -1,6 +1,7 @@
 package de.rettichlp.therettingtoncompanion.common.services;
 
 import de.rettichlp.therettingtoncompanion.common.models.Notification;
+import lombok.Getter;
 import net.minecraft.text.Text;
 
 import java.awt.Color;
@@ -17,6 +18,7 @@ import static java.util.Comparator.comparing;
 
 public class NotificationService {
 
+    @Getter
     private final Set<Notification> notifications = new HashSet<>();
 
     public void sendSuccessNotification(Text text) {

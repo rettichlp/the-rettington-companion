@@ -1,9 +1,11 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
+import de.rettichlp.therettingtoncompanion.TheRettingtonCompanionApi;
 import de.rettichlp.therettingtoncompanion.common.gui.widgets.NotificationWidget;
 import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.AbstractProgressTextWidget;
 import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.AbstractWidget;
 import de.rettichlp.therettingtoncompanion.common.models.Notification;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -26,8 +28,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.SequencedCollection;
+import java.util.Set;
 import java.util.function.Predicate;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.renderService;
@@ -67,6 +71,14 @@ public abstract class InGameHudMixin {
     @Inject(method = "renderMainHud", at = @At("TAIL"))
     private void trc$renderMainHudTail(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         // render notification widgets
+        FabricLoader.getInstance() // load notifications from other mods
+                .getEntrypointContainers(MOD_ID + ":notifications", TheRettingtonCompanionApi.class)
+                .forEach(entrypointContainer -> {
+                    TheRettingtonCompanionApi entrypoint = entrypointContainer.getEntrypoint();
+                    Set<Notification> externalNotifications = entrypoint.getNotifications();
+                    notificationService.getNotifications().addAll(externalNotifications);
+                });
+
         List<NotificationWidget> notificationWidgets = notificationService.getVisibleNotifications().stream()
                 .map(Notification::toWidget)
                 .toList();
