@@ -42,7 +42,7 @@
   "trc.option.visuals.show_armor_hud.title": "Show Armor HUD",
   "trc.option.visuals.show_arrow_hud.description": "Toggles the display of the number of arrows in your inventory on the screen.",
   "trc.option.visuals.show_arrow_hud.title": "Show Arrow HUD",
-  "trc.option.visuals.title": "Overlay",
+  "trc.option.visuals.title": "Visuals",
   "trc.option.visuals.visible_equipment_model.description": "Hides equipment models from yourself and from other players.",
   "trc.option.visuals.visible_equipment_model.title": "Visible equipment models",
   "trc.option.visuals.day_time_value.title": "Day time value",

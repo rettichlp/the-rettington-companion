@@ -65,16 +65,7 @@ public class VisualsConfiguration {
         private final int timeValue;
 
         public Text getDisplayName() {
-            if (this == DT_OFF) {
-                return OFF;
-            }
-
-            return literal(String.valueOf(this.timeValue));
-        }
-
-        public DayTimeValue next() {
-            int nextOrdinal = ordinal() + 1;
-            return values()[nextOrdinal % values().length];
+            return this == DT_OFF ? OFF : literal(String.valueOf(this.timeValue));
         }
     }
 

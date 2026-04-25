@@ -37,7 +37,7 @@ public class VisualsOptionTab extends AbstractOptionTab {
                 configuration.visuals().isShowArrowHud(),
                 value -> configuration.visuals().setShowArrowHud(value));
 
-        CyclingButtonEntry<VisualsConfiguration.EquipmentModelVisibility> visibleEquipmentModelEntry = new CyclingButtonEntry<VisualsConfiguration.EquipmentModelVisibility>(
+        CyclingButtonEntry<VisualsConfiguration.EquipmentModelVisibility> visibleEquipmentModelEntry = new CyclingButtonEntry<>(
                 translatable("trc.option.visuals.visible_equipment_model.title"),
                 translatable("trc.option.visuals.visible_equipment_model.description"),
                 configuration.visuals().getEquipmentModelVisibility(),
@@ -45,7 +45,7 @@ public class VisualsOptionTab extends AbstractOptionTab {
                 VisualsConfiguration.EquipmentModelVisibility::getDisplayName,
                 equipmentModelVisibility -> configuration.visuals().setEquipmentModelVisibility(equipmentModelVisibility));
 
-        CyclingButtonEntry<VisualsConfiguration.DayTimeValue> dayTimeValueEntry = new CyclingButtonEntry<VisualsConfiguration.DayTimeValue>(
+        CyclingButtonEntry<VisualsConfiguration.DayTimeValue> dayTimeValueEntry = new CyclingButtonEntry<>(
                 translatable("trc.option.visuals.day_time_value.title"),
                 translatable("trc.option.visuals.day_time_value.description"),
                 configuration.visuals().getDayTimeValue(),
