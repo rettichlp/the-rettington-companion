@@ -6,10 +6,14 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
+import org.jspecify.annotations.NonNull;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Pattern;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
@@ -28,9 +32,18 @@ public class ModUtils {
             .registerTypeAdapter(Pattern.class, (JsonSerializer<Pattern>) (src, typeOfSrc, context) -> new JsonPrimitive(src.pattern()))
             .create();
 
-    public static String getVersionString() {
+    public static @NonNull String getVersionString() {
         return FabricLoader.getInstance().getModContainer(MOD_ID)
                 .map(modContainer -> modContainer.getMetadata().getVersion().getFriendlyString())
                 .orElseThrow(() -> new NullPointerException("Cannot find version"));
+    }
+
+    public static void delayedAction(Runnable runnable, long milliseconds) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                MinecraftClient.getInstance().execute(runnable);
+            }
+        }, milliseconds);
     }
 }
