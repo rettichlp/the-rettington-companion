@@ -5,14 +5,15 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.util.Formatting;
 
+import java.awt.Color;
 import java.util.function.Consumer;
 
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
 import static net.minecraft.text.Text.translatable;
 
-public class ColorReturningSelectionPopupScreen extends AbstractReturningSelectionPopupScreen<Formatting> {
+public class ColorReturningSelectionPopupScreen extends AbstractReturningSelectionPopupScreen<Color> {
 
-    public ColorReturningSelectionPopupScreen(Screen parent, Consumer<Formatting> onClose) {
+    public ColorReturningSelectionPopupScreen(Screen parent, Consumer<Color> onClose) {
         super(parent, onClose, translatable("trc.option.chat.message_patterns.popup.color.title"));
     }
 
@@ -27,10 +28,12 @@ public class ColorReturningSelectionPopupScreen extends AbstractReturningSelecti
                 continue;
             }
 
+            Color color = new Color(value.getColorValue());
+
             if (rowLength < 8) {
-                firstRow.add(new ColorButtonWidget(30, 20, value, this::onReturn));
+                firstRow.add(new ColorButtonWidget(30, 20, color, this::onReturn));
             } else {
-                secondRow.add(new ColorButtonWidget(30, 20, value, this::onReturn));
+                secondRow.add(new ColorButtonWidget(30, 20, color, this::onReturn));
             }
 
             rowLength++;

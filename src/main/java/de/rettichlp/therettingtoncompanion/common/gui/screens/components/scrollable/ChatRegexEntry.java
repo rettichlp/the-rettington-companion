@@ -13,7 +13,6 @@ import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.client.input.CharInput;
 import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.MutableText;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import java.awt.Color;
@@ -69,13 +68,13 @@ public class ChatRegexEntry extends ScrollableListEntry {
         this.buttonWidgetEnabled.setWidth(30);
 
         // Button: Colour
-        Formatting currentColourValue = this.editable ? this.chatRegex.getColor() : defaultChatRegex.getColor();
-        this.buttonWidgetColour = new ColorButtonWidget(20, 20, currentColourValue, formatting -> {
-            ColorReturningSelectionPopupScreen colorSelectionPopupScreen = new ColorReturningSelectionPopupScreen(this.client.currentScreen, color -> {
+        Color currentColourValue = this.editable ? this.chatRegex.getColor() : defaultChatRegex.getColor();
+        this.buttonWidgetColour = new ColorButtonWidget(20, 20, currentColourValue, color -> {
+            ColorReturningSelectionPopupScreen colorSelectionPopupScreen = new ColorReturningSelectionPopupScreen(this.client.currentScreen, color1 -> {
                 if (this.editable) {
-                    this.chatRegex.setColor(color);
+                    this.chatRegex.setColor(color1);
                 } else {
-                    defaultChatRegex.setColor(color);
+                    defaultChatRegex.setColor(color1);
                 }
             });
 

@@ -7,8 +7,8 @@ import lombok.experimental.Accessors;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.awt.Color.GREEN;
 import static net.minecraft.sound.SoundEvents.BLOCK_NOTE_BLOCK_BELL;
-import static net.minecraft.util.Formatting.GREEN;
 
 @Data
 public class ChatConfiguration {
