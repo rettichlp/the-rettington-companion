@@ -101,22 +101,24 @@ public abstract class InGameHudMixin {
         renderService.getWidgets().forEach(abstractWidget -> abstractWidget.draw(context));
 
         // render empty inventory space text
-        long emptySlotAmount = player.getInventory().getMainStacks().stream()
-                .filter(ItemStack::isEmpty)
-                .count();
+        if (configuration.visuals().isShowEmptyInventorySlotCount()) {
+            long emptySlotAmount = player.getInventory().getMainStacks().stream()
+                    .filter(ItemStack::isEmpty)
+                    .count();
 
-        Text text = literal(String.valueOf(emptySlotAmount));
+            Text text = literal(String.valueOf(emptySlotAmount));
 
-        int textWidth = getTextRenderer().getWidth(text);
-        int x = (context.getScaledWindowWidth() - textWidth) / 2;
-        int y = context.getScaledWindowHeight() - 46;
+            int textWidth = getTextRenderer().getWidth(text);
+            int x = (context.getScaledWindowWidth() - textWidth) / 2;
+            int y = context.getScaledWindowHeight() - 46;
 
-        context.drawText(getTextRenderer(), text, x + 1, y, -16777216, false);
-        context.drawText(getTextRenderer(), text, x - 1, y, -16777216, false);
-        context.drawText(getTextRenderer(), text, x, y + 1, -16777216, false);
-        context.drawText(getTextRenderer(), text, x, y - 1, -16777216, false);
+            context.drawText(getTextRenderer(), text, x + 1, y, -16777216, false);
+            context.drawText(getTextRenderer(), text, x - 1, y, -16777216, false);
+            context.drawText(getTextRenderer(), text, x, y + 1, -16777216, false);
+            context.drawText(getTextRenderer(), text, x, y - 1, -16777216, false);
 
-        context.drawText(getTextRenderer(), text, x, y, configuration.visuals().getExperienceLevelColor(), false);
+            context.drawText(getTextRenderer(), text, x, y, configuration.visuals().getExperienceLevelColor(), false);
+        }
     }
 
     @Inject(method = "renderHotbar", at = @At("TAIL"))

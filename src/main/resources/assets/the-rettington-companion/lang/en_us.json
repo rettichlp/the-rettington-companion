@@ -51,6 +51,8 @@
   "trc.option.visuals.weather_value.description": "Sets the weather in the world to a fixed value (only client-side).",
   "trc.option.visuals.experience_level_color.title": "Experience level color",
   "trc.option.visuals.experience_level_color.description": "Changes the color of the experience level above the bar.",
+  "trc.option.visuals.show_empty_inventory_slot_count.title": "Show empty inventory slot count",
+  "trc.option.visuals.show_empty_inventory_slot_count.description": "Toggles the display of the number of empty inventory slots on the screen.",
   "trc.weather_value.clear": "Clear",
   "trc.weather_value.rain": "Rain",
   "trc.weather_value.thunder": "Rain & thunder"

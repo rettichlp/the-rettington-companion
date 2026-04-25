@@ -67,6 +67,12 @@ public class VisualsOptionTab extends AbstractOptionTab {
                 translatable("trc.option.visuals.experience_level_color.description"),
                 color -> configuration.visuals().setExperienceLevelColor(color.getRGB()));
 
-        return List.of(showArmorHudEntry, showArrowHudEntry, visibleEquipmentModelEntry, dayTimeValueEntry, weatherValueEntry, experienceLevelColorEntry);
+        ToggleButtonEntry showEmptyInventorySlotCount = new ToggleButtonEntry(
+                translatable("trc.option.visuals.show_empty_inventory_slot_count.title"),
+                translatable("trc.option.visuals.show_empty_inventory_slot_count.description"),
+                configuration.visuals().isShowEmptyInventorySlotCount(),
+                value -> configuration.visuals().setShowEmptyInventorySlotCount(value));
+
+        return List.of(showArmorHudEntry, showArrowHudEntry, visibleEquipmentModelEntry, dayTimeValueEntry, weatherValueEntry, experienceLevelColorEntry, showEmptyInventorySlotCount);
     }
 }
