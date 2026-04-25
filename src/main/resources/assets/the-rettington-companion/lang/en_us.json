@@ -46,5 +46,10 @@
   "trc.option.visuals.visible_equipment_model.description": "Hides equipment models from yourself and from other players.",
   "trc.option.visuals.visible_equipment_model.title": "Visible equipment models",
   "trc.option.visuals.day_time_value.title": "Day time value",
-  "trc.option.visuals.day_time_value.description": "Sets the time of day in the world to a fixed value (only client-side)."
+  "trc.option.visuals.day_time_value.description": "Sets the time of day in the world to a fixed value (only client-side).",
+  "trc.option.visuals.weather_value.title": "Weather value",
+  "trc.option.visuals.weather_value.description": "Sets the weather in the world to a fixed value (only client-side).",
+  "trc.weather_value.clear": "Clear",
+  "trc.weather_value.rain": "Rain",
+  "trc.weather_value.thunder": "Rain & thunder"
 }

@@ -53,6 +53,14 @@ public class VisualsOptionTab extends AbstractOptionTab {
                 VisualsConfiguration.DayTimeValue::getDisplayName,
                 dayTimeValue -> configuration.visuals().setDayTimeValue(dayTimeValue));
 
-        return List.of(showArmorHudEntry, showArrowHudEntry, visibleEquipmentModelEntry, dayTimeValueEntry);
+        CyclingButtonEntry<VisualsConfiguration.WeatherValue> weatherValueEntry = new CyclingButtonEntry<>(
+                translatable("trc.option.visuals.weather_value.title"),
+                translatable("trc.option.visuals.weather_value.description"),
+                configuration.visuals().getWeatherValue(),
+                List.of(VisualsConfiguration.WeatherValue.values()),
+                VisualsConfiguration.WeatherValue::getDisplayName,
+                weatherValue -> configuration.visuals().setWeatherValue(weatherValue));
+
+        return List.of(showArmorHudEntry, showArrowHudEntry, visibleEquipmentModelEntry, dayTimeValueEntry, weatherValueEntry);
     }
 }
