@@ -19,6 +19,11 @@ repositories {
         name = "Terraformers"
         url = "https://maven.terraformersmc.com/"
     }
+
+    maven {
+        name = "Xaero's Maven"
+        url = "https://chocolateminecraft.com/maven"
+    }
 }
 
 dependencies {
@@ -44,6 +49,9 @@ dependencies {
 
     // https://github.com/TerraformersMC/ModMenu
     modCompileOnly("com.terraformersmc:modmenu:${project.modmenu_version}")
+
+    // https://modrinth.com/mod/xaeros-minimap
+    modCompileOnly("xaero.minimap:xaerominimap-fabric-${project.minecraft_version}:${project.xaerominimap_version}")
 }
 
 processResources {
