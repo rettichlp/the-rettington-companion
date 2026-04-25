@@ -14,24 +14,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.concurrent.CompletableFuture;
 
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
-import static de.rettichlp.therettingtoncompanion.common.registry.Registry.SCREENSHOT_KEY;
-import static de.rettichlp.therettingtoncompanion.common.utils.ScreenshotUtils.takeScreenshot;
-import static de.rettichlp.therettingtoncompanion.common.utils.ScreenshotUtils.uploadImageToImgur;
-import static java.awt.Color.CYAN;
-import static net.minecraft.text.Text.translatable;
-
-import java.util.concurrent.CompletableFuture;
-
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
-import static de.rettichlp.therettingtoncompanion.common.registry.Registry.SCREENSHOT_KEY;
-import static de.rettichlp.therettingtoncompanion.common.utils.ScreenshotUtils.takeScreenshot;
-import static de.rettichlp.therettingtoncompanion.common.utils.ScreenshotUtils.uploadImageToImgur;
-import static java.awt.Color.CYAN;
-import static net.minecraft.text.Text.translatable;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.EQUIPMENT_MODEL_VISIBILITY_KEY;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.GAMMA_PRESET_KEY;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.SCREENSHOT_KEY;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
+import static de.rettichlp.therettingtoncompanion.common.utils.ScreenshotUtils.takeScreenshot;
+import static de.rettichlp.therettingtoncompanion.common.utils.ScreenshotUtils.uploadImageToImgur;
+import static java.awt.Color.CYAN;
+import static net.minecraft.text.Text.translatable;
 @Mixin(Keyboard.class)
 public abstract class KeyboardMixin {
 
