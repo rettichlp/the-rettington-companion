@@ -25,7 +25,7 @@ public class ColorButtonEntry extends NamedEntry {
             ColorReturningSelectionPopupScreen colorReturningSelectionPopupScreen = new ColorReturningSelectionPopupScreen(this.client.currentScreen, color1 -> {
                 onChange.accept(color1);
                 this.colorButtonWidget.updateColor(color1);
-            });
+            }, currentColourValue);
             this.client.setScreen(colorReturningSelectionPopupScreen);
         });
         this.colorButtonWidget.setTooltip(Tooltip.of(tooltip));

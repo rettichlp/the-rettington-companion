@@ -77,7 +77,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
                     defaultChatRegex.setColor(color1);
                 }
                 this.buttonWidgetColour.updateColor(color1);
-            });
+            }, currentColourValue);
 
             this.client.setScreen(colorSelectionPopupScreen);
         });
