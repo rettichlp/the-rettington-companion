@@ -2,6 +2,7 @@ package de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs;
 
 import de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ScrollableListEntry;
+import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.named.ColorButtonEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.named.CyclingButtonEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.named.ToggleButtonEntry;
 import net.minecraft.text.Text;
@@ -61,6 +62,11 @@ public class VisualsOptionTab extends AbstractOptionTab {
                 VisualsConfiguration.WeatherValue::getDisplayName,
                 weatherValue -> configuration.visuals().setWeatherValue(weatherValue));
 
-        return List.of(showArmorHudEntry, showArrowHudEntry, visibleEquipmentModelEntry, dayTimeValueEntry, weatherValueEntry);
+        ColorButtonEntry experienceLevelColorEntry = new ColorButtonEntry(
+                translatable("trc.option.visuals.experience_level_color.title"),
+                translatable("trc.option.visuals.experience_level_color.description"),
+                color -> configuration.visuals().setExperienceLevelColor(color.getRGB()));
+
+        return List.of(showArmorHudEntry, showArrowHudEntry, visibleEquipmentModelEntry, dayTimeValueEntry, weatherValueEntry, experienceLevelColorEntry);
     }
 }

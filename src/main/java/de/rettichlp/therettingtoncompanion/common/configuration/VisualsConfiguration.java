@@ -24,6 +24,7 @@ public class VisualsConfiguration {
     private EquipmentModelVisibility equipmentModelVisibility = ALL;
     private DayTimeValue dayTimeValue = DT_OFF;
     private WeatherValue weatherValue = W_OFF;
+    private int experienceLevelColor = -8323296;
 
     @Getter
     @AllArgsConstructor
