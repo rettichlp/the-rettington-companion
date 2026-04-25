@@ -110,7 +110,7 @@ public abstract class ChatHudMixin {
         String timeString = now.format(ofPattern("HH:mm:ss "));
         String dateString = now.format(ofPattern("dd.MM.yyyy"));
 
-        return empty().setStyle(originalMessage.getStyle())
+        return empty()
                 .append(literal(timeString).styled(style -> style
                         .withFormatting(DARK_GRAY)
                         .withHoverEvent(new HoverEvent.ShowText(literal(dateString)))))
