@@ -1,3 +1,5 @@
+import static org.gradle.api.JavaVersion.VERSION_21
+
 plugins {
     id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
     id 'maven-publish'
@@ -41,7 +43,7 @@ dependencies {
     annotationProcessor("org.atteo.classindex:classindex:3.13")
 
     // https://github.com/TerraformersMC/ModMenu
-    modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+    modCompileOnly("com.terraformersmc:modmenu:${project.modmenu_version}")
 }
 
 processResources {
@@ -62,8 +64,8 @@ java {
     // If you remove this line, sources will not be generated.
     withSourcesJar()
 
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = VERSION_21
+    targetCompatibility = VERSION_21
 }
 
 jar {
