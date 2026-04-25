@@ -10,10 +10,14 @@ import static net.minecraft.text.Text.empty;
 
 public class ColorButtonWidget extends ButtonWidget {
 
-    private final Color color;
+    private Color color;
 
     public ColorButtonWidget(int width, int height, Color color, Consumer<Color> onPressed) {
         super(0, 0, width, height, empty(), button -> onPressed.accept(color), textSupplier -> empty());
+        this.color = color;
+    }
+
+    public void updateColor(Color color) {
         this.color = color;
     }
 

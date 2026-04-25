@@ -36,7 +36,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
 
     private final TextFieldWidget textFieldWidgetRegex; // regex input
     private final ButtonWidget buttonWidgetEnabled; // activate/deactivate
-    private final ColorButtonWidget buttonWidgetColour; // colour select
+    private ColorButtonWidget buttonWidgetColour = null; // colour select (not final and null for dynamic color update)
     private final ButtonWidget buttonWidgetSoundIdentifier;
     private final TextWidget textWidgetPriority; // priority display
     private final ButtonWidget buttonWidgetPriorityIncrease; // increase priority
@@ -76,6 +76,7 @@ public class ChatRegexEntry extends ScrollableListEntry {
                 } else {
                     defaultChatRegex.setColor(color1);
                 }
+                this.buttonWidgetColour.updateColor(color1);
             });
 
             this.client.setScreen(colorSelectionPopupScreen);
