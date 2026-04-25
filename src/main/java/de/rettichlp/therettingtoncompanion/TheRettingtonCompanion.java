@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import static net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.registerKeyBinding;
 import static net.minecraft.client.util.InputUtil.Type.KEYSYM;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_G;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_H;
 
@@ -39,6 +40,7 @@ public class TheRettingtonCompanion implements ModInitializer {
     public static final KeyBinding.Category KEY_CATEGORY = KeyBinding.Category.create(Identifier.of(MOD_ID, "trc.key.category.name"));
     public static final KeyBinding GAMMA_PRESET_KEY = registerKeyBinding(new KeyBinding("trc.key.gamma_preset", KEYSYM, GLFW_KEY_G, KEY_CATEGORY));
     public static final KeyBinding EQUIPMENT_MODEL_VISIBILITY_KEY = registerKeyBinding(new KeyBinding("trc.key.hide_armor", KEYSYM, GLFW_KEY_H, KEY_CATEGORY));
+    public static final KeyBinding SCREENSHOT_KEY = registerKeyBinding(new KeyBinding("trc.key.screenshot", KEYSYM, GLFW_KEY_F12, KEY_CATEGORY));
 
     public static ClientPlayerEntity player;
 
