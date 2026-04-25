@@ -49,6 +49,8 @@
   "trc.option.visuals.day_time_value.description": "Sets the time of day in the world to a fixed value (only client-side).",
   "trc.option.visuals.weather_value.title": "Weather value",
   "trc.option.visuals.weather_value.description": "Sets the weather in the world to a fixed value (only client-side).",
+  "trc.option.visuals.experience_level_color.title": "Experience level colour",
+  "trc.option.visuals.experience_level_color.description": "Changes the colour of the experience level above the bar.",
   "trc.weather_value.clear": "Clear",
   "trc.weather_value.rain": "Rain",
   "trc.weather_value.thunder": "Rain & thunder"
