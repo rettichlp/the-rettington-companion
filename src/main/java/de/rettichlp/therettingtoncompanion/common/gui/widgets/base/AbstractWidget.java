@@ -18,6 +18,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notific
 import static de.rettichlp.therettingtoncompanion.common.utils.ModUtils.GSON;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
+import static net.minecraft.text.Text.translatable;
 
 @Getter
 public abstract class AbstractWidget<C extends WidgetConfiguration> {
@@ -91,7 +92,7 @@ public abstract class AbstractWidget<C extends WidgetConfiguration> {
                 this.widgetConfiguration.setX(getDefaultX());
                 this.widgetConfiguration.setY(getDefaultY());
             } catch (Exception e) {
-                notificationService.sendErrorNotification("Konfiguration konnte nicht geladen werden");
+                notificationService.sendErrorNotification(translatable("trc.notification.configuration_not_loaded", translatable(registryName)));
                 LOGGER.error("Could not load configuration for widget {}", registryName, e);
             }
 

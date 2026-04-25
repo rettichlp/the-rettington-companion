@@ -47,7 +47,7 @@ public class ScreenshotUtils {
 
         File screenshotFile = new File(screenshotsDirectory, getScreenshotFileName(screenshotsDirectory));
         saveScreenshot(client.runDirectory, IMGUR_SCREENSHOT_DIRECTORY + "/" + screenshotFile.getName(), client.getFramebuffer(), 1, text -> {
-            notificationService.sendNotification(() -> translatable("trc.notification.screenshot_created"), WHITE, 5000);
+            notificationService.sendNotification(translatable("trc.notification.screenshot_created"), WHITE, 5000);
             completableFuture.complete(screenshotFile);
         });
 

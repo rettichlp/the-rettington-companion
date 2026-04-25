@@ -46,7 +46,7 @@ public abstract class KeyboardMixin {
             delayedAction(() -> takeScreenshot().thenAccept(file -> {
                 CompletableFuture<String> futureImageLink = uploadImageToImgur(file.toPath());
                 futureImageLink.thenAccept(link -> {
-                    notificationService.sendNotification(() -> translatable("trc.notification.screenshot_uploaded"), CYAN, 5000);
+                    notificationService.sendNotification(translatable("trc.notification.screenshot_uploaded"), CYAN, 5000);
                     this.client.keyboard.setClipboard(link);
                 });
             }), 100);

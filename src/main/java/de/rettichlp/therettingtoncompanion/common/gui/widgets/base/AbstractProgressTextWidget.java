@@ -2,7 +2,9 @@ package de.rettichlp.therettingtoncompanion.common.gui.widgets.base;
 
 import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
+import java.time.Duration;
 import java.time.temporal.Temporal;
 
 import static de.rettichlp.therettingtoncompanion.common.services.RenderService.TEXT_BOX_PADDING;
@@ -21,14 +23,14 @@ public abstract class AbstractProgressTextWidget<C extends WidgetConfiguration> 
         int xProgressStart = (int) (x + TEXT_BOX_PADDING + maxProgressWidth * progress());
         int xProgressEnd = x + getWidth() - TEXT_BOX_PADDING;
 
-        drawContext.drawHorizontalLine(xProgressStart, xProgressEnd, y + getHeight() - 3, getBorderColor().getRGB());
+        drawContext.drawHorizontalLine(xProgressStart, xProgressEnd, y + getHeight() - 3, getColor().getRGB());
     }
 
     public abstract double progress();
 
-    protected double calculateProgress(Temporal creationTime, long durationInMillis) {
-        long elapsedMillis = between(creationTime, now()).toMillis();
-        double progress = (double) elapsedMillis / durationInMillis;
+    protected double calculateProgress(Temporal creationTime, @NonNull Duration duration) {
+        Duration elapsed = between(creationTime, now());
+        double progress = (double) elapsed.toMillis() / duration.toMillis();
         return clamp(progress, 0.0, 1.0);
     }
 }
