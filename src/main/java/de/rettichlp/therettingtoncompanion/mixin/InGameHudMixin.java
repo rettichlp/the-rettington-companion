@@ -3,7 +3,7 @@ package de.rettichlp.therettingtoncompanion.mixin;
 import de.rettichlp.therettingtoncompanion.common.gui.widgets.NotificationWidget;
 import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.AbstractProgressTextWidget;
 import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.AbstractWidget;
-import de.rettichlp.therettingtoncompanion.common.models.Notification;
+import de.rettichlp.therettingtoncompanion.common.services.NotificationService;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -67,8 +67,8 @@ public abstract class InGameHudMixin {
     @Inject(method = "renderMainHud", at = @At("TAIL"))
     private void trc$renderMainHudTail(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         // render notification widgets
-        List<NotificationWidget> notificationWidgets = notificationService.getVisibleNotifications().stream()
-                .map(Notification::toWidget)
+        List<NotificationWidget> notificationWidgets = notificationService.getActiveNotifications().stream()
+                .map(NotificationService.Notification::toWidget)
                 .toList();
 
         for (int i = 0; i < notificationWidgets.size(); i++) {
