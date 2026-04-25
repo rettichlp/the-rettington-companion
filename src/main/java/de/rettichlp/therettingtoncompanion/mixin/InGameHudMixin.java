@@ -72,7 +72,7 @@ public abstract class InGameHudMixin {
     private void trc$renderMainHudTail(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         // render notification widgets
         FabricLoader.getInstance() // load notifications from other mods
-                .getEntrypointContainers(MOD_ID + ":notifications", TheRettingtonCompanionApi.class)
+                .getEntrypointContainers(MOD_ID, TheRettingtonCompanionApi.class)
                 .forEach(entrypointContainer -> {
                     TheRettingtonCompanionApi entrypoint = entrypointContainer.getEntrypoint();
                     Set<Notification> externalNotifications = entrypoint.getNotifications();
