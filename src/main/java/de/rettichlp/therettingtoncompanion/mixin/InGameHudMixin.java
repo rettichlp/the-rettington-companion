@@ -7,6 +7,7 @@ import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.AbstractWidge
 import de.rettichlp.therettingtoncompanion.common.models.Notification;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -14,6 +15,7 @@ import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.Window;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
@@ -34,6 +36,7 @@ import java.util.function.Predicate;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.renderService;
 import static net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.entity.EquipmentSlot.CHEST;
@@ -43,6 +46,7 @@ import static net.minecraft.entity.EquipmentSlot.LEGS;
 import static net.minecraft.item.Items.ARROW;
 import static net.minecraft.item.Items.SPECTRAL_ARROW;
 import static net.minecraft.item.Items.TIPPED_ARROW;
+import static net.minecraft.text.Text.literal;
 import static net.minecraft.util.Arm.RIGHT;
 
 @Mixin(InGameHud.class)
@@ -58,6 +62,9 @@ public abstract class InGameHudMixin {
     @Shadow
     @Final
     private static Identifier HOTBAR_OFFHAND_LEFT_TEXTURE;
+
+    @Shadow
+    public abstract TextRenderer getTextRenderer();
 
     @Shadow
     protected abstract void renderHotbarItem(DrawContext context,
@@ -92,6 +99,24 @@ public abstract class InGameHudMixin {
 
         // render widgets
         renderService.getWidgets().forEach(abstractWidget -> abstractWidget.draw(context));
+
+        // render empty inventory space text
+        long emptySlotAmount = player.getInventory().getMainStacks().stream()
+                .filter(ItemStack::isEmpty)
+                .count();
+
+        Text text = literal(String.valueOf(emptySlotAmount));
+
+        int textWidth = getTextRenderer().getWidth(text);
+        int x = (context.getScaledWindowWidth() - textWidth) / 2;
+        int y = context.getScaledWindowHeight() - 46;
+
+        context.drawText(getTextRenderer(), text, x + 1, y, -16777216, false);
+        context.drawText(getTextRenderer(), text, x - 1, y, -16777216, false);
+        context.drawText(getTextRenderer(), text, x, y + 1, -16777216, false);
+        context.drawText(getTextRenderer(), text, x, y - 1, -16777216, false);
+
+        context.drawText(getTextRenderer(), text, x, y, configuration.visuals().getExperienceLevelColor(), false);
     }
 
     @Inject(method = "renderHotbar", at = @At("TAIL"))
