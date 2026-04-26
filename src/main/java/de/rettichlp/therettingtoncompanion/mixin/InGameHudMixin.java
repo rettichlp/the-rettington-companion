@@ -64,6 +64,10 @@ public abstract class InGameHudMixin {
     private static Identifier HOTBAR_OFFHAND_LEFT_TEXTURE;
 
     @Shadow
+    @Final
+    private MinecraftClient client;
+
+    @Shadow
     public abstract TextRenderer getTextRenderer();
 
     @Shadow
@@ -112,10 +116,16 @@ public abstract class InGameHudMixin {
             int x = (context.getScaledWindowWidth() - textWidth) / 2;
             int y = context.getScaledWindowHeight() - 46;
 
-            context.drawText(getTextRenderer(), text, x + 1, y, -16777216, false);
-            context.drawText(getTextRenderer(), text, x - 1, y, -16777216, false);
-            context.drawText(getTextRenderer(), text, x, y + 1, -16777216, false);
-            context.drawText(getTextRenderer(), text, x, y - 1, -16777216, false);
+            if (this.client.interactionManager != null && !this.client.interactionManager.hasStatusBars()) {
+                y += 14;
+            }
+
+            boolean onlyFiveLeft = emptySlotAmount <= 5;
+
+            context.drawText(getTextRenderer(), text, x + 1, y, onlyFiveLeft ? -6946816 : -16777216, false);
+            context.drawText(getTextRenderer(), text, x - 1, y, onlyFiveLeft ? -6946816 : -16777216, false);
+            context.drawText(getTextRenderer(), text, x, y + 1, onlyFiveLeft ? -6946816 : -16777216, false);
+            context.drawText(getTextRenderer(), text, x, y - 1, onlyFiveLeft ? -6946816 : -16777216, false);
 
             context.drawText(getTextRenderer(), text, x, y, configuration.visuals().getExperienceLevelColor(), false);
         }
