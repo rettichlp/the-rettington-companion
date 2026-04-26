@@ -25,6 +25,7 @@ public class VisualsConfiguration {
     private DayTimeValue dayTimeValue = DT_OFF;
     private WeatherValue weatherValue = W_OFF;
     private int experienceLevelColor = -8323296;
+    private boolean showEmptyInventorySlotCount = false;
 
     @Getter
     @AllArgsConstructor
