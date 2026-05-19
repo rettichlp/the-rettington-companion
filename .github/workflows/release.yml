@@ -28,19 +28,10 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Check version in gradle.properties
-      run: |
-        MOD_VERSION=$(grep "^mod_version=" gradle.properties | cut -d'=' -f2)
-        echo "Found mod version: $MOD_VERSION"
-        if [ "$MOD_VERSION" != "${{ inputs.version }}" ]; then
-          echo "Version mismatch! gradle.properties=$MOD_VERSION input=${{ inputs.version }}"
-          exit 1
-        fi
-
     - name: Set up JDK
       uses: actions/setup-java@v5
       with:
-        java-version: '23'
+        java-version: '25'
         distribution: 'temurin'
         cache: gradle
 
@@ -48,7 +39,7 @@ jobs:
       run: chmod +x ./gradlew
 
     - name: Build with Gradle
-      run: ./gradlew build --full-stacktrace
+      run: ./gradlew build --full-stacktrace -Pmod_version=${{ inputs.version }}
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v7
@@ -65,4 +56,5 @@ jobs:
             --target main \
             --repo="$GITHUB_REPOSITORY" \
             --title="The Rettington Companion $tag" \
-            --generate-notes
+            --generate-notes \
+            build/libs/*.jar
