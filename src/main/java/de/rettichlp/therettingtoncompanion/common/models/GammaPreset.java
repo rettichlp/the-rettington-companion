@@ -2,6 +2,7 @@ package de.rettichlp.therettingtoncompanion.common.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -44,14 +45,21 @@ public enum GammaPreset {
     }
 
     public void sendMessage() {
-        player.sendMessage(empty().formatted(this.color)
+        MutableText text = empty().formatted(this.color)
                 .append(literal("Gamma").formatted(GRAY))
                 .append(literal(": ").formatted(DARK_GRAY))
-                .append(this.displayName)
-                .append(literal(" (" + toPercent() + "%)")), true);
+                .append(this.displayName);
+
+        switch (this) {
+            case OWN_SETTING -> text.append(literal(" (" + toPercent(configuration.getOwnGammaValue()) + "%)"));
+            case MOODY, DEFAULT, BRIGHT, FULLBRIGHT_GAMMA -> text.append(literal(" (" + toPercent(this.gammaValue) + "%)"));
+            default -> {}
+        }
+
+        player.sendMessage(text, true);
     }
 
-    private int toPercent() {
-        return (int) (getGammaValue() * 100);
+    private int toPercent(double d) {
+        return (int) (d * 100);
     }
 }
