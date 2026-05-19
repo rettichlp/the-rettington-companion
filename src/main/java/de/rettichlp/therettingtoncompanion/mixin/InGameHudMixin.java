@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
@@ -168,6 +169,18 @@ public abstract class InGameHudMixin {
         if (!arrowItems.isEmpty() && configuration.visuals().isShowArrowHud()) {
             drawArrowHud(context, tickCounter, y, arrowItems);
         }
+    }
+
+    @ModifyVariable(method = "renderStatusBars", at = @At("STORE"), ordinal = 10)
+    private int trc$renderStatusBarsStore(int originalWert) {
+        // always render food
+        return 0;
+    }
+
+    @ModifyVariable(method = "renderMountHealth", at = @At("STORE"), ordinal = 4)
+    private int trc$renderMountHealthStore(int originalWert) {
+        // move mount health bar one row higher
+        return originalWert - 10;
     }
 
     @Unique
