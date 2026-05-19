@@ -56,13 +56,13 @@ public abstract class KeyboardMixin {
 
         // only with closed chat
         if (!this.client.inGameHud.getChatHud().isChatFocused()) {
-            if (EQUIPMENT_MODEL_VISIBILITY_KEY.wasPressed()) {
+            if (EQUIPMENT_MODEL_VISIBILITY_KEY.matchesKey(input)) {
                 VisualsConfiguration.EquipmentModelVisibility equipmentModelVisibility = configuration.visuals().getEquipmentModelVisibility().next();
                 configuration.visuals().setEquipmentModelVisibility(equipmentModelVisibility);
                 equipmentModelVisibility.sendMessage();
             }
 
-            if (GAMMA_PRESET_KEY.wasPressed()) {
+            if (GAMMA_PRESET_KEY.matchesKey(input)) {
                 GammaPreset newGammaPreset = configuration.getGammaPreset().next();
                 configuration.setGammaPreset(newGammaPreset);
                 newGammaPreset.sendMessage();
