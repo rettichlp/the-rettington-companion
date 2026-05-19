@@ -8,6 +8,7 @@ import net.minecraft.text.Text;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration.DayTimeValue.DT_OFF;
 import static de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration.EquipmentModelVisibility.ALL;
+import static de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration.WeatherValue.W_OFF;
 import static net.minecraft.screen.ScreenTexts.OFF;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.literal;
@@ -22,6 +23,9 @@ public class VisualsConfiguration {
     private boolean showArrowHud = true;
     private EquipmentModelVisibility equipmentModelVisibility = ALL;
     private DayTimeValue dayTimeValue = DT_OFF;
+    private WeatherValue weatherValue = W_OFF;
+    private int experienceLevelColor = -8323296;
+    private boolean showEmptyInventorySlotCount = false;
 
     @Getter
     @AllArgsConstructor
@@ -63,16 +67,19 @@ public class VisualsConfiguration {
         private final int timeValue;
 
         public Text getDisplayName() {
-            if (this == DT_OFF) {
-                return OFF;
-            }
-
-            return literal(String.valueOf(this.timeValue));
+            return this == DT_OFF ? OFF : literal(String.valueOf(this.timeValue));
         }
+    }
 
-        public DayTimeValue next() {
-            int nextOrdinal = ordinal() + 1;
-            return values()[nextOrdinal % values().length];
-        }
+    @Getter
+    @AllArgsConstructor
+    public enum WeatherValue {
+
+        W_OFF(OFF),
+        W_CLEAR(translatable("trc.weather_value.clear")),
+        W_RAIN(translatable("trc.weather_value.rain")),
+        W_THUNDER(translatable("trc.weather_value.thunder"));
+
+        private final Text displayName;
     }
 }

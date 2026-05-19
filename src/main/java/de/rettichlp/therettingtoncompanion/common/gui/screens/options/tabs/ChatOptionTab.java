@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static java.awt.Color.GREEN;
 import static net.minecraft.sound.SoundEvents.BLOCK_NOTE_BLOCK_BELL;
 import static net.minecraft.text.Text.literal;
 import static net.minecraft.text.Text.translatable;
-import static net.minecraft.util.Formatting.GREEN;
 
 public class ChatOptionTab extends AbstractOptionTab {
 

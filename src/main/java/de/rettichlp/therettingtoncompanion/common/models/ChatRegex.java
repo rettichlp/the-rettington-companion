@@ -2,9 +2,10 @@ package de.rettichlp.therettingtoncompanion.common.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import org.jspecify.annotations.NonNull;
 
+import java.awt.Color;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -20,8 +21,16 @@ public class ChatRegex {
     private String pattern;
     private Identifier soundIdentifier;
     private boolean active;
-    private Formatting color;
+    private int colorValue;
     private int priority;
+
+    public ChatRegex(String pattern, Identifier soundIdentifier, boolean active, @NonNull Color color, int priority) {
+        this.pattern = pattern;
+        this.soundIdentifier = soundIdentifier;
+        this.active = active;
+        this.colorValue = color.getRGB();
+        this.priority = priority;
+    }
 
     public boolean isValidPattern() {
         try {
@@ -44,9 +53,17 @@ public class ChatRegex {
     @Override
     public boolean equals(Object object) {
         return object instanceof ChatRegex chatRegex
-                && Objects.equals(this.pattern, chatRegex.pattern)
-                && this.active == chatRegex.active
-                && this.color == chatRegex.color
-                && this.priority == chatRegex.priority;
+                && Objects.equals(this.pattern, chatRegex.getPattern())
+                && this.active == chatRegex.isActive()
+                && this.colorValue == chatRegex.getColorValue()
+                && this.priority == chatRegex.getPriority();
+    }
+
+    public Color getColor() {
+        return new Color(this.colorValue);
+    }
+
+    public void setColor(@NonNull Color color) {
+        this.colorValue = color.getRGB();
     }
 }

@@ -1,6 +1,13 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
+import de.rettichlp.therettingtoncompanion.TheRettingtonCompanionApi;
+import de.rettichlp.therettingtoncompanion.common.gui.widgets.NotificationWidget;
+import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.AbstractProgressTextWidget;
+import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.AbstractWidget;
+import de.rettichlp.therettingtoncompanion.common.models.Notification;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -8,6 +15,7 @@ import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.Window;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
@@ -16,15 +24,21 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.SequencedCollection;
+import java.util.Set;
 import java.util.function.Predicate;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.renderService;
 import static net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.entity.EquipmentSlot.CHEST;
 import static net.minecraft.entity.EquipmentSlot.FEET;
@@ -33,6 +47,7 @@ import static net.minecraft.entity.EquipmentSlot.LEGS;
 import static net.minecraft.item.Items.ARROW;
 import static net.minecraft.item.Items.SPECTRAL_ARROW;
 import static net.minecraft.item.Items.TIPPED_ARROW;
+import static net.minecraft.text.Text.literal;
 import static net.minecraft.util.Arm.RIGHT;
 
 @Mixin(InGameHud.class)
@@ -50,6 +65,13 @@ public abstract class InGameHudMixin {
     private static Identifier HOTBAR_OFFHAND_LEFT_TEXTURE;
 
     @Shadow
+    @Final
+    private MinecraftClient client;
+
+    @Shadow
+    public abstract TextRenderer getTextRenderer();
+
+    @Shadow
     protected abstract void renderHotbarItem(DrawContext context,
                                              int x,
                                              int y,
@@ -57,6 +79,58 @@ public abstract class InGameHudMixin {
                                              PlayerEntity player,
                                              ItemStack stack,
                                              int seed);
+
+    @Inject(method = "renderMainHud", at = @At("TAIL"))
+    private void trc$renderMainHudTail(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+        // render notification widgets
+        FabricLoader.getInstance() // load notifications from other mods
+                .getEntrypointContainers(MOD_ID, TheRettingtonCompanionApi.class)
+                .forEach(entrypointContainer -> {
+                    TheRettingtonCompanionApi entrypoint = entrypointContainer.getEntrypoint();
+                    Set<Notification> externalNotifications = entrypoint.getNotifications();
+                    notificationService.getNotifications().addAll(externalNotifications);
+                });
+
+        List<NotificationWidget> notificationWidgets = notificationService.getVisibleNotifications().stream()
+                .map(Notification::toWidget)
+                .toList();
+
+        for (int i = 0; i < notificationWidgets.size(); i++) {
+            AbstractProgressTextWidget<?> abstractProgressTextWidget = notificationWidgets.get(i);
+            int x = MinecraftClient.getInstance().getWindow().getScaledWidth() - abstractProgressTextWidget.getWidth() - 4;
+            int y = 19 * i + 4;
+            abstractProgressTextWidget.draw(context, x, y, AbstractWidget.Alignment.RIGHT);
+        }
+
+        // render widgets
+        renderService.getWidgets().forEach(abstractWidget -> abstractWidget.draw(context));
+
+        // render empty inventory space text
+        if (configuration.visuals().isShowEmptyInventorySlotCount()) {
+            long emptySlotAmount = player.getInventory().getMainStacks().stream()
+                    .filter(ItemStack::isEmpty)
+                    .count();
+
+            Text text = literal(String.valueOf(emptySlotAmount));
+
+            int textWidth = getTextRenderer().getWidth(text);
+            int x = (context.getScaledWindowWidth() - textWidth) / 2;
+            int y = context.getScaledWindowHeight() - 46;
+
+            if (this.client.interactionManager != null && !this.client.interactionManager.hasStatusBars()) {
+                y += 14;
+            }
+
+            boolean onlyFiveLeft = emptySlotAmount <= 5;
+
+            context.drawText(getTextRenderer(), text, x + 1, y, onlyFiveLeft ? -6946816 : -16777216, false);
+            context.drawText(getTextRenderer(), text, x - 1, y, onlyFiveLeft ? -6946816 : -16777216, false);
+            context.drawText(getTextRenderer(), text, x, y + 1, onlyFiveLeft ? -6946816 : -16777216, false);
+            context.drawText(getTextRenderer(), text, x, y - 1, onlyFiveLeft ? -6946816 : -16777216, false);
+
+            context.drawText(getTextRenderer(), text, x, y, configuration.visuals().getExperienceLevelColor(), false);
+        }
+    }
 
     @Inject(method = "renderHotbar", at = @At("TAIL"))
     private void trc$renderHotbarTail(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
@@ -95,6 +169,18 @@ public abstract class InGameHudMixin {
         if (!arrowItems.isEmpty() && configuration.visuals().isShowArrowHud()) {
             drawArrowHud(context, tickCounter, y, arrowItems);
         }
+    }
+
+    @ModifyVariable(method = "renderStatusBars", at = @At("STORE"), ordinal = 10)
+    private int trc$renderStatusBarsStore(int originalWert) {
+        // always render food
+        return 0;
+    }
+
+    @ModifyVariable(method = "renderMountHealth", at = @At("STORE"), ordinal = 4)
+    private int trc$renderMountHealthStore(int originalWert) {
+        // move mount health bar one row higher
+        return originalWert - 10;
     }
 
     @Unique

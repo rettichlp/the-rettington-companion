@@ -3,7 +3,8 @@
   "package": "de.rettichlp.therettingtoncompanion.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ItemStackMixin"
+    "ItemStackMixin",
+    "WorldMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -12,12 +13,14 @@
     "requireAnnotations": true
   },
   "client": [
+    "BarMixin",
     "ChatHudMixin",
     "ClientWorldMixin",
     "EquipmentRendererMixin",
     "GameMenuScreenMixin",
     "HandledScreenMixin",
     "InGameHudMixin",
+    "KeyboardMixin",
     "LightmapTextureManagerMixin",
     "SimpleOptionMixin",
     "TitleScreenMixin"

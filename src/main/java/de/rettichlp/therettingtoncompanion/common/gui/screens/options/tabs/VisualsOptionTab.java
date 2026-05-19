@@ -2,6 +2,7 @@ package de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs;
 
 import de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ScrollableListEntry;
+import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.named.ColorButtonEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.named.CyclingButtonEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.named.ToggleButtonEntry;
 import net.minecraft.text.Text;
@@ -37,7 +38,7 @@ public class VisualsOptionTab extends AbstractOptionTab {
                 configuration.visuals().isShowArrowHud(),
                 value -> configuration.visuals().setShowArrowHud(value));
 
-        CyclingButtonEntry<VisualsConfiguration.EquipmentModelVisibility> visibleEquipmentModelEntry = new CyclingButtonEntry<VisualsConfiguration.EquipmentModelVisibility>(
+        CyclingButtonEntry<VisualsConfiguration.EquipmentModelVisibility> visibleEquipmentModelEntry = new CyclingButtonEntry<>(
                 translatable("trc.option.visuals.visible_equipment_model.title"),
                 translatable("trc.option.visuals.visible_equipment_model.description"),
                 configuration.visuals().getEquipmentModelVisibility(),
@@ -45,7 +46,7 @@ public class VisualsOptionTab extends AbstractOptionTab {
                 VisualsConfiguration.EquipmentModelVisibility::getDisplayName,
                 equipmentModelVisibility -> configuration.visuals().setEquipmentModelVisibility(equipmentModelVisibility));
 
-        CyclingButtonEntry<VisualsConfiguration.DayTimeValue> dayTimeValueEntry = new CyclingButtonEntry<VisualsConfiguration.DayTimeValue>(
+        CyclingButtonEntry<VisualsConfiguration.DayTimeValue> dayTimeValueEntry = new CyclingButtonEntry<>(
                 translatable("trc.option.visuals.day_time_value.title"),
                 translatable("trc.option.visuals.day_time_value.description"),
                 configuration.visuals().getDayTimeValue(),
@@ -53,6 +54,25 @@ public class VisualsOptionTab extends AbstractOptionTab {
                 VisualsConfiguration.DayTimeValue::getDisplayName,
                 dayTimeValue -> configuration.visuals().setDayTimeValue(dayTimeValue));
 
-        return List.of(showArmorHudEntry, showArrowHudEntry, visibleEquipmentModelEntry, dayTimeValueEntry);
+        CyclingButtonEntry<VisualsConfiguration.WeatherValue> weatherValueEntry = new CyclingButtonEntry<>(
+                translatable("trc.option.visuals.weather_value.title"),
+                translatable("trc.option.visuals.weather_value.description"),
+                configuration.visuals().getWeatherValue(),
+                List.of(VisualsConfiguration.WeatherValue.values()),
+                VisualsConfiguration.WeatherValue::getDisplayName,
+                weatherValue -> configuration.visuals().setWeatherValue(weatherValue));
+
+        ColorButtonEntry experienceLevelColorEntry = new ColorButtonEntry(
+                translatable("trc.option.visuals.experience_level_color.title"),
+                translatable("trc.option.visuals.experience_level_color.description"),
+                color -> configuration.visuals().setExperienceLevelColor(color.getRGB()));
+
+        ToggleButtonEntry showEmptyInventorySlotCount = new ToggleButtonEntry(
+                translatable("trc.option.visuals.show_empty_inventory_slot_count.title"),
+                translatable("trc.option.visuals.show_empty_inventory_slot_count.description"),
+                configuration.visuals().isShowEmptyInventorySlotCount(),
+                value -> configuration.visuals().setShowEmptyInventorySlotCount(value));
+
+        return List.of(showArmorHudEntry, showArrowHudEntry, visibleEquipmentModelEntry, dayTimeValueEntry, weatherValueEntry, experienceLevelColorEntry, showEmptyInventorySlotCount);
     }
 }

@@ -10,7 +10,6 @@ import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
@@ -23,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.awt.Color;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -110,7 +110,7 @@ public abstract class ChatHudMixin {
         String timeString = now.format(ofPattern("HH:mm:ss "));
         String dateString = now.format(ofPattern("dd.MM.yyyy"));
 
-        return empty().setStyle(originalMessage.getStyle())
+        return empty()
                 .append(literal(timeString).styled(style -> style
                         .withFormatting(DARK_GRAY)
                         .withHoverEvent(new HoverEvent.ShowText(literal(dateString)))))
@@ -188,9 +188,8 @@ public abstract class ChatHudMixin {
 
         if (highestPriorityMatchingChatRegex != null) {
             // colour for chat line highlight
-            Formatting chatRegexColor = highestPriorityMatchingChatRegex.getColor();
-            assert chatRegexColor.getColorValue() != null;
-            backgroundColor = withAlpha(100, 0xFF000000 | chatRegexColor.getColorValue());
+            Color chatRegexColor = highestPriorityMatchingChatRegex.getColor();
+            backgroundColor = withAlpha(100, 0xFF000000 | chatRegexColor.getRGB());
 
             // play sound
             if (!NOTIFIED_LINES.contains(line)) {
