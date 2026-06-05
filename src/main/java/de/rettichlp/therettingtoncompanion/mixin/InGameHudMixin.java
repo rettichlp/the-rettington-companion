@@ -36,6 +36,7 @@ import java.util.function.Predicate;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.renderService;
@@ -140,6 +141,8 @@ public abstract class InGameHudMixin {
         if (playerEntity == null) {
             return;
         }
+
+        inventoryService.checkRestock();
 
         Window window = client.getWindow();
         int y = window.getScaledHeight() - 22;

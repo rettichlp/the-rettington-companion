@@ -53,7 +53,7 @@ public abstract class ItemStackMixin {
                 this.client.getSoundManager().play(ui(BLOCK_NOTE_BLOCK_COW_BELL.value(), 2f, 2f));
             }
             case 10, 5 -> {
-                if (tryRestock(true)) {
+                if (inventoryService.restock((ItemStack) (Object) this)) {
                     player.sendMessage(translatable("trc.message.auto_restock.restock_succeeded", getItem().getName().getString()).formatted(GREEN), true);
                     this.client.getSoundManager().play(ui(ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 2f));
                 } else {
