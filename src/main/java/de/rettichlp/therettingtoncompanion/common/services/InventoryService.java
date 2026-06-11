@@ -4,15 +4,19 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
-import static java.util.Comparator.comparingInt;
+import static net.minecraft.client.sound.PositionedSoundInstance.ui;
 import static net.minecraft.screen.slot.SlotActionType.SWAP;
+import static net.minecraft.sound.SoundEvents.ITEM_ARMOR_EQUIP_GENERIC;
+import static net.minecraft.text.Text.translatable;
 
 public class InventoryService {
 
@@ -30,7 +34,11 @@ public class InventoryService {
         }
 
         if (!this.itemStack.isEmpty() && currentItemStack.isEmpty()) {
-            restock(this.itemStack);
+            if (restock(this.itemStack)) {
+                MinecraftClient.getInstance().getSoundManager().play(ui(ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 2f));
+                Text message = translatable("trc.message.auto_restock.restock_succeeded", this.itemStack.getName());
+                player.sendMessage(message, true);
+            }
         }
 
         this.itemStack = currentItemStack;
@@ -40,40 +48,60 @@ public class InventoryService {
         MinecraftClient client = MinecraftClient.getInstance();
 
         if (client.currentScreen != null || !configuration.inventory().isAutoRestock()) {
+            LOGGER.debug("Auto restock is disabled or a screen is open");
             return false;
         }
 
         ClientPlayerInteractionManager interactionManager = client.interactionManager;
 
-        ItemStack mostMatchingItemStack = getMostMatchingItemStack(previousItemStack);
-        if (mostMatchingItemStack == null || interactionManager == null) {
+        List<Integer> matchingSlotIds = getMatchingSlotIds(previousItemStack);
+        if (interactionManager == null || matchingSlotIds.isEmpty()) {
+            LOGGER.debug("No matching item stacks found");
             return false;
         }
 
-        int slotWithStack = player.getInventory().getSlotWithStack(mostMatchingItemStack);
-        int hotbarIndex = player.getInventory().getSelectedSlot();
+        int mostMatchingSlotIndex = matchingSlotIds.getFirst();
 
-        interactionManager.clickSlot(player.currentScreenHandler.syncId, slotWithStack, hotbarIndex, SWAP, player);
+        // adjust slot ids for hotbar
+        if (mostMatchingSlotIndex < 9) {
+            mostMatchingSlotIndex += 36;
+        }
+
+        interactionManager.clickSlot(player.currentScreenHandler.syncId, mostMatchingSlotIndex, this.hotbarSlotIndex, SWAP, player);
+
         return true;
     }
 
-    private @Nullable ItemStack getMostMatchingItemStack(ItemStack itemStack) {
+    public List<Integer> getMatchingSlotIds(ItemStack itemStack) {
+        List<Integer> matchingSlotIds = new ArrayList<>();
         PlayerInventory inventory = player.getInventory();
 
-        List<ItemStack> itemStacks = inventory.getMainStacks().stream()
-                .filter(is -> inventory.getMainStacks().indexOf(is) != inventory.getSelectedSlot())
-                .filter(is -> is.isOf(itemStack.getItem()))
-                .filter(is -> !is.isDamageable() || is.getMaxDamage() - is.getDamage() > 10)
-                .sorted(comparingInt(ItemStack::getCount))
-                .toList();
+        for (int i = 0; i < inventory.getMainStacks().size(); i++) {
+            ItemStack is = inventory.getMainStacks().get(i);
 
-        if (itemStacks.isEmpty()) {
-            return null;
+            // skip current selected slot
+            if (i == inventory.getSelectedSlot()) {
+                continue;
+            }
+
+            // check for same type
+            if (!is.isOf(itemStack.getItem())) {
+                continue;
+            }
+
+            // if item damageable check for more than 10 durability
+            if (is.isDamageable() && is.getMaxDamage() - is.getDamage() <= 10) {
+                continue;
+            }
+
+            // check for same name
+            if (!is.getName().equals(itemStack.getName())) {
+                continue;
+            }
+
+            matchingSlotIds.add(i);
         }
 
-        return itemStacks.stream()
-                .filter(is -> is.getName().getString().equals(itemStack.getName().getString()))
-                .findFirst()
-                .orElseGet(itemStacks::getFirst);
+        return matchingSlotIds;
     }
 }
