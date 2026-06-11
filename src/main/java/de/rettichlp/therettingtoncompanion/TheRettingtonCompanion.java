@@ -1,6 +1,7 @@
 package de.rettichlp.therettingtoncompanion;
 
 import de.rettichlp.therettingtoncompanion.common.configuration.Configuration;
+import de.rettichlp.therettingtoncompanion.common.services.InventoryService;
 import de.rettichlp.therettingtoncompanion.common.services.NotificationService;
 import de.rettichlp.therettingtoncompanion.common.services.RenderService;
 import net.fabricmc.api.ModInitializer;
@@ -32,6 +33,7 @@ public class TheRettingtonCompanion implements ModInitializer {
     // That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+    public static final InventoryService inventoryService = new InventoryService();
     public static final NotificationService notificationService = new NotificationService();
     public static final RenderService renderService = new RenderService();
 

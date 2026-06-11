@@ -5,6 +5,7 @@ import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.Widget;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -16,6 +17,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.entity.EntityLike;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.Color;
 import java.util.LinkedHashSet;
@@ -243,5 +245,24 @@ public class RenderService {
                 .peek(AbstractWidget::init)
                 .sorted(comparing(AbstractWidget::getRegistryName))
                 .collect(toCollection(LinkedHashSet::new));
+    }
+
+    public void renderShadowText(@NonNull DrawContext context, Text text, int y, int color, int shadowColor) {
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        int textWidth = textRenderer.getWidth(text);
+        renderShadowText(context, text, (context.getScaledWindowWidth() - textWidth) / 2, y, color, shadowColor);
+    }
+
+    private void renderShadowText(@NonNull DrawContext context, Text text, int x, int y, int color, int shadowColor) {
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+
+        // render shadow
+        context.drawText(textRenderer, text, x + 1, y, shadowColor, false);
+        context.drawText(textRenderer, text, x - 1, y, shadowColor, false);
+        context.drawText(textRenderer, text, x, y + 1, shadowColor, false);
+        context.drawText(textRenderer, text, x, y - 1, shadowColor, false);
+
+        // render text
+        context.drawText(textRenderer, text, x, y, color, false);
     }
 }

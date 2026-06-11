@@ -3,27 +3,19 @@ package de.rettichlp.therettingtoncompanion.mixin;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.collection.DefaultedList;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
-import static java.util.Comparator.comparingInt;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static net.minecraft.client.sound.PositionedSoundInstance.ui;
-import static net.minecraft.screen.slot.SlotActionType.PICKUP;
 import static net.minecraft.sound.SoundEvents.BLOCK_NOTE_BLOCK_COW_BELL;
 import static net.minecraft.sound.SoundEvents.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE;
 import static net.minecraft.sound.SoundEvents.ITEM_ARMOR_EQUIP_GENERIC;
@@ -44,13 +36,6 @@ public abstract class ItemStackMixin {
     @Shadow
     public abstract Item getItem();
 
-    @Inject(method = "useOnBlock", at = @At("RETURN"))
-    private void trc$useOnBlockReturn(@NotNull ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-        if (context.getWorld().isClient() && this.client.player != null && context.getStack().getCount() == 0 && configuration.inventory().isAutoRestock()) {
-            tryRestock(false);
-        }
-    }
-
     @Inject(method = "onDurabilityChange", at = @At("HEAD"))
     private void trc$onDurabilityChange(int damage, ServerPlayerEntity player, Consumer<Item> breakCallback, CallbackInfo ci) {
         if (!configuration.inventory().isAutoRestock()) {
@@ -68,7 +53,7 @@ public abstract class ItemStackMixin {
                 this.client.getSoundManager().play(ui(BLOCK_NOTE_BLOCK_COW_BELL.value(), 2f, 2f));
             }
             case 10, 5 -> {
-                if (tryRestock(true)) {
+                if (inventoryService.restock((ItemStack) (Object) this)) {
                     player.sendMessage(translatable("trc.message.auto_restock.restock_succeeded", getItem().getName().getString()).formatted(GREEN), true);
                     this.client.getSoundManager().play(ui(ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 2f));
                 } else {
@@ -78,35 +63,5 @@ public abstract class ItemStackMixin {
                 }
             }
         }
-    }
-
-    @Unique
-    private boolean tryRestock(boolean replace) {
-        Optional<ItemStack> optionalItemStack = getMatchingItemStack();
-
-        if (optionalItemStack.isEmpty()) {
-            return false;
-        }
-
-        int slotWithStack = player.getInventory().getSlotWithStack(optionalItemStack.get());
-        int selectedSlot = player.getInventory().getSelectedSlot() + 36; // translate to screen handler slot index
-
-        if (replace) {
-            this.client.interactionManager.clickSlot(player.currentScreenHandler.syncId, selectedSlot, 0, PICKUP, player);
-        }
-
-        this.client.interactionManager.clickSlot(player.currentScreenHandler.syncId, slotWithStack, 0, PICKUP, player);
-        this.client.interactionManager.clickSlot(player.currentScreenHandler.syncId, selectedSlot, 0, PICKUP, player);
-
-        return true;
-    }
-
-    @Unique
-    private @NotNull Optional<ItemStack> getMatchingItemStack() {
-        DefaultedList<ItemStack> mainStacks = player.getInventory().getMainStacks();
-        return mainStacks.subList(9, mainStacks.size()).stream()
-                .filter(itemStack -> itemStack.isOf(getItem()))
-                .filter(itemStack -> !itemStack.isDamageable() || itemStack.getMaxDamage() - itemStack.getDamage() > 10)
-                .min(comparingInt(ItemStack::getCount));
     }
 }

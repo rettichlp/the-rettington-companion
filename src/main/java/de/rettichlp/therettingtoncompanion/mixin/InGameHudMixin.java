@@ -36,9 +36,11 @@ import java.util.function.Predicate;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.renderService;
+import static java.lang.String.valueOf;
 import static net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.entity.EquipmentSlot.CHEST;
 import static net.minecraft.entity.EquipmentSlot.FEET;
@@ -106,29 +108,17 @@ public abstract class InGameHudMixin {
         renderService.getWidgets().forEach(abstractWidget -> abstractWidget.draw(context));
 
         // render empty inventory space text
-        if (configuration.visuals().isShowEmptyInventorySlotCount()) {
-            long emptySlotAmount = player.getInventory().getMainStacks().stream()
-                    .filter(ItemStack::isEmpty)
-                    .count();
+        if (configuration.visuals().isShowEmptyInventorySlotCount() && player.getGameMode() != null && player.getGameMode().isSurvivalLike()) {
+            ItemStack mainHandStack = player.getMainHandStack();
+            boolean showSameItemLeftAmount = player.isSneaking() && !mainHandStack.isEmpty();
+            long emptySlotAmount = showSameItemLeftAmount
+                    ? inventoryService.getMatchingSlotIds(mainHandStack).size() // retrieve same-item-left number
+                    : player.getInventory().getMainStacks().stream().filter(ItemStack::isEmpty).count();
 
-            Text text = literal(String.valueOf(emptySlotAmount));
-
-            int textWidth = getTextRenderer().getWidth(text);
-            int x = (context.getScaledWindowWidth() - textWidth) / 2;
+            Text text = literal(valueOf(emptySlotAmount));
             int y = context.getScaledWindowHeight() - 46;
-
-            if (this.client.interactionManager != null && !this.client.interactionManager.hasStatusBars()) {
-                y += 14;
-            }
-
-            boolean onlyFiveLeft = emptySlotAmount <= 5;
-
-            context.drawText(getTextRenderer(), text, x + 1, y, onlyFiveLeft ? -6946816 : -16777216, false);
-            context.drawText(getTextRenderer(), text, x - 1, y, onlyFiveLeft ? -6946816 : -16777216, false);
-            context.drawText(getTextRenderer(), text, x, y + 1, onlyFiveLeft ? -6946816 : -16777216, false);
-            context.drawText(getTextRenderer(), text, x, y - 1, onlyFiveLeft ? -6946816 : -16777216, false);
-
-            context.drawText(getTextRenderer(), text, x, y, configuration.visuals().getExperienceLevelColor(), false);
+            boolean onlyFiveLeft = !showSameItemLeftAmount && emptySlotAmount <= 5;
+            renderService.renderShadowText(context, text, y, configuration.visuals().getExperienceLevelColor(), onlyFiveLeft ? -6946816 : -16777216);
         }
     }
 
@@ -140,6 +130,8 @@ public abstract class InGameHudMixin {
         if (playerEntity == null) {
             return;
         }
+
+        inventoryService.checkRestock();
 
         Window window = client.getWindow();
         int y = window.getScaledHeight() - 22;
