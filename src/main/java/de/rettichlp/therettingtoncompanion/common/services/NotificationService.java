@@ -2,7 +2,7 @@ package de.rettichlp.therettingtoncompanion.common.services;
 
 import de.rettichlp.therettingtoncompanion.common.models.Notification;
 import lombok.Getter;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.awt.Color;
 import java.util.HashSet;
@@ -21,25 +21,25 @@ public class NotificationService {
     @Getter
     private final Set<Notification> notifications = new HashSet<>();
 
-    public void sendSuccessNotification(Text text) {
-        sendNotification(text, GREEN, 5000);
+    public void sendSuccessNotification(Component component) {
+        sendNotification(component, GREEN, 5000);
     }
 
-    public void sendInfoNotification(Text text) {
-        sendNotification(text, CYAN, 5000);
+    public void sendInfoNotification(Component component) {
+        sendNotification(component, CYAN, 5000);
     }
 
-    public void sendWarningNotification(Text text) {
-        sendNotification(text, ORANGE, 5000);
+    public void sendWarningNotification(Component component) {
+        sendNotification(component, ORANGE, 5000);
     }
 
-    public void sendErrorNotification(Text text) {
-        sendNotification(text, RED, 5000);
+    public void sendErrorNotification(Component component) {
+        sendNotification(component, RED, 5000);
     }
 
-    public void sendNotification(Text text, Color color, long durationInMillis) {
+    public void sendNotification(Component component, Color color, long durationInMillis) {
         Notification notification = Notification.builder()
-                .text(text)
+                .text(component)
                 .displayDuration(ofMillis(durationInMillis))
                 .color(color)
                 .build();

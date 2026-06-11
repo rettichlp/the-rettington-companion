@@ -2,23 +2,23 @@ package de.rettichlp.therettingtoncompanion.common.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
-import static net.minecraft.text.Text.empty;
-import static net.minecraft.text.Text.literal;
-import static net.minecraft.text.Text.translatable;
-import static net.minecraft.util.Formatting.AQUA;
-import static net.minecraft.util.Formatting.BLUE;
-import static net.minecraft.util.Formatting.DARK_GRAY;
-import static net.minecraft.util.Formatting.GOLD;
-import static net.minecraft.util.Formatting.GRAY;
-import static net.minecraft.util.Formatting.LIGHT_PURPLE;
-import static net.minecraft.util.Formatting.RED;
-import static net.minecraft.util.Formatting.YELLOW;
+import static net.minecraft.ChatFormatting.AQUA;
+import static net.minecraft.ChatFormatting.BLUE;
+import static net.minecraft.ChatFormatting.DARK_GRAY;
+import static net.minecraft.ChatFormatting.GOLD;
+import static net.minecraft.ChatFormatting.GRAY;
+import static net.minecraft.ChatFormatting.LIGHT_PURPLE;
+import static net.minecraft.ChatFormatting.RED;
+import static net.minecraft.ChatFormatting.YELLOW;
+import static net.minecraft.network.chat.Component.empty;
+import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.Component.translatable;
 
 @Getter
 @AllArgsConstructor
@@ -31,8 +31,8 @@ public enum GammaPreset {
     FULLBRIGHT_NIGHT_VISION(translatable("trc.gamma_preset.fullbright_night_vision"), AQUA, -1.0),
     FULLBRIGHT_GAMMA(translatable("trc.gamma_preset.fullbright_gamma"), BLUE, 15.0);
 
-    private final Text displayName;
-    private final Formatting color;
+    private final Component displayName;
+    private final ChatFormatting color;
     private final double gammaValue;
 
     public GammaPreset next() {
@@ -45,18 +45,18 @@ public enum GammaPreset {
     }
 
     public void sendMessage() {
-        MutableText text = empty().formatted(this.color)
-                .append(literal("Gamma").formatted(GRAY))
-                .append(literal(": ").formatted(DARK_GRAY))
+        MutableComponent component = empty().withStyle(this.color)
+                .append(literal("Gamma").withStyle(GRAY))
+                .append(literal(": ").withStyle(DARK_GRAY))
                 .append(this.displayName);
 
         switch (this) {
-            case OWN_SETTING -> text.append(literal(" (" + toPercent(configuration.getOwnGammaValue()) + "%)"));
-            case MOODY, DEFAULT, BRIGHT, FULLBRIGHT_GAMMA -> text.append(literal(" (" + toPercent(this.gammaValue) + "%)"));
+            case OWN_SETTING -> component.append(literal(" (" + toPercent(configuration.getOwnGammaValue()) + "%)"));
+            case MOODY, DEFAULT, BRIGHT, FULLBRIGHT_GAMMA -> component.append(literal(" (" + toPercent(this.gammaValue) + "%)"));
             default -> {}
         }
 
-        player.sendMessage(text, true);
+        player.sendOverlayMessage(component);
     }
 
     private int toPercent(double d) {

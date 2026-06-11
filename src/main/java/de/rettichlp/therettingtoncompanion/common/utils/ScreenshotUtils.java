@@ -1,7 +1,8 @@
 package de.rettichlp.therettingtoncompanion.common.utils;
 
 import com.google.gson.JsonElement;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.Util;
 import org.jspecify.annotations.NonNull;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static com.google.gson.JsonParser.parseString;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_NAME;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
@@ -27,28 +29,38 @@ import static java.nio.file.Files.probeContentType;
 import static java.nio.file.Files.readAllBytes;
 import static java.util.UUID.randomUUID;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
-import static net.minecraft.client.util.ScreenshotRecorder.SCREENSHOTS_DIRECTORY;
-import static net.minecraft.client.util.ScreenshotRecorder.saveScreenshot;
-import static net.minecraft.text.Text.translatable;
-import static net.minecraft.util.Util.getFormattedCurrentTime;
+import static net.minecraft.client.Screenshot.SCREENSHOT_DIR;
+import static net.minecraft.client.Screenshot.takeScreenshot;
+import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.util.Util.getFilenameFormattedDateTime;
 
 public class ScreenshotUtils {
 
     private static final String IMGUR_API_URL = "https://api.imgur.com/3/image";
     private static final String IMGUR_CLIENT_ID = "f0f10087565b2ee";
-    private static final String IMGUR_SCREENSHOT_DIRECTORY = "uploaded_to_imgur";
+    private static final String IMGUR_SCREENSHOT_DIR = "uploaded_to_imgur";
 
-    public static @NonNull CompletableFuture<File> takeScreenshot() {
+    public static @NonNull CompletableFuture<File> takeImgurScreenshot() {
         CompletableFuture<File> completableFuture = new CompletableFuture<>();
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
 
-        File screenshotsDirectory = client.runDirectory.toPath().resolve(SCREENSHOTS_DIRECTORY).resolve(IMGUR_SCREENSHOT_DIRECTORY).toFile();
+        File screenshotsDirectory = client.gameDirectory.toPath().resolve(SCREENSHOT_DIR).resolve(IMGUR_SCREENSHOT_DIR).toFile();
         screenshotsDirectory.mkdirs();
 
-        File screenshotFile = new File(screenshotsDirectory, getScreenshotFileName(screenshotsDirectory));
-        saveScreenshot(client.runDirectory, IMGUR_SCREENSHOT_DIRECTORY + "/" + screenshotFile.getName(), client.getFramebuffer(), 1, text -> {
-            notificationService.sendNotification(translatable("trc.notification.screenshot_created"), WHITE, 5000);
-            completableFuture.complete(screenshotFile);
+        takeScreenshot(client.getMainRenderTarget(), nativeImage -> {
+            File screenshotFile = getFile(screenshotsDirectory);
+
+            Util.ioPool().execute(() -> {
+                try {
+                    nativeImage.writeToFile(screenshotFile);
+                    notificationService.sendNotification(translatable("screenshot.success", screenshotFile.getName()), WHITE, 5000);
+                    completableFuture.complete(screenshotFile);
+                } catch (Exception e) {
+                    LOGGER.warn("Couldn't save screenshot", e);
+                    notificationService.sendWarningNotification(translatable("screenshot.failure", e.getMessage()));
+                    completableFuture.completeExceptionally(e);
+                }
+            });
         });
 
         return completableFuture;
@@ -109,17 +121,13 @@ public class ScreenshotUtils {
         return byteBuilder.toByteArray();
     }
 
-    private static @NonNull String getScreenshotFileName(File directory) {
-        String formattedCurrentTime = getFormattedCurrentTime();
-        int i = 1;
-
-        while (true) {
-            String name = formattedCurrentTime + (i == 1 ? "" : "_" + i) + ".png";
-            if (!new File(directory, name).exists()) {
-                return name;
-            }
-
-            ++i;
+    private static File getFile(File picDir) {
+        String name = getFilenameFormattedDateTime();
+        int count = 1;
+        File file;
+        while ((file = new File(picDir, name + (count == 1 ? "" : "_" + count) + ".png")).exists()) {
+            ++count;
         }
+        return file;
     }
 }

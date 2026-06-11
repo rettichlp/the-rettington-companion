@@ -7,16 +7,16 @@ import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrolla
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.named.ToggleButtonEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.options.ModOptionScreen;
 import de.rettichlp.therettingtoncompanion.common.models.ChatRegex;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static java.awt.Color.GREEN;
-import static net.minecraft.sound.SoundEvents.BLOCK_NOTE_BLOCK_BELL;
-import static net.minecraft.text.Text.literal;
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
 
 public class ChatOptionTab extends AbstractOptionTab {
 
@@ -25,7 +25,7 @@ public class ChatOptionTab extends AbstractOptionTab {
     }
 
     @Override
-    public Text displayName() {
+    public Component displayName() {
         return translatable("trc.option.chat.title");
     }
 
@@ -62,7 +62,7 @@ public class ChatOptionTab extends AbstractOptionTab {
         });
 
         ButtonEntry buttonEntry = new ButtonEntry(literal("+"), button -> {
-            ChatRegex newChatRegex = new ChatRegex("", BLOCK_NOTE_BLOCK_BELL.value().id(), true, GREEN, 0);
+            ChatRegex newChatRegex = new ChatRegex("", NOTE_BLOCK_BELL.value().location(), true, GREEN, 0);
             configuration.chat().regex().getChatRegexes().add(newChatRegex);
             this.client.execute(() -> this.client.setScreen(new ModOptionScreen("chat")));
         });

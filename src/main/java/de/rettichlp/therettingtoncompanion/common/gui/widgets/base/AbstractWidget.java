@@ -2,10 +2,10 @@ package de.rettichlp.therettingtoncompanion.common.gui.widgets.base;
 
 import com.google.common.reflect.TypeToken;
 import lombok.Getter;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.ParameterizedType;
@@ -18,39 +18,39 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notific
 import static de.rettichlp.therettingtoncompanion.common.utils.ModUtils.GSON;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.translatable;
 
 @Getter
 public abstract class AbstractWidget<C extends WidgetConfiguration> {
 
     private static final Type MAP_TYPE = new TypeToken<Map<String, Object>>() {}.getType();
 
-    private final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+    private final Font font = Minecraft.getInstance().font;
 
     private C widgetConfiguration;
 
-    public abstract Text getDisplayName();
+    public abstract Component getDisplayName();
 
-    public abstract Text getTooltip();
+    public abstract Component getTooltip();
 
     public abstract int getWidth();
 
     public abstract int getHeight();
 
-    public abstract void draw(@NotNull DrawContext drawContext, int x, int y, Alignment alignment);
+    public abstract void draw(@NotNull GuiGraphicsExtractor graphics, int x, int y, Alignment alignment);
 
     public void init() {
         loadConfiguration();
     }
 
-    public void draw(@NotNull DrawContext drawContext) {
-        if (!isVisible() || !this.widgetConfiguration.isEnabled() || MinecraftClient.getInstance().options.hudHidden) {
+    public void draw(@NotNull GuiGraphicsExtractor graphics) {
+        if (!isVisible() || !this.widgetConfiguration.isEnabled() || Minecraft.getInstance().options.hideGui) {
             return;
         }
 
         int x = (int) this.widgetConfiguration.getX();
         int y = (int) this.widgetConfiguration.getY();
-        draw(drawContext, x, y, getAlignment());
+        draw(graphics, x, y, getAlignment());
     }
 
     public boolean isMouseOver(double mouseX, double mouseY) {
@@ -122,7 +122,7 @@ public abstract class AbstractWidget<C extends WidgetConfiguration> {
     }
 
     private Alignment getAlignment() {
-        int scaledWidth = MinecraftClient.getInstance().getWindow().getScaledWidth();
+        int scaledWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
         int widthSegment = scaledWidth / 3;
 
         Alignment alignment;

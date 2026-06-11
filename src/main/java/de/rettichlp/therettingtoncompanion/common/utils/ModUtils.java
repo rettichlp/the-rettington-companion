@@ -6,7 +6,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import org.jspecify.annotations.NonNull;
 
 import java.time.Instant;
@@ -42,7 +42,7 @@ public class ModUtils {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                MinecraftClient.getInstance().execute(runnable);
+                Minecraft.getInstance().execute(runnable);
             }
         }, milliseconds);
     }

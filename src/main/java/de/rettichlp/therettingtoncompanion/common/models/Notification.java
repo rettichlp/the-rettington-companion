@@ -3,7 +3,7 @@ package de.rettichlp.therettingtoncompanion.common.models;
 import de.rettichlp.therettingtoncompanion.common.gui.widgets.NotificationWidget;
 import lombok.Builder;
 import lombok.Data;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.awt.Color;
 import java.time.Duration;
@@ -22,7 +22,7 @@ import static java.util.UUID.randomUUID;
 public class Notification {
 
     private final UUID id = randomUUID();
-    private final Text text;
+    private final Component text;
     private final Duration displayDuration;
     @Builder.Default
     private LocalDateTime timestamp = now();

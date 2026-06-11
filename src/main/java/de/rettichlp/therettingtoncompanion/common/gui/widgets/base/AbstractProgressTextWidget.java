@@ -1,6 +1,6 @@
 package de.rettichlp.therettingtoncompanion.common.gui.widgets.base;
 
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
@@ -15,15 +15,15 @@ import static java.time.LocalDateTime.now;
 public abstract class AbstractProgressTextWidget<C extends WidgetConfiguration> extends AbstractTextWidget<C> {
 
     @Override
-    public void draw(@NotNull DrawContext drawContext, int x, int y, Alignment alignment) {
-        drawContext.fill(x, y, x + getWidth(), y + getHeight(), getBackgroundColor().getRGB());
-        drawContext.drawText(getTextRenderer(), text(), x + TEXT_BOX_PADDING, y + TEXT_BOX_PADDING, 0xFFFFFFFF, false);
+    public void draw(@NotNull GuiGraphicsExtractor graphics, int x, int y, Alignment alignment) {
+        graphics.fill(x, y, x + getWidth(), y + getHeight(), getBackgroundColor().getRGB());
+        graphics.text(getFont(), text(), x + TEXT_BOX_PADDING, y + TEXT_BOX_PADDING, 0xFFFFFFFF, false);
 
         int maxProgressWidth = getWidth() - TEXT_BOX_PADDING * 2;
         int xProgressStart = (int) (x + TEXT_BOX_PADDING + maxProgressWidth * progress());
         int xProgressEnd = x + getWidth() - TEXT_BOX_PADDING;
 
-        drawContext.drawHorizontalLine(xProgressStart, xProgressEnd, y + getHeight() - 3, getColor().getRGB());
+        graphics.horizontalLine(xProgressStart, xProgressEnd, y + getHeight() - 3, getColor().getRGB());
     }
 
     public abstract double progress();

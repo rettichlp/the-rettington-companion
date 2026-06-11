@@ -1,32 +1,31 @@
 package de.rettichlp.therettingtoncompanion.common.gui.screens.popup;
 
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.ColorButtonWidget;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
-import net.minecraft.client.gui.widget.Positioner;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.layouts.LayoutSettings;
+import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.screens.Screen;
 
 import java.awt.Color;
 import java.util.function.Consumer;
 
 import static java.lang.Integer.parseInt;
-import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
-import static net.minecraft.screen.ScreenTexts.CANCEL;
-import static net.minecraft.screen.ScreenTexts.OK;
-import static net.minecraft.text.Text.empty;
-import static net.minecraft.text.Text.literal;
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
+import static net.minecraft.network.chat.CommonComponents.GUI_CANCEL;
+import static net.minecraft.network.chat.CommonComponents.GUI_OK;
+import static net.minecraft.network.chat.Component.empty;
+import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class ColorReturningSelectionPopupScreen extends AbstractReturningSelectionPopupScreen<Color> {
 
     private final Color fallbackColor;
 
-    private TextFieldWidget colorInputRed;
-    private TextFieldWidget colorInputGreen;
-    private TextFieldWidget colorInputBlue;
+    private StringWidget colorInputRed;
+    private StringWidget colorInputGreen;
+    private StringWidget colorInputBlue;
 
     public ColorReturningSelectionPopupScreen(Screen parent, Consumer<Color> onClose, Color fallbackColor) {
         super(parent, onClose, translatable("trc.option.chat.message_patterns.popup.color.title"));
@@ -36,44 +35,44 @@ public class ColorReturningSelectionPopupScreen extends AbstractReturningSelecti
     @Override
     public void initBody() {
         // minecraft colors
-        DirectionalLayoutWidget firstRow = this.layout.add(horizontal().spacing(8));
-        DirectionalLayoutWidget secondRow = this.layout.add(horizontal().spacing(8));
+        LinearLayout firstRow = this.layout.addChild(horizontal().spacing(8));
+        LinearLayout secondRow = this.layout.addChild(horizontal().spacing(8));
 
         int rowLength = 0;
-        for (Formatting value : Formatting.values()) {
+        for (ChatFormatting value : ChatFormatting.values()) {
             if (!value.isColor()) {
                 continue;
             }
 
-            Color color = new Color(value.getColorValue());
+            Color color = new Color(value.getColor());
 
             if (rowLength < 8) {
-                firstRow.add(new ColorButtonWidget(30, 20, color, this::onReturn));
+                firstRow.addChild(new ColorButtonWidget(30, 20, color, this::onReturn));
             } else {
-                secondRow.add(new ColorButtonWidget(30, 20, color, this::onReturn));
+                secondRow.addChild(new ColorButtonWidget(30, 20, color, this::onReturn));
             }
 
             rowLength++;
         }
 
         // custom color
-        DirectionalLayoutWidget colorInputRow = this.layout.add(horizontal().spacing(8));
+        LinearLayout colorInputRow = this.layout.addChild(horizontal().spacing(8));
 
-        colorInputRow.add(new TextWidget(literal("R"), this.textRenderer), Positioner::alignVerticalCenter);
-        this.colorInputRed = colorInputRow.add(new TextFieldWidget(this.textRenderer, 40, 20, empty()));
-        colorInputRow.add(new TextWidget(literal("G"), this.textRenderer), Positioner::alignVerticalCenter);
-        this.colorInputGreen = colorInputRow.add(new TextFieldWidget(this.textRenderer, 40, 20, empty()));
-        colorInputRow.add(new TextWidget(literal("B"), this.textRenderer), Positioner::alignVerticalCenter);
-        this.colorInputBlue = colorInputRow.add(new TextFieldWidget(this.textRenderer, 40, 20, empty()));
+        colorInputRow.addChild(new StringWidget(literal("R"), this.font), LayoutSettings::alignVerticallyMiddle);
+        this.colorInputRed = colorInputRow.addChild(new StringWidget(40, 20, empty(), this.font));
+        colorInputRow.addChild(new StringWidget(literal("G"), this.font), LayoutSettings::alignVerticallyMiddle);
+        this.colorInputGreen = colorInputRow.addChild(new StringWidget(40, 20, empty(), this.font));
+        colorInputRow.addChild(new StringWidget(literal("B"), this.font), LayoutSettings::alignVerticallyMiddle);
+        this.colorInputBlue = colorInputRow.addChild(new StringWidget(40, 20, empty(), this.font));
     }
 
     @Override
     public void initButtons() {
-        this.buttonLayout.add(ButtonWidget.builder(CANCEL, button -> close()).width(120).build());
-        this.buttonLayout.add(ButtonWidget.builder(OK, button -> {
-            String redString = this.colorInputRed.getText();
-            String greenString = this.colorInputGreen.getText();
-            String blueString = this.colorInputBlue.getText();
+        this.buttonLayout.addChild(Button.builder(GUI_CANCEL, button -> onClose()).width(120).build());
+        this.buttonLayout.addChild(Button.builder(GUI_OK, button -> {
+            String redString = this.colorInputRed.getMessage().getString();
+            String greenString = this.colorInputGreen.getMessage().getString();
+            String blueString = this.colorInputBlue.getMessage().getString();
 
             Color color;
             try {

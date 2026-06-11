@@ -5,11 +5,11 @@ import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.Widget;
 import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.WidgetConfiguration;
 import de.rettichlp.therettingtoncompanion.common.models.Notification;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.awt.Color;
 
-import static net.minecraft.text.Text.empty;
+import static net.minecraft.network.chat.Component.empty;
 
 @RequiredArgsConstructor
 @Widget(registryName = "notification")
@@ -18,7 +18,7 @@ public class NotificationWidget extends AbstractProgressTextWidget<NotificationW
     private final Notification notification;
 
     @Override
-    public Text text() {
+    public Component text() {
         return this.notification.getText();
     }
 
@@ -33,12 +33,12 @@ public class NotificationWidget extends AbstractProgressTextWidget<NotificationW
     }
 
     @Override
-    public Text getDisplayName() {
+    public Component getDisplayName() {
         return empty();
     }
 
     @Override
-    public Text getTooltip() {
+    public Component getTooltip() {
         return empty();
     }
 

@@ -3,18 +3,18 @@ package de.rettichlp.therettingtoncompanion.common.configuration;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration.DayTimeValue.DT_OFF;
 import static de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration.EquipmentModelVisibility.ALL;
 import static de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration.WeatherValue.W_OFF;
-import static net.minecraft.screen.ScreenTexts.OFF;
-import static net.minecraft.text.Text.empty;
-import static net.minecraft.text.Text.literal;
-import static net.minecraft.text.Text.translatable;
-import static net.minecraft.util.Formatting.DARK_GRAY;
-import static net.minecraft.util.Formatting.GRAY;
+import static net.minecraft.ChatFormatting.DARK_GRAY;
+import static net.minecraft.ChatFormatting.GRAY;
+import static net.minecraft.network.chat.CommonComponents.OPTION_OFF;
+import static net.minecraft.network.chat.Component.empty;
+import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.Component.translatable;
 
 @Data
 public class VisualsConfiguration {
@@ -35,7 +35,7 @@ public class VisualsConfiguration {
         NONE(translatable("trc.equipment_model_visibility.none")),
         ONLY_WINGS(translatable("trc.equipment_model_visibility.only_wings"));
 
-        private final Text displayName;
+        private final Component displayName;
 
         public EquipmentModelVisibility next() {
             int nextOrdinal = ordinal() + 1;
@@ -43,10 +43,10 @@ public class VisualsConfiguration {
         }
 
         public void sendMessage() {
-            player.sendMessage(empty()
-                    .append(literal("Equipment").formatted(GRAY))
-                    .append(literal(": ").formatted(DARK_GRAY))
-                    .append(this.displayName), true);
+            player.sendOverlayMessage(empty()
+                    .append(literal("Equipment").withStyle(GRAY))
+                    .append(literal(": ").withStyle(DARK_GRAY))
+                    .append(this.displayName));
         }
     }
 
@@ -66,8 +66,8 @@ public class VisualsConfiguration {
 
         private final int timeValue;
 
-        public Text getDisplayName() {
-            return this == DT_OFF ? OFF : literal(String.valueOf(this.timeValue));
+        public Component getDisplayName() {
+            return this == DT_OFF ? OPTION_OFF : literal(String.valueOf(this.timeValue));
         }
     }
 
@@ -75,11 +75,11 @@ public class VisualsConfiguration {
     @AllArgsConstructor
     public enum WeatherValue {
 
-        W_OFF(OFF),
+        W_OFF(OPTION_OFF),
         W_CLEAR(translatable("trc.weather_value.clear")),
         W_RAIN(translatable("trc.weather_value.rain")),
         W_THUNDER(translatable("trc.weather_value.thunder"));
 
-        private final Text displayName;
+        private final Component displayName;
     }
 }

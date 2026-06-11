@@ -2,13 +2,13 @@ package de.rettichlp.therettingtoncompanion.common.gui.screens.options.tabs;
 
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.ScrollableListEntry;
 import de.rettichlp.therettingtoncompanion.common.gui.screens.components.scrollable.named.ToggleButtonEntry;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.util.Collection;
 import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class InventoryOptionTab extends AbstractOptionTab {
 
@@ -17,7 +17,7 @@ public class InventoryOptionTab extends AbstractOptionTab {
     }
 
     @Override
-    public Text displayName() {
+    public Component displayName() {
         return translatable("trc.option.inventory.title");
     }
 

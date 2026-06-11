@@ -2,7 +2,7 @@ package de.rettichlp.therettingtoncompanion.common.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
 import java.awt.Color;
