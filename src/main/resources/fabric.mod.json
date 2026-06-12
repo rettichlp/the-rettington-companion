@@ -32,6 +32,6 @@
     "fabric-api": "*"
   },
   "recommends": {
-    "modmenu": "*"
+    "modmenu": ">=18.0.0"
   }
 }
