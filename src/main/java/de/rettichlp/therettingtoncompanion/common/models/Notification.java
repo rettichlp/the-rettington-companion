@@ -1,6 +1,5 @@
 package de.rettichlp.therettingtoncompanion.common.models;
 
-import de.rettichlp.therettingtoncompanion.common.gui.widgets.NotificationWidget;
 import lombok.Builder;
 import lombok.Data;
 import net.minecraft.network.chat.Component;
@@ -44,7 +43,7 @@ public class Notification {
         return timestamp.isBefore(now) && between(this.timestamp, now).compareTo(this.displayDuration) < 0;
     }
 
-    public NotificationWidget toWidget() {
-        return new NotificationWidget(this);
-    }
+//    public NotificationWidget toWidget() {
+//        return new NotificationWidget(this);
+//    }
 }

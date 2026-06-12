@@ -1,8 +1,6 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import de.rettichlp.therettingtoncompanion.common.gui.screens.components.IconButtonWidget;
-import de.rettichlp.therettingtoncompanion.common.gui.screens.options.ModOptionScreen;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.GridLayout;
@@ -59,7 +57,7 @@ public abstract class PauseScreenMixin extends Screen {
 
     @Inject(method = "extractRenderState", at = @At("RETURN"))
     private void trc$extractRenderStateReturn(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
-        this.button = new IconButtonWidget(0, 0, fromNamespaceAndPath(MOD_ID, "icon.png"), 0, 0, 12, 12, button -> this.minecraft.setScreen(new ModOptionScreen()));
+        // FIXME this.button = new IconButtonWidget(0, 0, fromNamespaceAndPath(MOD_ID, "icon.png"), 0, 0, 12, 12, button -> this.minecraft.setScreen(new ModOptionScreen()));
         this.button.setPosition(this.settingsButtonX, this.settingsButtonY);
         this.button.extractRenderState(graphics, mouseX, mouseY, a);
     }

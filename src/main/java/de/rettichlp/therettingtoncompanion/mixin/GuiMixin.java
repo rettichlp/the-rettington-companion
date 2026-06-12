@@ -2,9 +2,6 @@ package de.rettichlp.therettingtoncompanion.mixin;
 
 import com.mojang.blaze3d.platform.Window;
 import de.rettichlp.therettingtoncompanion.TheRettingtonCompanionApi;
-import de.rettichlp.therettingtoncompanion.common.gui.widgets.NotificationWidget;
-import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.AbstractProgressTextWidget;
-import de.rettichlp.therettingtoncompanion.common.gui.widgets.base.AbstractWidget;
 import de.rettichlp.therettingtoncompanion.common.models.Notification;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.DeltaTracker;
@@ -12,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -89,19 +87,19 @@ public abstract class GuiMixin {
                     notificationService.getNotifications().addAll(externalNotifications);
                 });
 
-        List<NotificationWidget> notificationWidgets = notificationService.getVisibleNotifications().stream()
-                .map(Notification::toWidget)
-                .toList();
-
-        for (int i = 0; i < notificationWidgets.size(); i++) {
-            AbstractProgressTextWidget<?> abstractProgressTextWidget = notificationWidgets.get(i);
-            int x = Minecraft.getInstance().getWindow().getGuiScaledWidth() - abstractProgressTextWidget.getWidth() - 4;
-            int y = 19 * i + 4;
-            abstractProgressTextWidget.draw(graphics, x, y, AbstractWidget.Alignment.RIGHT);
-        }
-
-        // render widgets
-        renderService.getWidgets().forEach(abstractWidget -> abstractWidget.draw(graphics));
+//        List<NotificationWidget> notificationWidgets = notificationService.getVisibleNotifications().stream()
+//                .map(Notification::toWidget)
+//                .toList();
+//
+//        for (int i = 0; i < notificationWidgets.size(); i++) {
+//            AbstractProgressStringWidget<?> abstractProgressStringWidget = notificationWidgets.get(i);
+//            int x = Minecraft.getInstance().getWindow().getGuiScaledWidth() - abstractProgressStringWidget.getWidth() - 4;
+//            int y = 19 * i + 4;
+//            abstractProgressStringWidget.draw(graphics, x, y, AbstractWidget.Alignment.RIGHT);
+//        }
+//
+//        // render widgets
+//        renderService.getWidgets().forEach(abstractWidget -> abstractWidget.draw(graphics));
 
         // render empty inventory space text
         if (configuration.visuals().isShowEmptyInventorySlotCount() && player.gameMode() != null && player.gameMode().isSurvival()) {

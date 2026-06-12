@@ -2,12 +2,12 @@ package de.rettichlp.therettingtoncompanion.common.integrations;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import de.rettichlp.therettingtoncompanion.common.gui.screens.options.ModOptionScreen;
+import net.minecraft.client.gui.screens.PauseScreen;
 
 public class ModMenuIntegration implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> new ModOptionScreen();
+        return parent -> new PauseScreen(true); // FIXME
     }
 }
