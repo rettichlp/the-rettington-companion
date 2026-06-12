@@ -1,4 +1,4 @@
-package de.rettichlp.therettingtoncompanion.common.configuration;
+package de.rettichlp.therettingtoncompanion.configuration;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,9 +6,9 @@ import lombok.Getter;
 import net.minecraft.network.chat.Component;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
-import static de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration.DayTimeValue.DT_OFF;
-import static de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration.EquipmentModelVisibility.ALL;
-import static de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration.WeatherValue.W_OFF;
+import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.DayTimeValue.DT_OFF;
+import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.EquipmentModelVisibility.ALL;
+import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.WeatherValue.W_OFF;
 import static net.minecraft.ChatFormatting.DARK_GRAY;
 import static net.minecraft.ChatFormatting.GRAY;
 import static net.minecraft.network.chat.CommonComponents.OPTION_OFF;

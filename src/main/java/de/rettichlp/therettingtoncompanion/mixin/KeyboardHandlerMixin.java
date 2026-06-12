@@ -1,7 +1,7 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
-import de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration;
-import de.rettichlp.therettingtoncompanion.common.models.GammaPreset;
+import de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration;
+import de.rettichlp.therettingtoncompanion.models.GammaPreset;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.KeyEvent;
@@ -21,9 +21,9 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.SCREENS
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
-import static de.rettichlp.therettingtoncompanion.common.utils.ModUtils.delayedAction;
-import static de.rettichlp.therettingtoncompanion.common.utils.ScreenshotUtils.takeImgurScreenshot;
-import static de.rettichlp.therettingtoncompanion.common.utils.ScreenshotUtils.uploadImageToImgur;
+import static de.rettichlp.therettingtoncompanion.utils.ModUtils.delayedAction;
+import static de.rettichlp.therettingtoncompanion.utils.ScreenshotUtils.takeImgurScreenshot;
+import static de.rettichlp.therettingtoncompanion.utils.ScreenshotUtils.uploadImageToImgur;
 import static java.awt.Color.CYAN;
 import static net.minecraft.network.chat.Component.translatable;
 import static xaero.common.effect.Effects.NO_MINIMAP;

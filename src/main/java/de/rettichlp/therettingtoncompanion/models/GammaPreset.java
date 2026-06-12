@@ -1,4 +1,4 @@
-package de.rettichlp.therettingtoncompanion.common.models;
+package de.rettichlp.therettingtoncompanion.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

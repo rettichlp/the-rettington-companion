@@ -1,6 +1,6 @@
-package de.rettichlp.therettingtoncompanion.common.services;
+package de.rettichlp.therettingtoncompanion.services;
 
-import de.rettichlp.therettingtoncompanion.common.models.Notification;
+import de.rettichlp.therettingtoncompanion.models.Notification;
 import lombok.Getter;
 import net.minecraft.network.chat.Component;
 

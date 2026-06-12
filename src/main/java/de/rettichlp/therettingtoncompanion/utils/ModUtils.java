@@ -1,4 +1,4 @@
-package de.rettichlp.therettingtoncompanion.common.utils;
+package de.rettichlp.therettingtoncompanion.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

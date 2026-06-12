@@ -2,14 +2,13 @@ package de.rettichlp.therettingtoncompanion.mixin;
 
 import com.mojang.blaze3d.platform.Window;
 import de.rettichlp.therettingtoncompanion.TheRettingtonCompanionApi;
-import de.rettichlp.therettingtoncompanion.common.models.Notification;
+import de.rettichlp.therettingtoncompanion.models.Notification;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;

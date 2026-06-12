@@ -1,4 +1,4 @@
-package de.rettichlp.therettingtoncompanion.common.services;
+package de.rettichlp.therettingtoncompanion.services;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

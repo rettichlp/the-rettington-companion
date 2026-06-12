@@ -1,4 +1,4 @@
-package de.rettichlp.therettingtoncompanion.common.utils;
+package de.rettichlp.therettingtoncompanion.utils;
 
 import com.google.gson.JsonElement;
 import net.minecraft.client.Minecraft;

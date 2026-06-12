@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.common.models.GammaPreset.FULLBRIGHT_NIGHT_VISION;
+import static de.rettichlp.therettingtoncompanion.models.GammaPreset.FULLBRIGHT_NIGHT_VISION;
 import static java.lang.Integer.MAX_VALUE;
 import static net.minecraft.world.effect.MobEffects.NIGHT_VISION;
 

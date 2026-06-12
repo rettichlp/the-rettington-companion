@@ -1,6 +1,6 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
-import de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration;
+import de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration;
 import net.minecraft.core.Holder;
 import net.minecraft.world.clock.WorldClock;
 import net.minecraft.world.level.Level;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Optional;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.common.configuration.VisualsConfiguration.DayTimeValue.DT_OFF;
+import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.DayTimeValue.DT_OFF;
 
 @Mixin(Level.class)
 public class LevelMixin {

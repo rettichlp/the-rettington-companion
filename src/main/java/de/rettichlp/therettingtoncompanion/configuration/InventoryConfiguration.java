@@ -1,4 +1,4 @@
-package de.rettichlp.therettingtoncompanion.common.configuration;
+package de.rettichlp.therettingtoncompanion.configuration;
 
 import lombok.Data;
 

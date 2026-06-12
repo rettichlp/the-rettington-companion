@@ -2,7 +2,7 @@ package de.rettichlp.therettingtoncompanion.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import de.rettichlp.therettingtoncompanion.common.models.ChatRegex;
+import de.rettichlp.therettingtoncompanion.models.ChatRegex;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
-import static de.rettichlp.therettingtoncompanion.common.utils.TextUtils.getHighestPriorityMatchingChatRegex;
+import static de.rettichlp.therettingtoncompanion.utils.TextUtils.getHighestPriorityMatchingChatRegex;
 import static java.lang.Math.max;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static net.minecraft.ChatFormatting.DARK_GRAY;

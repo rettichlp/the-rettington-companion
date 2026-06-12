@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.common.models.GammaPreset.OWN_SETTING;
+import static de.rettichlp.therettingtoncompanion.models.GammaPreset.OWN_SETTING;
 import static java.util.Optional.ofNullable;
 
 @Mixin(OptionInstance.class)

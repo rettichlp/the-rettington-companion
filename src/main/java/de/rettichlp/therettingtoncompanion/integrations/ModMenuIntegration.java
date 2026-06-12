@@ -1,4 +1,4 @@
-package de.rettichlp.therettingtoncompanion.common.integrations;
+package de.rettichlp.therettingtoncompanion.integrations;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;

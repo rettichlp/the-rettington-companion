@@ -1,6 +1,6 @@
-package de.rettichlp.therettingtoncompanion.common.utils;
+package de.rettichlp.therettingtoncompanion.utils;
 
-import de.rettichlp.therettingtoncompanion.common.models.ChatRegex;
+import de.rettichlp.therettingtoncompanion.models.ChatRegex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;

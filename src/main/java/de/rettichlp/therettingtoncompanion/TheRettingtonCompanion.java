@@ -1,9 +1,9 @@
 package de.rettichlp.therettingtoncompanion;
 
-import de.rettichlp.therettingtoncompanion.common.configuration.Configuration;
-import de.rettichlp.therettingtoncompanion.common.services.InventoryService;
-import de.rettichlp.therettingtoncompanion.common.services.NotificationService;
-import de.rettichlp.therettingtoncompanion.common.services.RenderService;
+import de.rettichlp.therettingtoncompanion.configuration.Configuration;
+import de.rettichlp.therettingtoncompanion.services.InventoryService;
+import de.rettichlp.therettingtoncompanion.services.NotificationService;
+import de.rettichlp.therettingtoncompanion.services.RenderService;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.KeyMapping;
@@ -32,10 +32,13 @@ public class TheRettingtonCompanion implements ModInitializer {
     // It is considered best practice to use your mod id as the logger's name.
     // That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static final Configuration configuration = new Configuration().loadFromFile();
+
     public static final InventoryService inventoryService = new InventoryService();
     public static final NotificationService notificationService = new NotificationService();
     public static final RenderService renderService = new RenderService();
+
+    public static final Configuration configuration = new Configuration().loadFromFile();
+
     public static final KeyMapping.Category KEY_CATEGORY = new KeyMapping.Category(Identifier.fromNamespaceAndPath(MOD_ID, "trc.key.category.name"));
     public static final KeyMapping GAMMA_PRESET_KEY = new KeyMapping("trc.key.gamma_preset", KEYSYM, GLFW_KEY_G, KEY_CATEGORY);
     public static final KeyMapping EQUIPMENT_MODEL_VISIBILITY_KEY = new KeyMapping("trc.key.hide_armor", KEYSYM, GLFW_KEY_H, KEY_CATEGORY);
