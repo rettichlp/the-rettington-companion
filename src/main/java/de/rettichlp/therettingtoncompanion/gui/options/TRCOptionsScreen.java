@@ -38,7 +38,7 @@ public class TRCOptionsScreen extends Screen {
     public static final int SPACING_HORIZONTAL = 8;
     public static final int SPACING_VERTICAL = 4;
 
-    protected final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this, this.font.lineHeight * 2 + 4 * SPACING_VERTICAL + 20, 2 * SPACING_VERTICAL + 20);
+    protected final HeaderAndFooterLayout layout;
 
     private static final URI DISCORD_INVITE = URI.create("https://discord.gg/mZGAAwhPHu");
     private static final int DISCORD_COLOR = 0x5865F2;
@@ -68,6 +68,10 @@ public class TRCOptionsScreen extends Screen {
 
         super(title);
 
+        int headerHeight = this.font.lineHeight * 2 + 4 * SPACING_VERTICAL + 20;
+        int footerHeight = 2 * SPACING_VERTICAL + 20;
+
+        this.layout = new HeaderAndFooterLayout(this, headerHeight, footerHeight);
         this.selectedTabId = selectedTabId;
         this.lastScreen = lastScreen;
         this.renderBackground = renderBackground;
@@ -113,7 +117,7 @@ public class TRCOptionsScreen extends Screen {
         // footer
         LinearLayout footer = this.layout.addToFooter(horizontal().spacing(SPACING_HORIZONTAL));
         footer.addChild(Button.builder(GUI_BACK, _ -> onBack()).width(120).build());
-        footer.addChild(Button.builder(GUI_DONE, _ -> onClose()).width(200).build());
+        footer.addChild(Button.builder(GUI_DONE, _ -> onClose()).width(168).build());
         footer.addChild(Button.builder(literal("Discord").withColor(DISCORD_COLOR), confirmLink(this, DISCORD_INVITE)).width(56).build());
         footer.addChild(Button.builder(literal("Modrinth").withColor(MODRINTH_COLOR), confirmLink(this, MODRINTH)).width(56).build());
 
