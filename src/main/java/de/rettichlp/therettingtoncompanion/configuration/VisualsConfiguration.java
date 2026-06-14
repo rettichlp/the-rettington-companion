@@ -1,9 +1,14 @@
 package de.rettichlp.therettingtoncompanion.configuration;
 
+import de.rettichlp.therettingtoncompanion.gui.ICycleButtonValue;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.experimental.Accessors;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.NonNull;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.DayTimeValue.DT_OFF;
@@ -11,6 +16,7 @@ import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfigura
 import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.WeatherValue.W_OFF;
 import static net.minecraft.ChatFormatting.DARK_GRAY;
 import static net.minecraft.ChatFormatting.GRAY;
+import static net.minecraft.client.gui.components.Tooltip.create;
 import static net.minecraft.network.chat.CommonComponents.OPTION_OFF;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
@@ -28,14 +34,21 @@ public class VisualsConfiguration {
     private boolean showEmptyInventorySlotCount = false;
 
     @Getter
+    @Accessors(fluent = true)
     @AllArgsConstructor
-    public enum EquipmentModelVisibility {
+    public enum EquipmentModelVisibility implements ICycleButtonValue {
 
         ALL(translatable("trc.equipment_model_visibility.all")),
         NONE(translatable("trc.equipment_model_visibility.none")),
         ONLY_WINGS(translatable("trc.equipment_model_visibility.only_wings"));
 
-        private final Component displayName;
+        private final Component value;
+
+        @Contract(" -> new")
+        @Override
+        public @NonNull Tooltip tooltip() {
+            return create(empty());
+        }
 
         public EquipmentModelVisibility next() {
             int nextOrdinal = ordinal() + 1;
@@ -46,13 +59,13 @@ public class VisualsConfiguration {
             player.sendOverlayMessage(empty()
                     .append(literal("Equipment").withStyle(GRAY))
                     .append(literal(": ").withStyle(DARK_GRAY))
-                    .append(this.displayName));
+                    .append(this.value));
         }
     }
 
     @Getter
     @AllArgsConstructor
-    public enum DayTimeValue {
+    public enum DayTimeValue implements ICycleButtonValue {
 
         DT_OFF(-1),
         DT_0(0),
@@ -66,20 +79,29 @@ public class VisualsConfiguration {
 
         private final int timeValue;
 
-        public Component getDisplayName() {
+        @Override
+        public Component value() {
             return this == DT_OFF ? OPTION_OFF : literal(String.valueOf(this.timeValue));
+        }
+
+        @Contract(" -> new")
+        @Override
+        public @NonNull Tooltip tooltip() {
+            return create(empty());
         }
     }
 
     @Getter
+    @Accessors(fluent = true)
     @AllArgsConstructor
-    public enum WeatherValue {
+    public enum WeatherValue implements ICycleButtonValue {
 
-        W_OFF(OPTION_OFF),
-        W_CLEAR(translatable("trc.weather_value.clear")),
-        W_RAIN(translatable("trc.weather_value.rain")),
-        W_THUNDER(translatable("trc.weather_value.thunder"));
+        W_OFF(OPTION_OFF, create(empty())),
+        W_CLEAR(translatable("trc.weather_value.clear"), create(empty())),
+        W_RAIN(translatable("trc.weather_value.rain"), create(empty())),
+        W_THUNDER(translatable("trc.weather_value.thunder"), create(empty()));
 
-        private final Component displayName;
+        private final Component value;
+        private final Tooltip tooltip;
     }
 }

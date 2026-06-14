@@ -1,10 +1,12 @@
 package de.rettichlp.therettingtoncompanion.gui.options;
 
+import de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.AbstractTRCOptionsTab;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.ChatOptionsTab;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.GeneralOptionsTab;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.InventoryOptionsTab;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.VisualsOptionsTab;
+import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
@@ -38,8 +40,6 @@ public class TRCOptionsScreen extends Screen {
     public static final int SPACING_HORIZONTAL = 8;
     public static final int SPACING_VERTICAL = 4;
 
-    protected final HeaderAndFooterLayout layout;
-
     private static final URI DISCORD_INVITE = URI.create("https://discord.gg/mZGAAwhPHu");
     private static final int DISCORD_COLOR = 0x5865F2;
     private static final URI MODRINTH = URI.create("https://modrinth.com/mod/ucutils");
@@ -54,6 +54,8 @@ public class TRCOptionsScreen extends Screen {
             new InventoryOptionsTab()
     );
 
+    @Getter
+    private final HeaderAndFooterLayout layout;
     private final String selectedTabId;
     private final Screen lastScreen;
     private final boolean renderBackground;
