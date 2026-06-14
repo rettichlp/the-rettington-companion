@@ -10,7 +10,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.Identifier;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +68,7 @@ public class TheRettingtonCompanion implements ModInitializer {
      * @param client The Minecraft client instance. Used to determine whether the player is in a single-player world or a server, and
      *               to retrieve the necessary information for the current world.
      */
-    private void sendWorldInfoOnJoin(@NotNull Minecraft client) {
+    private void sendWorldInfoOnJoin(@NonNull Minecraft client) {
         String worldName = "?";
 
         boolean isMultiplayerServer = !client.isLocalServer() || client.getSingleplayerServer() != null && client.getSingleplayerServer().isPublished();

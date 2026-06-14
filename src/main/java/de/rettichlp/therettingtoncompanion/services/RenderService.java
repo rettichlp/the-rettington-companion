@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
 import java.awt.Color;
@@ -20,7 +19,7 @@ public class RenderService {
         return false;
     }
 
-    public Color getSecondaryColor(@NotNull Color color) {
+    public Color getSecondaryColor(@NonNull Color color) {
         return new Color(color.getRed() / 2, color.getGreen() / 2, color.getBlue() / 2, 100);
     }
 

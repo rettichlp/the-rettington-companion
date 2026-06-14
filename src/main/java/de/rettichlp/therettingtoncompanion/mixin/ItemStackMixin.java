@@ -30,7 +30,7 @@ import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE;
 public abstract class ItemStackMixin {
 
     @Unique
-    private Minecraft minecraft = Minecraft.getInstance();
+    private final Minecraft minecraft = Minecraft.getInstance();
 
     @Shadow
     public abstract int getMaxDamage();

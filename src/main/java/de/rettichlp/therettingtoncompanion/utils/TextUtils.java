@@ -1,9 +1,8 @@
 package de.rettichlp.therettingtoncompanion.utils;
 
 import de.rettichlp.therettingtoncompanion.models.ChatRegex;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +55,7 @@ public class TextUtils {
      *
      * @return an unmodifiable list of {@link ChatRegex} objects that match the given message.
      */
-    private static @NotNull @Unmodifiable List<ChatRegex> getMatchingCustomRegexes(CharSequence message) {
+    private static @NonNull List<ChatRegex> getMatchingCustomRegexes(CharSequence message) {
         return configuration.chat().regex().getChatRegexes().stream()
                 .sorted(comparingInt(ChatRegex::getPriority))
                 .filter(ChatRegex::isActive)

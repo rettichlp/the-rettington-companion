@@ -14,7 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -169,10 +169,10 @@ public abstract class GuiMixin {
     }
 
     @Unique
-    private void drawArmorHud(@NotNull GuiGraphicsExtractor graphics,
+    private void drawArmorHud(@NonNull GuiGraphicsExtractor graphics,
                               DeltaTracker deltaTracker,
                               int y,
-                              @NotNull SequencedCollection<ItemStack> armorItems) {
+                              @NonNull SequencedCollection<ItemStack> armorItems) {
         Minecraft client = Minecraft.getInstance();
         LocalPlayer localPlayer = client.player;
         Window window = client.getWindow();
@@ -199,10 +199,10 @@ public abstract class GuiMixin {
     }
 
     @Unique
-    private void drawArrowHud(@NotNull GuiGraphicsExtractor graphics,
+    private void drawArrowHud(@NonNull GuiGraphicsExtractor graphics,
                               DeltaTracker deltaTracker,
                               int y,
-                              @NotNull Collection<ItemStack> arrowItems) {
+                              @NonNull Collection<ItemStack> arrowItems) {
         Minecraft client = Minecraft.getInstance();
         LocalPlayer localPlayer = client.player;
         Window window = client.getWindow();
@@ -240,22 +240,22 @@ public abstract class GuiMixin {
     }
 
     @Unique
-    private void drawSingleSlot(@NotNull GuiGraphicsExtractor graphics, int x, int y) {
+    private void drawSingleSlot(@NonNull GuiGraphicsExtractor graphics, int x, int y) {
         graphics.blitSprite(GUI_TEXTURED, HOTBAR_OFFHAND_LEFT_SPRITE, x, y, 29, 24); // for some reason y for offhand slot is 23 and not 22 (that's why -1)
     }
 
     @Unique
-    private void drawFirstSlot(@NotNull GuiGraphicsExtractor graphics, int x, int y) {
+    private void drawFirstSlot(@NonNull GuiGraphicsExtractor graphics, int x, int y) {
         graphics.blit(GUI_TEXTURED, HOTBAR_SPRITE, 182, 22, 0, 0, x, y, 21, 22);
     }
 
     @Unique
-    private void drawMiddleSlot(@NotNull GuiGraphicsExtractor graphics, int x, int y) {
+    private void drawMiddleSlot(@NonNull GuiGraphicsExtractor graphics, int x, int y) {
         graphics.blit(GUI_TEXTURED, HOTBAR_SPRITE, 182, 22, 21, 0, x, y, 20, 22);
     }
 
     @Unique
-    private void drawLastSlot(@NotNull GuiGraphicsExtractor graphics, int x, int y) {
+    private void drawLastSlot(@NonNull GuiGraphicsExtractor graphics, int x, int y) {
         graphics.blit(GUI_TEXTURED, HOTBAR_SPRITE, 182, 22, 161, 0, x, y, 21, 22);
     }
 }

@@ -40,7 +40,7 @@ public class Notification {
 
     public boolean isVisible() {
         LocalDateTime now = now();
-        return timestamp.isBefore(now) && between(this.timestamp, now).compareTo(this.displayDuration) < 0;
+        return this.timestamp.isBefore(now) && between(this.timestamp, now).compareTo(this.displayDuration) < 0;
     }
 
 //    public NotificationWidget toWidget() {
