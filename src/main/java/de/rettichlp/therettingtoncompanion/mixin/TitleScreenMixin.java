@@ -1,5 +1,6 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
+import de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -23,9 +24,9 @@ public abstract class TitleScreenMixin extends Screen {
     @Inject(method = "createTestWorldButton", at = @At("RETURN"), cancellable = true)
     private void trc$createTestWorldButtonReturn(int topPos, int spacing, CallbackInfoReturnable<Integer> cir) {
         if (getBoolean("fabric.development")) {
-//    FIXME        this.addRenderableWidget(Button.builder(literal(MOD_NAME), button -> this.minecraft.setScreen(new ModOptionScreen()))
-//                    .bounds(this.minecraft.getWindow().getGuiScaledWidth() / 2 - 100, topPos += spacing, 200, 20)
-//                    .build());
+            this.addRenderableWidget(Button.builder(literal(MOD_NAME), button -> this.minecraft.setScreen(new TRCOptionsScreen("general", this, true)))
+                    .bounds(this.minecraft.getWindow().getGuiScaledWidth() / 2 - 100, topPos += spacing, 200, 20)
+                    .build());
         }
 
         cir.setReturnValue(topPos);
