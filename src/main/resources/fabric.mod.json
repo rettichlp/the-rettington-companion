@@ -19,7 +19,7 @@
       "de.rettichlp.therettingtoncompanion.TheRettingtonCompanion"
     ],
     "modmenu": [
-      "de.rettichlp.therettingtoncompanion.common.integrations.ModMenuIntegration"
+      "de.rettichlp.therettingtoncompanion.integrations.ModMenuIntegration"
     ]
   },
   "mixins": [
