@@ -1,9 +1,11 @@
 package de.rettichlp.therettingtoncompanion.gui.options.list;
 
 import de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration;
+import de.rettichlp.therettingtoncompanion.gui.ColorButton;
 import de.rettichlp.therettingtoncompanion.gui.ICycleButtonValue;
 import de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry;
 import de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
@@ -13,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.OFF;
@@ -26,6 +29,7 @@ public class TRCOptionsList extends ContainerObjectSelectionList<AbstractEntry> 
 
     private static final int ENTRY_HEIGHT = 24;
 
+    @Getter
     private final TRCOptionsScreen screen;
 
     public TRCOptionsList(@NonNull Minecraft minecraft, @NonNull TRCOptionsScreen screen) {
@@ -67,7 +71,7 @@ public class TRCOptionsList extends ContainerObjectSelectionList<AbstractEntry> 
         addEntry(new WeatherButtonEntry(this.minecraft.font, label, tooltip, valueChangeListener));
     }
 
-    public void addColorButton(Component label, Tooltip tooltip, int initialValue, Consumer<Integer> valueChangeListener) {
-        addEntry(new ColorButtonEntry(this.minecraft.font, label, tooltip, initialValue, valueChangeListener));
+    public void addColorButton(Component label, Tooltip tooltip, int initialValue, BiConsumer<ColorButton, Integer> onPress) {
+        addEntry(new ColorButtonEntry(this.minecraft.font, label, tooltip, initialValue, onPress));
     }
 }
