@@ -57,7 +57,7 @@ public class TextUtils {
      */
     private static @NonNull List<ChatRegex> getMatchingCustomRegexes(CharSequence message) {
         return configuration.chat().regex().getChatRegexes().stream()
-                .sorted(comparingInt(ChatRegex::getPriority))
+                .sorted(comparingInt(ChatRegex::getPriority).reversed())
                 .filter(ChatRegex::isActive)
                 .filter(chatRegex -> {
                     Optional<Pattern> compiledPattern = chatRegex.getCompiledPattern();
