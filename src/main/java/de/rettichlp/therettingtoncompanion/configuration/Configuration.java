@@ -33,7 +33,6 @@ public class Configuration {
     private VisualsConfiguration visuals = new VisualsConfiguration();
 
     private Map<String, Object> widgets = new HashMap<>();
-    private double ownGammaValue = 0.5;
     private GammaPreset gammaPreset = OWN_SETTING;
 
     public Configuration loadFromFile() {

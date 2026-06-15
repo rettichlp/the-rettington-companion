@@ -19,9 +19,9 @@
     "GuiMixin",
     "KeyboardHandlerMixin",
     "LevelMixin",
+    "LightmapRenderStateExtractorMixin",
     "LivingEntityMixin",
     "PauseScreenMixin",
-    "SimpleOptionMixin",
     "TitleScreenMixin"
   ]
 }
