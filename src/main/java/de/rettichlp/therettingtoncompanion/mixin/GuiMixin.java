@@ -241,21 +241,21 @@ public abstract class GuiMixin {
 
     @Unique
     private void drawSingleSlot(@NonNull GuiGraphicsExtractor graphics, int x, int y) {
-        graphics.blitSprite(GUI_TEXTURED, HOTBAR_OFFHAND_LEFT_SPRITE, x, y, 29, 24); // for some reason y for offhand slot is 23 and not 22 (that's why -1)
+        graphics.blitSprite(GUI_TEXTURED, HOTBAR_OFFHAND_LEFT_SPRITE, x, y - 1, 29, 24); // for some reason y for offhand slot is 23 and not 22 (that's why -1)
     }
 
     @Unique
     private void drawFirstSlot(@NonNull GuiGraphicsExtractor graphics, int x, int y) {
-        graphics.blit(GUI_TEXTURED, HOTBAR_SPRITE, 182, 22, 0, 0, x, y, 21, 22);
+        graphics.blitSprite(GUI_TEXTURED, HOTBAR_SPRITE, 182, 22, 0, 0, x, y, 21, 22);
     }
 
     @Unique
     private void drawMiddleSlot(@NonNull GuiGraphicsExtractor graphics, int x, int y) {
-        graphics.blit(GUI_TEXTURED, HOTBAR_SPRITE, 182, 22, 21, 0, x, y, 20, 22);
+        graphics.blitSprite(GUI_TEXTURED, HOTBAR_SPRITE, 182, 22, 21, 0, x, y, 20, 22);
     }
 
     @Unique
     private void drawLastSlot(@NonNull GuiGraphicsExtractor graphics, int x, int y) {
-        graphics.blit(GUI_TEXTURED, HOTBAR_SPRITE, 182, 22, 161, 0, x, y, 21, 22);
+        graphics.blitSprite(GUI_TEXTURED, HOTBAR_SPRITE, 182, 22, 161, 0, x, y, 21, 22);
     }
 }
