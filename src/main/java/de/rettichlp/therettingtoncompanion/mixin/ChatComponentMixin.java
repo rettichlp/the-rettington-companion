@@ -1,5 +1,6 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import de.rettichlp.therettingtoncompanion.models.ChatRegex;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.utils.TextUtils.getHighestPriorityMatchingChatRegex;
+import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Math.max;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static net.minecraft.ChatFormatting.DARK_GRAY;
@@ -35,7 +37,7 @@ import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.sounds.SoundEvent.createVariableRangeEvent;
 
 @Mixin(ChatComponent.class)
-public abstract class ChatHudMixin {
+public abstract class ChatComponentMixin {
 
     @Shadow
     @Final
@@ -72,6 +74,12 @@ public abstract class ChatHudMixin {
                         .applyFormat(DARK_GRAY)
                         .withHoverEvent(new HoverEvent.ShowText(literal(dateString)))))
                 .append(contents);
+    }
+
+    @ModifyExpressionValue(method = { "addMessageToDisplayQueue", "addMessageToQueue", "addRecentChat" },
+                           at = @At(value = "CONSTANT", args = "intValue=100"))
+    private int moreMessages(int hundred) {
+        return configuration.chat().isMoreMessages() ? MAX_VALUE : 100;
     }
 
     @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))

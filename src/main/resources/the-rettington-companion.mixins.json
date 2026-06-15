@@ -13,7 +13,7 @@
   },
   "client": [
     "AbstractContainerScreenMixin",
-    "ChatHudMixin",
+    "ChatComponentMixin",
     "ContextualBarRendererMixin",
     "EquipmentLayerRendererMixin",
     "GuiMixin",
