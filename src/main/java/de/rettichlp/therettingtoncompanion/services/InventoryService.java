@@ -27,7 +27,7 @@ public class InventoryService {
         int currentHotbarSlotIndex = player.getInventory().getSelectedSlot();
         ItemStack currentItemStack = player.getMainHandItem().copy();
 
-        if (this.hotbarSlotIndex != currentHotbarSlotIndex) {
+        if (this.itemStack == null || this.hotbarSlotIndex != currentHotbarSlotIndex) {
             this.hotbarSlotIndex = currentHotbarSlotIndex;
             this.itemStack = currentItemStack;
             return;
