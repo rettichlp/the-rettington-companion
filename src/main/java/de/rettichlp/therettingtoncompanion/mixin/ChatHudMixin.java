@@ -9,7 +9,7 @@ import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.Identifier;
-import net.minecraft.sounds.SoundEvent;
+import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,16 +24,15 @@ import java.awt.Color;
 import java.time.LocalDateTime;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.utils.TextUtils.getHighestPriorityMatchingChatRegex;
 import static java.lang.Math.max;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static net.minecraft.ChatFormatting.DARK_GRAY;
 import static net.minecraft.client.gui.components.ChatComponent.getHeight;
 import static net.minecraft.client.gui.components.ChatComponent.getWidth;
-import static net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.sounds.SoundEvent.createVariableRangeEvent;
 
 @Mixin(ChatComponent.class)
 public abstract class ChatHudMixin {
@@ -52,59 +51,14 @@ public abstract class ChatHudMixin {
         }
     }
 
-    @Inject(method = "addMessageToDisplayQueue",
-            at = @At(value = "INVOKE", target = "Ljava/util/List;removeLast()Ljava/lang/Object;"),
-            cancellable = true)
-    public void trc$addMessageToDisplayQueueInvoke(GuiMessage message, CallbackInfo ci) {
-        ChatRegex highestPriorityMatchingChatRegex = getHighestPriorityMatchingChatRegex(message.content().getString());
-        if (highestPriorityMatchingChatRegex != null) {
+    @ModifyVariable(method = "addMessage", at = @At("HEAD"), argsOnly = true, name = "contents")
+    private @NonNull Component trc$addMessageHead(@NonNull Component contents) {
+        ChatRegex highestPriorityMatchingChatRegex = getHighestPriorityMatchingChatRegex(contents.getString());
+        if (highestPriorityMatchingChatRegex != null && this.minecraft.player != null) {
             Identifier chatRegexSoundIdentifier = highestPriorityMatchingChatRegex.getSoundIdentifier();
-            SoundEvent soundEvent = SOUND_EVENT.getValue(chatRegexSoundIdentifier);
-            player.playSound(soundEvent, 1, 1.5f);
+            this.minecraft.player.playSound(createVariableRangeEvent(chatRegexSoundIdentifier), 1.0f, 1.0f);
         }
 
-        if (configuration.chat().isMoreMessages()) {
-            ci.cancel();
-        }
-    }
-
-    @Inject(method = "addMessageToQueue",
-            at = @At(value = "INVOKE", target = "Ljava/util/List;removeLast()Ljava/lang/Object;"),
-            cancellable = true)
-    public void trc$addMessageToQueueInvoke(GuiMessage message, CallbackInfo ci) {
-        ChatRegex highestPriorityMatchingChatRegex = getHighestPriorityMatchingChatRegex(message.content().getString());
-        if (highestPriorityMatchingChatRegex != null) {
-            Identifier chatRegexSoundIdentifier = highestPriorityMatchingChatRegex.getSoundIdentifier();
-            SoundEvent soundEvent = SOUND_EVENT.getValue(chatRegexSoundIdentifier);
-            player.playSound(soundEvent, 1, 1.5f);
-        }
-
-        if (configuration.chat().isMoreMessages()) {
-            ci.cancel();
-        }
-    }
-
-    @Inject(method = "addRecentChat",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ArrayListDeque;removeFirst()Ljava/lang/Object;"),
-            cancellable = true)
-    public void trc$addRecentChatInvoke(String message, CallbackInfo ci) {
-        ChatRegex highestPriorityMatchingChatRegex = getHighestPriorityMatchingChatRegex(message);
-        if (highestPriorityMatchingChatRegex != null) {
-            Identifier chatRegexSoundIdentifier = highestPriorityMatchingChatRegex.getSoundIdentifier();
-            SoundEvent soundEvent = SOUND_EVENT.getValue(chatRegexSoundIdentifier);
-            player.playSound(soundEvent, 1, 1.5f);
-        }
-
-        if (configuration.chat().isMoreMessages()) {
-            ci.cancel();
-        }
-    }
-
-    @ModifyVariable(method = "addMessage",
-                    at = @At("HEAD"),
-                    argsOnly = true,
-                    name = "contents")
-    private Component trc$addMessageHead(Component contents) {
         if (!configuration.chat().isChatTime()) {
             return contents;
         }
@@ -149,7 +103,8 @@ public abstract class ChatHudMixin {
     @ModifyArgs(method = "lambda$extractRenderState$1(IILnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IFLnet/minecraft/client/multiplayer/chat/GuiMessage$Line;IF)V",
                 at = @At(value = "INVOKE",
                          target = "Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;fill(IIIII)V"))
-    private static void trc$method_75802Invoke(Args args, @Local(argsOnly = true, name = "arg5") GuiMessage.Line arg5) {
+    private static void trc$method_75802Invoke(@NonNull Args args,
+                                               @Local(argsOnly = true, name = "arg5") GuiMessage.@NonNull Line arg5) {
         int originalColor = args.get(4);
 
         // extract alpha value
