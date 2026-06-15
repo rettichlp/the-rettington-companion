@@ -9,6 +9,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -17,10 +18,10 @@ public class ColorButtonEntry extends AbstractEntry {
     private final StringWidget stringWidget;
     private final ColorButton colorButton;
 
-    protected ColorButtonEntry(Font font, Component label, Tooltip tooltip, int colorValue, BiConsumer<ColorButton, Integer> onPress) {
+    protected ColorButtonEntry(Font font, Component label, Tooltip tooltip, Color color, BiConsumer<ColorButton, Color> onPress) {
         this.stringWidget = new StringWidget(label, font);
         this.stringWidget.setTooltip(tooltip);
-        this.colorButton = new ColorButton(0, 0, 100, 20, colorValue, button -> onPress.accept((ColorButton) button, colorValue));
+        this.colorButton = new ColorButton(0, 0, 100, 20, color, button -> onPress.accept((ColorButton) button, color));
     }
 
     @Override

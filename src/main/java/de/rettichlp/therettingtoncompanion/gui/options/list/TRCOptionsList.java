@@ -14,6 +14,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
+import java.awt.Color;
 import java.util.Collection;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -71,7 +72,7 @@ public class TRCOptionsList extends ContainerObjectSelectionList<AbstractEntry> 
         addEntry(new WeatherButtonEntry(this.minecraft.font, label, tooltip, valueChangeListener));
     }
 
-    public void addColorButton(Component label, Tooltip tooltip, int initialValue, BiConsumer<ColorButton, Integer> onPress) {
+    public void addColorButton(Component label, Tooltip tooltip, Color initialValue, BiConsumer<ColorButton, Color> onPress) {
         addEntry(new ColorButtonEntry(this.minecraft.font, label, tooltip, initialValue, onPress));
     }
 }
