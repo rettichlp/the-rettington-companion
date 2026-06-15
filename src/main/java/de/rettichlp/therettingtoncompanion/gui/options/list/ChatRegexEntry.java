@@ -6,6 +6,7 @@ import de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry;
 import de.rettichlp.therettingtoncompanion.gui.SoundSelectionPopupScreen;
 import de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen;
 import de.rettichlp.therettingtoncompanion.models.ChatRegex;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -21,9 +22,10 @@ import java.util.List;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.OFF;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
+import static java.awt.Color.RED;
+import static java.awt.Color.WHITE;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static net.minecraft.ChatFormatting.RED;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 
@@ -54,6 +56,10 @@ public class ChatRegexEntry extends AbstractEntry {
         this.editBox = new EditBox(this.minecraft.font, 0, 20, empty());
         this.editBox.setValue(this.editable ? chatRegex.getPattern() : this.minecraft.getGameProfile().name());
         this.editBox.setEditable(this.editable);
+        this.editBox.setResponder(value -> {
+            this.chatRegex.setPattern(value);
+            this.editBox.setTextColor((this.chatRegex.isValidPattern() ? WHITE : RED).getRGB());
+        });
 
         boolean enabled = this.editable ? this.chatRegex.isActive() : defaultChatRegex.isActive();
         this.toggleButton = CycleButton.builder(OnOffCycleButtonEntry::value, enabled ? ON : OFF)
@@ -66,7 +72,7 @@ public class ChatRegexEntry extends AbstractEntry {
             ((ColorButton) button).setColor(color);
         })));
 
-        this.soundSelectionButton = Button.builder(literal("🔊"), _ -> this.minecraft.setScreen(new SoundSelectionPopupScreen(this.minecraft.screen, chatRegex.getSoundIdentifier(), (this.editable ? this.chatRegex : defaultChatRegex)::setSoundIdentifier)))
+        this.soundSelectionButton = Button.builder(literal("🔊"), _ -> this.minecraft.setScreen(new SoundSelectionPopupScreen(this.minecraft.screen, this.chatRegex.getSoundIdentifier(), (this.editable ? this.chatRegex : defaultChatRegex)::setSoundIdentifier)))
                 .width(30)
                 .build();
 
@@ -89,7 +95,7 @@ public class ChatRegexEntry extends AbstractEntry {
         this.priorityDecreaseButton.setHeight(10);
         this.priorityDecreaseButton.active = this.editable;
 
-        this.deleteButton = Button.builder(literal("X").withStyle(RED), _ -> {
+        this.deleteButton = Button.builder(literal("X").withStyle(ChatFormatting.RED), _ -> {
             configuration.chat().regex().getChatRegexes().removeIf(cr -> cr.equals(this.chatRegex));
             this.minecraft.setScreen(new TRCOptionsScreen("chat", new PauseScreen(true), true));
         }).build();
