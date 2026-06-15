@@ -1,13 +1,20 @@
 package de.rettichlp.therettingtoncompanion.gui.options.tabs;
 
+import de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen;
 import de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList;
+import de.rettichlp.therettingtoncompanion.models.ChatRegex;
+import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
+import static java.awt.Color.GREEN;
 import static net.minecraft.client.gui.components.Tooltip.create;
+import static net.minecraft.network.chat.Component.empty;
+import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
 
 public class ChatOptionsTab extends AbstractTRCOptionsTab {
 
@@ -29,20 +36,14 @@ public class ChatOptionsTab extends AbstractTRCOptionsTab {
         optionsList.addToggleButton(translatable("trc.option.chat.chat_time.label"), create(translatable("trc.option.chat.chat_time.tooltip")), configuration.chat().isChatTime(), (_, value) -> configuration.chat().setChatTime(value == ON));
 
         optionsList.addHeader(translatable("trc.option.chat.section.message_patterns.title"));
-
-//        ChatRegex defaultChatRegex = configuration.chat().regex().getDefaulChatRegex();
-//        ChatRegexEntry defaultChatRegexEntry = new ChatRegexEntry(defaultChatRegex, false);
-//        scrollableListEntries.add(defaultChatRegexEntry);
-//
-//        configuration.chat().regex().getChatRegexes().forEach(chatRegex -> {
-//            ChatRegexEntry chatRegexEntry = new ChatRegexEntry(chatRegex, true);
-//            scrollableListEntries.add(chatRegexEntry);
-//        });
-//
-//        ButtonEntry buttonEntry = new ButtonEntry(literal("+"), button -> {
-//            ChatRegex newChatRegex = new ChatRegex("", NOTE_BLOCK_BELL.value().location(), true, GREEN, 0);
-//            configuration.chat().regex().getChatRegexes().add(newChatRegex);
-//            this.client.execute(() -> this.client.setScreen(new ModOptionScreen("chat")));
-//        });
+        optionsList.addChatRegexEntry(configuration.chat().regex().getDefaulChatRegex(), false);
+        configuration.chat().regex().getChatRegexes().forEach(chatRegex -> {
+            optionsList.addChatRegexEntry(chatRegex, true);
+        });
+        optionsList.addFullWidthButton(literal("+"), create(empty()), _ -> {
+            ChatRegex newChatRegex = new ChatRegex("", NOTE_BLOCK_BELL.value().location(), true, GREEN, 0);
+            configuration.chat().regex().getChatRegexes().add(newChatRegex);
+            this.minecraft.setScreen(new TRCOptionsScreen("chat", new PauseScreen(true), true));
+        });
     }
 }

@@ -37,9 +37,9 @@ public class ColorSelectionPopupScreen extends Screen {
     private final LinearLayout layout = vertical().spacing(SPACING_VERTICAL);
 
     private final @Nullable Screen backgroundScreen;
+    private final Color initialColor;
     private final Consumer<Color> onClose;
 
-    private final Color initialColor;
     private EditBox colorInputRed;
     private EditBox colorInputGreen;
     private EditBox colorInputBlue;
