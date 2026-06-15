@@ -52,11 +52,11 @@ public class TheRettingtonCompanion implements ModInitializer {
         // However, some things (like resources) may still be uninitialized.
         // Proceed with mild caution.
 
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            player = client.player;
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, minecraft) -> {
+            player = minecraft.player;
 
             if (configuration.chat().isKeepMessagesOnDisconnect()) {
-                sendWorldInfoOnJoin(client);
+                sendWorldInfoOnJoin(minecraft);
             }
         });
     }
@@ -65,19 +65,19 @@ public class TheRettingtonCompanion implements ModInitializer {
      * Sends the world information (server name or save file name) to the player when they join a server or single-player world.
      * Displays the world information as a chat message formatted with specific colors.
      *
-     * @param client The Minecraft client instance. Used to determine whether the player is in a single-player world or a server, and
+     * @param minecraft The Minecraft client instance. Used to determine whether the player is in a single-player world or a server, and
      *               to retrieve the necessary information for the current world.
      */
-    private void sendWorldInfoOnJoin(@NonNull Minecraft client) {
+    private void sendWorldInfoOnJoin(@NonNull Minecraft minecraft) {
         String worldName = "?";
 
-        boolean isMultiplayerServer = !client.isLocalServer() || client.getSingleplayerServer() != null && client.getSingleplayerServer().isPublished();
+        boolean isMultiplayerServer = !minecraft.isLocalServer() || minecraft.getSingleplayerServer() != null && minecraft.getSingleplayerServer().isPublished();
 
         if (!isMultiplayerServer) {
-            assert client.getSingleplayerServer() != null;
-            worldName = client.getSingleplayerServer().getWorldData().getLevelName();
-        } else if (client.getCurrentServer() != null) {
-            worldName = client.getCurrentServer().name.isBlank() ? client.getCurrentServer().ip : client.getCurrentServer().name;
+            assert minecraft.getSingleplayerServer() != null;
+            worldName = minecraft.getSingleplayerServer().getWorldData().getLevelName();
+        } else if (minecraft.getCurrentServer() != null) {
+            worldName = minecraft.getCurrentServer().name.isBlank() ? minecraft.getCurrentServer().ip : minecraft.getCurrentServer().name;
         }
 
         player.sendSystemMessage(empty()

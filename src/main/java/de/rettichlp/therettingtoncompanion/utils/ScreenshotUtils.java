@@ -42,12 +42,12 @@ public class ScreenshotUtils {
 
     public static @NonNull CompletableFuture<File> takeImgurScreenshot() {
         CompletableFuture<File> completableFuture = new CompletableFuture<>();
-        Minecraft client = Minecraft.getInstance();
+        Minecraft minecraft = Minecraft.getInstance();
 
-        File screenshotsDirectory = client.gameDirectory.toPath().resolve(SCREENSHOT_DIR).resolve(IMGUR_SCREENSHOT_DIR).toFile();
+        File screenshotsDirectory = minecraft.gameDirectory.toPath().resolve(SCREENSHOT_DIR).resolve(IMGUR_SCREENSHOT_DIR).toFile();
         screenshotsDirectory.mkdirs();
 
-        takeScreenshot(client.getMainRenderTarget(), nativeImage -> {
+        takeScreenshot(minecraft.getMainRenderTarget(), nativeImage -> {
             File screenshotFile = getFile(screenshotsDirectory);
 
             Util.ioPool().execute(() -> {

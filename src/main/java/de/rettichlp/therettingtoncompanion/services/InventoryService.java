@@ -45,14 +45,14 @@ public class InventoryService {
     }
 
     public boolean restock(@NonNull ItemStack previousItemStack) {
-        Minecraft client = Minecraft.getInstance();
+        Minecraft minecraft = Minecraft.getInstance();
 
-        if (client.screen != null || !configuration.inventory().isAutoRestock()) {
+        if (minecraft.screen != null || !configuration.inventory().isAutoRestock()) {
             LOGGER.debug("Auto restock is disabled or a screen is open");
             return false;
         }
 
-        MultiPlayerGameMode gameMode = client.gameMode;
+        MultiPlayerGameMode gameMode = minecraft.gameMode;
 
         List<Integer> matchingSlotIds = getMatchingSlotIds(previousItemStack);
         if (gameMode == null || matchingSlotIds.isEmpty()) {

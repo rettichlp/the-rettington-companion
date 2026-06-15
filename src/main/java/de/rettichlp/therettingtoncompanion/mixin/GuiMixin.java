@@ -117,8 +117,8 @@ public abstract class GuiMixin {
 
     @Inject(method = "extractHotbarAndDecorations", at = @At("TAIL"))
     private void trc$extractHotbarAndDecorationsTail(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        Minecraft client = Minecraft.getInstance();
-        LocalPlayer localPlayer = client.player;
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer localPlayer = minecraft.player;
 
         if (localPlayer == null) {
             return;
@@ -126,7 +126,7 @@ public abstract class GuiMixin {
 
         inventoryService.checkRestock();
 
-        Window window = client.getWindow();
+        Window window = minecraft.getWindow();
         int y = window.getGuiScaledHeight() - 22;
 
         // draw armor hud
@@ -142,11 +142,11 @@ public abstract class GuiMixin {
         }
 
         // draw arrow hud
-        Collection<ItemStack> arrowItems = new ArrayList<>(client.player.getInventory().getNonEquipmentItems().stream()
+        Collection<ItemStack> arrowItems = new ArrayList<>(minecraft.player.getInventory().getNonEquipmentItems().stream()
                 .filter(ARROW_ITEM_PREDICATE)
                 .toList());
 
-        ItemStack offHandStack = client.player.getOffhandItem();
+        ItemStack offHandStack = minecraft.player.getOffhandItem();
         if (ARROW_ITEM_PREDICATE.test(offHandStack)) {
             arrowItems.add(offHandStack);
         }
@@ -173,9 +173,9 @@ public abstract class GuiMixin {
                               DeltaTracker deltaTracker,
                               int y,
                               @NonNull SequencedCollection<ItemStack> armorItems) {
-        Minecraft client = Minecraft.getInstance();
-        LocalPlayer localPlayer = client.player;
-        Window window = client.getWindow();
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer localPlayer = minecraft.player;
+        Window window = minecraft.getWindow();
 
         assert localPlayer != null; // cannot be null at this point
         int armorSlotsX = localPlayer.getMainArm() == RIGHT
@@ -203,9 +203,9 @@ public abstract class GuiMixin {
                               DeltaTracker deltaTracker,
                               int y,
                               @NonNull Collection<ItemStack> arrowItems) {
-        Minecraft client = Minecraft.getInstance();
-        LocalPlayer localPlayer = client.player;
-        Window window = client.getWindow();
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer localPlayer = minecraft.player;
+        Window window = minecraft.getWindow();
 
         int arrowItemsAmount = arrowItems.size();
 
