@@ -65,8 +65,8 @@ public class TheRettingtonCompanion implements ModInitializer {
      * Sends the world information (server name or save file name) to the player when they join a server or single-player world.
      * Displays the world information as a chat message formatted with specific colors.
      *
-     * @param minecraft The Minecraft client instance. Used to determine whether the player is in a single-player world or a server, and
-     *               to retrieve the necessary information for the current world.
+     * @param minecraft The Minecraft client instance. Used to determine whether the player is in a single-player world or a server,
+     *                  and to retrieve the necessary information for the current world.
      */
     private void sendWorldInfoOnJoin(@NonNull Minecraft minecraft) {
         String worldName = "?";

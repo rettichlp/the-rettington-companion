@@ -7,9 +7,6 @@ import lombok.experimental.Accessors;
 import java.util.HashSet;
 import java.util.Set;
 
-import static java.awt.Color.GREEN;
-import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
-
 @Data
 public class ChatConfiguration {
 
@@ -23,7 +20,7 @@ public class ChatConfiguration {
     @Data
     public static class ChatRegexConfiguration {
 
-        private ChatRegex defaulChatRegex = new ChatRegex("", NOTE_BLOCK_BELL.value().location(), true, GREEN, 0);
+        private ChatRegex defaulChatRegex = new ChatRegex("");
         private Set<ChatRegex> chatRegexes = new HashSet<>();
     }
 }

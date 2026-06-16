@@ -9,12 +9,10 @@ import org.jspecify.annotations.NonNull;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
-import static java.awt.Color.GREEN;
 import static net.minecraft.client.gui.components.Tooltip.create;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
-import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
 
 public class ChatOptionsTab extends AbstractTRCOptionsTab {
 
@@ -41,7 +39,7 @@ public class ChatOptionsTab extends AbstractTRCOptionsTab {
             optionsList.addChatRegexEntry(chatRegex, true);
         });
         optionsList.addFullWidthButton(literal("+"), create(empty()), _ -> {
-            ChatRegex newChatRegex = new ChatRegex("", NOTE_BLOCK_BELL.value().location(), true, GREEN, 0);
+            ChatRegex newChatRegex = new ChatRegex("");
             configuration.chat().regex().getChatRegexes().add(newChatRegex);
             this.minecraft.setScreen(new TRCOptionsScreen("chat", new PauseScreen(true), true));
         });

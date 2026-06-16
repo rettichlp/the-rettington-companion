@@ -18,10 +18,12 @@ import net.minecraft.client.gui.screens.PauseScreen;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.OFF;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
+import static de.rettichlp.therettingtoncompanion.models.ChatRegex.isValidPattern;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
 import static java.lang.Math.max;
@@ -54,11 +56,15 @@ public class ChatRegexEntry extends AbstractEntry {
         this.editable = editable;
 
         this.editBox = new EditBox(this.minecraft.font, 0, 20, empty());
-        this.editBox.setValue(this.editable ? chatRegex.getPattern() : this.minecraft.getGameProfile().name());
+        this.editBox.setValue(this.editable ? this.chatRegex.getPattern().map(Pattern::pattern).orElse("null") : this.minecraft.getGameProfile().name());
         this.editBox.setEditable(this.editable);
         this.editBox.setResponder(value -> {
-            this.chatRegex.setPattern(value);
-            this.editBox.setTextColor((this.chatRegex.isValidPattern() ? WHITE : RED).getRGB());
+            if (isValidPattern(value)) {
+                this.editBox.setTextColor(WHITE.getRGB());
+                this.chatRegex.setPatternString(value);
+            } else {
+                this.editBox.setTextColor(RED.getRGB());
+            }
         });
 
         boolean enabled = this.editable ? this.chatRegex.isActive() : defaultChatRegex.isActive();
@@ -67,12 +73,12 @@ public class ChatRegexEntry extends AbstractEntry {
                 .displayOnlyValue()
                 .create(0, 0, 30, 20, empty(), (_, value) -> (this.editable ? this.chatRegex : defaultChatRegex).setActive(value == ON));
 
-        this.colorButton = new ColorButton(0, 0, 30, 20, chatRegex.getColor(), button -> this.minecraft.setScreen(new ColorSelectionPopupScreen(this.minecraft.screen, chatRegex.getColor(), color -> {
+        this.colorButton = new ColorButton(0, 0, 30, 20, this.chatRegex.getColor(), button -> this.minecraft.setScreen(new ColorSelectionPopupScreen(this.minecraft.screen, this.chatRegex.getColor(), color -> {
             (this.editable ? this.chatRegex : defaultChatRegex).setColor(color);
             ((ColorButton) button).setColor(color);
         })));
 
-        this.soundSelectionButton = Button.builder(literal("🔊"), _ -> this.minecraft.setScreen(new SoundSelectionPopupScreen(this.minecraft.screen, this.chatRegex.getSoundIdentifier(), (this.editable ? this.chatRegex : defaultChatRegex)::setSoundIdentifier)))
+        this.soundSelectionButton = Button.builder(literal("🔊"), _ -> this.minecraft.setScreen(new SoundSelectionPopupScreen(this.minecraft.screen, this.chatRegex.getSoundIdentifier(), (this.editable ? this.chatRegex : defaultChatRegex)::setSoundIdentifierString)))
                 .width(30)
                 .build();
 

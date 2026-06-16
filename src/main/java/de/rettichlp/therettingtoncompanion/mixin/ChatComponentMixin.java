@@ -25,7 +25,7 @@ import java.awt.Color;
 import java.time.LocalDateTime;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.utils.TextUtils.getHighestPriorityMatchingChatRegex;
+import static de.rettichlp.therettingtoncompanion.models.ChatRegex.getBestMatchingChatRegex;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Math.max;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -55,9 +55,9 @@ public abstract class ChatComponentMixin {
 
     @ModifyVariable(method = "addMessage", at = @At("HEAD"), argsOnly = true, name = "contents")
     private @NonNull Component trc$addMessageHead(@NonNull Component contents) {
-        ChatRegex highestPriorityMatchingChatRegex = getHighestPriorityMatchingChatRegex(contents.getString());
-        if (highestPriorityMatchingChatRegex != null && this.minecraft.player != null) {
-            Identifier chatRegexSoundIdentifier = highestPriorityMatchingChatRegex.getSoundIdentifier();
+        ChatRegex bestMatchingChatRegex = getBestMatchingChatRegex(contents.getString());
+        if (bestMatchingChatRegex != null && this.minecraft.player != null) {
+            Identifier chatRegexSoundIdentifier = bestMatchingChatRegex.getSoundIdentifier();
             this.minecraft.player.playSound(createVariableRangeEvent(chatRegexSoundIdentifier), 1.0f, 1.0f);
         }
 
@@ -118,13 +118,13 @@ public abstract class ChatComponentMixin {
         // extract alpha value
         int alpha = (originalColor >> 24) & 0xFF;
 
-        ChatRegex highestPriorityMatchingChatRegex = getHighestPriorityMatchingChatRegex(arg5.parent().content().getString());
+        ChatRegex bestMatchingChatRegex = getBestMatchingChatRegex(arg5.parent().content().getString());
 
-        if (highestPriorityMatchingChatRegex == null) {
+        if (bestMatchingChatRegex == null) {
             return;
         }
 
-        Color chatRegexColor = highestPriorityMatchingChatRegex.getColor();
+        Color chatRegexColor = bestMatchingChatRegex.getColor();
         int highlightColorWithAlpha = (alpha << 24) | (chatRegexColor.getRed() << 16) | (chatRegexColor.getGreen() << 8) | chatRegexColor.getBlue();
         args.set(4, highlightColorWithAlpha);
     }

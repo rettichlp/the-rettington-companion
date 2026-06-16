@@ -14,18 +14,17 @@ import java.util.function.Consumer;
 
 import static de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen.SPACING_HORIZONTAL;
 import static de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen.SPACING_VERTICAL;
+import static de.rettichlp.therettingtoncompanion.models.ChatRegex.isValidSoundIdentifier;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
 import static net.minecraft.client.gui.layouts.FrameLayout.centerInRectangle;
 import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
 import static net.minecraft.client.gui.layouts.LinearLayout.vertical;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
-import static net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT;
 import static net.minecraft.network.chat.CommonComponents.GUI_CANCEL;
 import static net.minecraft.network.chat.CommonComponents.GUI_DONE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
-import static net.minecraft.resources.Identifier.parse;
 
 public class SoundSelectionPopupScreen extends Screen {
 
@@ -35,11 +34,11 @@ public class SoundSelectionPopupScreen extends Screen {
 
     private final @Nullable Screen backgroundScreen;
     private final Identifier initialSound;
-    private final Consumer<Identifier> onClose;
+    private final Consumer<String> onClose;
 
     private EditBox input;
 
-    public SoundSelectionPopupScreen(@Nullable Screen backgroundScreen, Identifier initialSound, Consumer<Identifier> onClose) {
+    public SoundSelectionPopupScreen(@Nullable Screen backgroundScreen, Identifier initialSound, Consumer<String> onClose) {
         super(literal("sound"));
         this.backgroundScreen = backgroundScreen;
         this.initialSound = initialSound;
@@ -60,7 +59,7 @@ public class SoundSelectionPopupScreen extends Screen {
         this.layout.defaultCellSetting().alignHorizontallyCenter();
         this.input = this.layout.addChild(new EditBox(this.font, 296, 20, empty()), LayoutSettings::alignHorizontallyCenter);
         this.input.setValue(this.initialSound.toString());
-        this.input.setResponder(_ -> this.input.setTextColor((verifyIdentifier() != null ? WHITE : RED).getRGB()));
+        this.input.setResponder(value -> this.input.setTextColor((isValidSoundIdentifier(value) ? WHITE : RED).getRGB()));
 
         // buttons
         LinearLayout buttonRow = horizontal().spacing(SPACING_HORIZONTAL);
@@ -104,23 +103,7 @@ public class SoundSelectionPopupScreen extends Screen {
     }
 
     private void onDone() {
-        Identifier identifier = verifyIdentifier();
-
-        if (identifier != null) {
-            this.onClose.accept(identifier);
-        }
-
+        this.onClose.accept(this.input.getValue());
         onClose();
-    }
-
-    private @Nullable Identifier verifyIdentifier() {
-        String value = this.input.getValue();
-
-        if (value.isEmpty()) {
-            return null;
-        }
-
-        Identifier parsed = parse(value);
-        return SOUND_EVENT.containsKey(parsed) ? parsed : null;
     }
 }
