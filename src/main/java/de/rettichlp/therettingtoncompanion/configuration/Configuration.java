@@ -48,7 +48,9 @@ public class Configuration {
         // load existing config
         try {
             Reader reader = newBufferedReader(CONFIG_PATH);
-            return GSON.fromJson(reader, Configuration.class);
+            Configuration configuration = GSON.fromJson(reader, Configuration.class);
+            LOGGER.info("Loaded configuration: {}", configuration);
+            return configuration;
         } catch (Exception e) {
             LOGGER.error("Failed to load config from {}", CONFIG_PATH, e);
         }
