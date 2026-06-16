@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_NAME;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getVersionString;
 import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
 import static net.minecraft.client.gui.layouts.LinearLayout.vertical;
@@ -94,8 +95,7 @@ public class TRCOptionsScreen extends Screen {
 
     @Override
     public void onClose() {
-        // TODO safe
-
+        configuration.saveToFile();
         this.minecraft.setScreen(null);
     }
 

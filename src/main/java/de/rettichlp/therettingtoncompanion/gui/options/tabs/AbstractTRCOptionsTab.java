@@ -10,6 +10,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+
 @Getter
 @RequiredArgsConstructor
 public abstract class AbstractTRCOptionsTab {
@@ -24,9 +26,10 @@ public abstract class AbstractTRCOptionsTab {
 
     public Button getTabButton(Screen lastScreen) {
         TRCOptionsScreen trcOptionsScreen = new TRCOptionsScreen(this.id, lastScreen, true);
-        return Button.builder(title(), _ -> this.minecraft.setScreen(trcOptionsScreen))
-                .size(100, 20)
-                .build();
+        return Button.builder(title(), _ -> {
+            this.minecraft.setScreen(trcOptionsScreen);
+            configuration.saveToFile();
+        }).size(100, 20).build();
     }
 
     public TRCOptionsList getOptionsList(TRCOptionsScreen screen) {
