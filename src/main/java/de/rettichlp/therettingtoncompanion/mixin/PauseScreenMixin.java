@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.network.chat.Component.empty;
-import static net.minecraft.network.chat.Component.translatable;
 import static net.minecraft.resources.Identifier.fromNamespaceAndPath;
 
 @Mixin(PauseScreen.class)
@@ -50,9 +49,9 @@ public abstract class PauseScreenMixin extends Screen {
     @Inject(method = "createPauseMenu", at = @At("TAIL"))
     private void trc$createPauseMenuTail(CallbackInfo ci, @Local(name = "gridLayout") @NonNull GridLayout gridLayout) {
         gridLayout.visitChildren(clickableWidget -> {
-            if (clickableWidget instanceof Button returnToGameButton && returnToGameButton.getMessage().equals(translatable("menu.returnToGame")) && this.settingsButtonX == 0 && this.settingsButtonY == 0) {
-                this.settingsButtonX = returnToGameButton.getX() + returnToGameButton.getWidth() + 4;
-                this.settingsButtonY = returnToGameButton.getY();
+            if (clickableWidget instanceof Button firstBigButton && firstBigButton.getWidth() == 204 && this.settingsButtonX == 0 && this.settingsButtonY == 0) {
+                this.settingsButtonX = firstBigButton.getX() + firstBigButton.getWidth() + 4;
+                this.settingsButtonY = firstBigButton.getY();
             }
         });
     }
