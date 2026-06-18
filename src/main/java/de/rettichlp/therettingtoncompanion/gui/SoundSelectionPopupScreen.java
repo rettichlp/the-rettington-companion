@@ -56,7 +56,7 @@ public class SoundSelectionPopupScreen extends Screen {
             this.backgroundScreen.init(this.width, this.height);
         }
 
-        this.layout.defaultCellSetting().alignHorizontallyCenter();
+        this.layout.newCellSettings().alignHorizontallyCenter();
         this.input = this.layout.addChild(new EditBox(this.font, 296, 20, empty()), LayoutSettings::alignHorizontallyCenter);
         this.input.setValue(this.initialSound.toString());
         this.input.setResponder(value -> this.input.setTextColor((isValidSoundIdentifier(value) ? WHITE : RED).getRGB()));

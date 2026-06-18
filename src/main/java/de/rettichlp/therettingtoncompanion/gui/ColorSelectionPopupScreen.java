@@ -62,7 +62,7 @@ public class ColorSelectionPopupScreen extends Screen {
             this.backgroundScreen.init(this.width, this.height);
         }
 
-        this.layout.defaultCellSetting().alignHorizontallyCenter();
+        this.layout.newCellSettings().alignHorizontallyCenter();
 
         // Minecraft colors
         int currentLength = 0;
