@@ -58,7 +58,7 @@ public abstract class ChatComponentMixin {
         ChatRegex bestMatchingChatRegex = getBestMatchingChatRegex(contents.getString());
         if (bestMatchingChatRegex != null && this.minecraft.player != null) {
             Identifier chatRegexSoundIdentifier = bestMatchingChatRegex.getSoundIdentifier();
-            this.minecraft.player.playSound(createVariableRangeEvent(chatRegexSoundIdentifier), 1.0f, 1.0f);
+            this.minecraft.player.playSound(createVariableRangeEvent(chatRegexSoundIdentifier), 1.0f, 1.5f);
         }
 
         if (!configuration.chat().isChatTime()) {
