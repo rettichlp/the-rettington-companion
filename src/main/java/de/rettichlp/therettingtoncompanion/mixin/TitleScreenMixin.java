@@ -1,11 +1,10 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
-import de.rettichlp.therettingtoncompanion.common.gui.screens.options.ModOptionScreen;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
+import de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,23 +12,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_NAME;
 import static java.lang.Boolean.getBoolean;
-import static net.minecraft.text.Text.literal;
+import static net.minecraft.network.chat.Component.literal;
 
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin extends Screen {
 
-    protected TitleScreenMixin(Text title) {
+    protected TitleScreenMixin(Component title) {
         super(title);
     }
 
-    @Inject(method = "addDevelopmentWidgets", at = @At("RETURN"), cancellable = true)
-    private void trc$addDevelopmentWidgetsReturn(int y, int spacingY, CallbackInfoReturnable<Integer> cir) {
+    @Inject(method = "createTestWorldButton", at = @At("RETURN"), cancellable = true)
+    private void trc$createTestWorldButtonReturn(int topPos, int spacing, CallbackInfoReturnable<Integer> cir) {
         if (getBoolean("fabric.development")) {
-            this.addDrawableChild(ButtonWidget.builder(literal(MOD_NAME), button -> this.client.setScreen(new ModOptionScreen()))
-                    .dimensions(MinecraftClient.getInstance().getWindow().getScaledWidth() / 2 - 100, y += spacingY, 200, 20)
+            this.addRenderableWidget(Button.builder(literal(MOD_NAME), button -> this.minecraft.setScreen(new TRCOptionsScreen("general", this, true)))
+                    .bounds(this.minecraft.getWindow().getGuiScaledWidth() / 2 - 100, topPos += spacing, 200, 20)
                     .build());
         }
 
-        cir.setReturnValue(y);
+        cir.setReturnValue(topPos);
     }
 }

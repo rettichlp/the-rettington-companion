@@ -1,6 +1,6 @@
 package de.rettichlp.therettingtoncompanion;
 
-import de.rettichlp.therettingtoncompanion.common.models.Notification;
+import de.rettichlp.therettingtoncompanion.models.Notification;
 
 import java.util.Set;
 
