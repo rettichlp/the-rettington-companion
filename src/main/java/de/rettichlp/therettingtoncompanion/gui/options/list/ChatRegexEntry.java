@@ -1,10 +1,10 @@
 package de.rettichlp.therettingtoncompanion.gui.options.list;
 
 import de.rettichlp.therettingtoncompanion.gui.ColorButton;
-import de.rettichlp.therettingtoncompanion.gui.ColorSelectionPopupScreen;
+import de.rettichlp.therettingtoncompanion.gui.screens.ColorSelectionPopupScreen;
 import de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry;
-import de.rettichlp.therettingtoncompanion.gui.SoundSelectionPopupScreen;
-import de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen;
+import de.rettichlp.therettingtoncompanion.gui.screens.SoundSelectionPopupScreen;
+import de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen;
 import de.rettichlp.therettingtoncompanion.models.ChatRegex;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;

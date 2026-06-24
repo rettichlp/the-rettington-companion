@@ -1,4 +1,4 @@
-package de.rettichlp.therettingtoncompanion.gui.options;
+package de.rettichlp.therettingtoncompanion.gui.screens;
 
 import de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.AbstractTRCOptionsTab;

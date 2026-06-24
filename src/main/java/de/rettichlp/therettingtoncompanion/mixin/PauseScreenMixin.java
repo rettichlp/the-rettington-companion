@@ -1,7 +1,7 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen;
+import de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.GridLayout;

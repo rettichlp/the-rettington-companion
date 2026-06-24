@@ -1,6 +1,6 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
-import de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen;
+import de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;

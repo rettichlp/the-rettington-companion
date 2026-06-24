@@ -1,5 +1,6 @@
-package de.rettichlp.therettingtoncompanion.gui;
+package de.rettichlp.therettingtoncompanion.gui.screens;
 
+import de.rettichlp.therettingtoncompanion.gui.ColorButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -15,8 +16,8 @@ import org.jspecify.annotations.Nullable;
 import java.awt.Color;
 import java.util.function.Consumer;
 
-import static de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen.SPACING_HORIZONTAL;
-import static de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen.SPACING_VERTICAL;
+import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_HORIZONTAL;
+import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_VERTICAL;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.clamp;
 import static java.lang.String.valueOf;
