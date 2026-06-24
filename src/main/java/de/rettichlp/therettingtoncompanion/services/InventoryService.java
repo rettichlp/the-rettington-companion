@@ -36,7 +36,7 @@ public class InventoryService {
         if (!this.itemStack.isEmpty() && currentItemStack.isEmpty()) {
             if (restock(this.itemStack)) {
                 Minecraft.getInstance().getSoundManager().play(forUI(ARMOR_EQUIP_GENERIC.value(), 1f, 2f));
-                Component message = translatable("trc.message.auto_restock.restock_succeeded", this.itemStack.getDisplayName());
+                Component message = translatable("trc.message.auto_restock.restock_succeeded", this.itemStack.getHoverName());
                 player.sendOverlayMessage(message);
             }
         }
@@ -95,7 +95,7 @@ public class InventoryService {
             }
 
             // check for same name
-            if (!is.getDisplayName().equals(itemStack.getDisplayName())) {
+            if (!is.getHoverName().equals(itemStack.getHoverName())) {
                 continue;
             }
 
