@@ -1,9 +1,7 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
 import com.mojang.blaze3d.platform.Window;
-import de.rettichlp.therettingtoncompanion.TheRettingtonCompanionApi;
-import de.rettichlp.therettingtoncompanion.models.Notification;
-import net.fabricmc.loader.api.FabricLoader;
+import de.rettichlp.therettingtoncompanion.gui.screens.WidgetPositionScreen;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -12,8 +10,10 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,17 +26,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.renderService;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
+import static de.rettichlp.therettingtoncompanion.gui.screens.WidgetPositionScreen.DARK_AQUA_COLOR;
+import static de.rettichlp.therettingtoncompanion.gui.screens.WidgetPositionScreen.DARK_GRAY_COLOR;
 import static java.lang.String.valueOf;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.network.chat.Component.literal;
@@ -64,6 +66,10 @@ public abstract class GuiMixin {
     private static Identifier HOTBAR_OFFHAND_LEFT_SPRITE;
 
     @Shadow
+    @Final
+    private Minecraft minecraft;
+
+    @Shadow
     public abstract Font getFont();
 
     @Shadow
@@ -76,32 +82,31 @@ public abstract class GuiMixin {
                                         int seed);
 
     @Inject(method = "extractRenderState", at = @At("TAIL"))
-    private void trc$renderMainHudTail(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        // render notification widgets
-        FabricLoader.getInstance() // load notifications from other mods
-                .getEntrypointContainers(MOD_ID, TheRettingtonCompanionApi.class)
-                .forEach(entrypointContainer -> {
-                    TheRettingtonCompanionApi entrypoint = entrypointContainer.getEntrypoint();
-                    Set<Notification> externalNotifications = entrypoint.getNotifications();
-                    notificationService.getNotifications().addAll(externalNotifications);
-                });
+    private void trc$extractRenderStateTail(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+        if (this.minecraft.screen instanceof WidgetPositionScreen) {
+            // draw grid
+            int squareSize = 8 / this.minecraft.options.guiScale().get();
 
-//        List<NotificationWidget> notificationWidgets = notificationService.getVisibleNotifications().stream()
-//                .map(Notification::toWidget)
-//                .toList();
-//
-//        for (int i = 0; i < notificationWidgets.size(); i++) {
-//            AbstractProgressStringWidget<?> abstractProgressStringWidget = notificationWidgets.get(i);
-//            int x = Minecraft.getInstance().getWindow().getGuiScaledWidth() - abstractProgressStringWidget.getWidth() - 4;
-//            int y = 19 * i + 4;
-//            abstractProgressStringWidget.draw(graphics, x, y, AbstractWidget.Alignment.RIGHT);
-//        }
-//
-//        // render widgets
-//        renderService.getWidgets().forEach(abstractWidget -> abstractWidget.draw(graphics));
+            for (Integer snapPosition : getSnapPositions(graphics.guiWidth(), squareSize)) {
+                graphics.verticalLine(snapPosition, -1, graphics.guiHeight(), DARK_GRAY_COLOR.getRGB());
+            }
+
+            for (Integer snapPosition : getSnapPositions(graphics.guiHeight(), squareSize)) {
+                graphics.horizontalLine(-1, graphics.guiWidth(), snapPosition, DARK_GRAY_COLOR.getRGB());
+            }
+
+            graphics.verticalLine(graphics.guiWidth() / 2, -1, graphics.guiHeight(), DARK_AQUA_COLOR.getRGB());
+            graphics.horizontalLine(-1, graphics.guiWidth(), graphics.guiHeight() / 2, DARK_AQUA_COLOR.getRGB());
+        }
+
+        // render widgets
+        Profiler.get().push("widget");
+        widgetService.getWidgets().forEach(abstractWidget -> abstractWidget.extractWidget(this.minecraft, graphics));
+        Profiler.get().pop();
 
         // render empty inventory space text
-        if (configuration.visuals().isShowEmptyInventorySlotCount() && player.gameMode() != null && player.gameMode().isSurvival()) {
+        GameType gameType = player.gameMode();
+        if (configuration.visuals().isShowEmptyInventorySlotCount() && gameType != null && gameType.isSurvival()) {
             ItemStack mainHandStack = player.getMainHandItem();
             boolean showSameItemLeftAmount = player.isCrouching() && !mainHandStack.isEmpty();
             long emptySlotAmount = showSameItemLeftAmount
@@ -257,5 +262,20 @@ public abstract class GuiMixin {
     @Unique
     private void drawLastSlot(@NonNull GuiGraphicsExtractor graphics, int x, int y) {
         graphics.blitSprite(GUI_TEXTURED, HOTBAR_SPRITE, 182, 22, 161, 0, x, y, 21, 22);
+    }
+
+    @Unique
+    private @NonNull Set<Integer> getSnapPositions(int guiSize, int squareSize) {
+        Set<Integer> snapPositions = new HashSet<>();
+
+        for (int i = guiSize / 2; i >= 0; i -= squareSize) {
+            snapPositions.add(i);
+        }
+
+        for (int i = guiSize / 2; i <= guiSize; i += squareSize) {
+            snapPositions.add(i);
+        }
+
+        return snapPositions;
     }
 }
