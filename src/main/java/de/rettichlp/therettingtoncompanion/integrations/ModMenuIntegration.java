@@ -8,6 +8,6 @@ public class ModMenuIntegration implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> new TRCOptionsScreen("general", parent, true);
+        return TRCOptionsScreen::new;
     }
 }

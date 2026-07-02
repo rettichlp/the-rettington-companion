@@ -58,7 +58,7 @@ public abstract class PauseScreenMixin extends Screen {
 
     @Inject(method = "extractRenderState", at = @At("RETURN"))
     private void trc$extractRenderStateReturn(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
-        this.button = Button.builder(empty(), _ -> this.minecraft.setScreen(new TRCOptionsScreen("general", this, true)))
+        this.button = Button.builder(empty(), _ -> this.minecraft.setScreen(new TRCOptionsScreen(this)))
                 .size(20, 20)
                 .build();
         this.button.setPosition(this.settingsButtonX, this.settingsButtonY);

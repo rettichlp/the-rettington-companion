@@ -63,6 +63,10 @@ public class TRCOptionsScreen extends Screen {
 
     private TRCOptionsList optionsList;
 
+    public TRCOptionsScreen(Screen lastScreen) {
+        this("visuals", lastScreen, true);
+    }
+
     public TRCOptionsScreen(String selectedTabId, Screen lastScreen, boolean renderBackground) {
         MutableComponent title = empty()
                 .append(literal(MOD_NAME))
