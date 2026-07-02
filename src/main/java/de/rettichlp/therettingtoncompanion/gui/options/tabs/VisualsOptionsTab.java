@@ -3,10 +3,12 @@ package de.rettichlp.therettingtoncompanion.gui.options.tabs;
 import de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration;
 import de.rettichlp.therettingtoncompanion.gui.screens.ColorSelectionPopupScreen;
 import de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList;
+import de.rettichlp.therettingtoncompanion.models.GammaPreset;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
 import java.awt.Color;
+import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
@@ -38,6 +40,7 @@ public class VisualsOptionsTab extends AbstractTRCOptionsTab {
 
         optionsList.addHeader(translatable("createWorld.tab.world.title"));
         optionsList.addCycleButton(translatable("trc.option.visuals.visible_equipment_model.label"), create(translatable("trc.option.visuals.visible_equipment_model.tooltip")), configuration.visuals().getEquipmentModelVisibility(), asList(VisualsConfiguration.EquipmentModelVisibility.values()), (_, value) -> configuration.visuals().setEquipmentModelVisibility(value));
+        optionsList.addCycleButton(translatable("trc.option.visuals.gamma_preset.label"), create(translatable("trc.option.visuals.gamma_preset.tooltip")), configuration.visuals().getGammaPreset(), List.of(GammaPreset.values()), (_, value) -> configuration.visuals().setGammaPreset(value));
 
         optionsList.addHeader(translatable("soundCategory.ambient"));
         optionsList.addCycleButton(translatable("trc.option.visuals.day_time_value.label"), create(translatable("trc.option.visuals.day_time_value.tooltip")), configuration.visuals().getDayTimeValue(), asList(VisualsConfiguration.DayTimeValue.values()), (_, value) -> configuration.visuals().setDayTimeValue(value));

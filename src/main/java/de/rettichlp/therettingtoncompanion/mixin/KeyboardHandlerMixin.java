@@ -64,8 +64,8 @@ public abstract class KeyboardHandlerMixin {
             }
 
             if (GAMMA_PRESET_KEY.matches(event)) {
-                GammaPreset newGammaPreset = configuration.getGammaPreset().next();
-                configuration.setGammaPreset(newGammaPreset);
+                GammaPreset newGammaPreset = configuration.visuals().getGammaPreset().next();
+                configuration.visuals().setGammaPreset(newGammaPreset);
                 newGammaPreset.sendMessage();
             }
         }

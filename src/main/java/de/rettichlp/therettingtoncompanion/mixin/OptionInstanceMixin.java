@@ -29,7 +29,7 @@ public class OptionInstanceMixin {
             return;
         }
 
-        GammaPreset gammaPreset = configuration.getGammaPreset();
+        GammaPreset gammaPreset = configuration.visuals().getGammaPreset();
 
         if (gammaPreset != OWN_SETTING && gammaPreset != FULLBRIGHT_NIGHT_VISION) {
             cir.setReturnValue(gammaPreset.getGammaValue());
