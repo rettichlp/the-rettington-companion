@@ -6,6 +6,7 @@ import de.rettichlp.therettingtoncompanion.gui.options.tabs.ChatOptionsTab;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.InventoryOptionsTab;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.VisualsOptionsTab;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.WidgetsOptionsTab;
+import de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_NAME;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getVersionString;
 import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
 import static net.minecraft.client.gui.layouts.LinearLayout.vertical;
@@ -99,6 +101,7 @@ public class TRCOptionsScreen extends Screen {
 
     @Override
     public void onClose() {
+        widgetService.getWidgets().forEach(AbstractTRCWidget::saveConfiguration);
         configuration.saveToFile();
         this.minecraft.setScreen(null);
     }
@@ -140,9 +143,9 @@ public class TRCOptionsScreen extends Screen {
     }
 
     public void onBack() {
-        // TODO safe
-
         this.minecraft.setScreen(this.lastScreen);
+        widgetService.getWidgets().forEach(AbstractTRCWidget::saveConfiguration);
+        configuration.saveToFile();
     }
 
     /**

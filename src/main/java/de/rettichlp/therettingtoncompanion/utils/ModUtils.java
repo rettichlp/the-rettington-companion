@@ -9,6 +9,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import org.jspecify.annotations.NonNull;
 
+import java.awt.Color;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -30,6 +31,8 @@ public class ModUtils {
             .registerTypeAdapter(LocalTime.class, (JsonSerializer<LocalTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
             .registerTypeAdapter(Pattern.class, (JsonDeserializer<Pattern>) (json, typeOfT, context) -> Pattern.compile(json.getAsString()))
             .registerTypeAdapter(Pattern.class, (JsonSerializer<Pattern>) (src, typeOfSrc, context) -> new JsonPrimitive(src.pattern()))
+            .registerTypeAdapter(Color.class, (JsonDeserializer<Color>) (json, typeOfT, context) -> new Color(json.getAsInt()))
+            .registerTypeAdapter(Color.class, (JsonSerializer<Color>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getRGB()))
             .create();
 
     public static @NonNull String getVersionString() {
