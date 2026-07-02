@@ -4,6 +4,7 @@ import de.rettichlp.therettingtoncompanion.configuration.Configuration;
 import de.rettichlp.therettingtoncompanion.services.InventoryService;
 import de.rettichlp.therettingtoncompanion.services.NotificationService;
 import de.rettichlp.therettingtoncompanion.services.RenderService;
+import de.rettichlp.therettingtoncompanion.services.WidgetService;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.KeyMapping;
@@ -33,11 +34,12 @@ public class TheRettingtonCompanion implements ModInitializer {
     // That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+    public static final Configuration configuration = new Configuration().loadFromFile();
+
     public static final InventoryService inventoryService = new InventoryService();
     public static final NotificationService notificationService = new NotificationService();
     public static final RenderService renderService = new RenderService();
-
-    public static final Configuration configuration = new Configuration().loadFromFile();
+    public static final WidgetService widgetService = new WidgetService();
 
     public static final KeyMapping.Category KEY_CATEGORY = new KeyMapping.Category(Identifier.fromNamespaceAndPath(MOD_ID, "trc.key.category.name"));
     public static final KeyMapping GAMMA_PRESET_KEY = new KeyMapping("trc.key.gamma_preset", KEYSYM, GLFW_KEY_G, KEY_CATEGORY);
@@ -51,6 +53,7 @@ public class TheRettingtonCompanion implements ModInitializer {
         // This code runs as soon as Minecraft is in a mod-load-ready state.
         // However, some things (like resources) may still be uninitialized.
         // Proceed with mild caution.
+        widgetService.initWidgets();
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, minecraft) -> {
             player = minecraft.player;
