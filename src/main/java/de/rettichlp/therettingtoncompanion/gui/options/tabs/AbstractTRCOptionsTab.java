@@ -25,11 +25,15 @@ public abstract class AbstractTRCOptionsTab {
     public abstract void populateOptionsList(@NonNull TRCOptionsList optionsList);
 
     public Button getTabButton(Screen lastScreen) {
-        TRCOptionsScreen trcOptionsScreen = new TRCOptionsScreen(this.id, lastScreen, true);
-        return Button.builder(title(), _ -> {
-            this.minecraft.setScreen(trcOptionsScreen);
+        Button button = Button.builder(title(), _ -> {
+            this.minecraft.setScreen(new TRCOptionsScreen(this.id, lastScreen, true));
             configuration.saveToFile();
         }).size(100, 20).build();
+
+        boolean isActive = this.minecraft.screen instanceof TRCOptionsScreen trcOptionsScreen && trcOptionsScreen.getSelectedTabId().equals(this.id);
+        button.setFocused(isActive);
+
+        return button;
     }
 
     public TRCOptionsList getOptionsList(TRCOptionsScreen screen) {

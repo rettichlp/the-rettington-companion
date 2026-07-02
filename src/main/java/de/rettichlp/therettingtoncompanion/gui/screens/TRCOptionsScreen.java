@@ -36,6 +36,7 @@ import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
 import static net.minecraft.resources.Identifier.withDefaultNamespace;
 
+@Getter
 public class TRCOptionsScreen extends Screen {
 
     public static final int SPACING_HORIZONTAL = 8;
@@ -55,7 +56,6 @@ public class TRCOptionsScreen extends Screen {
             new InventoryOptionsTab()
     );
 
-    @Getter
     private final HeaderAndFooterLayout layout;
     private final String selectedTabId;
     private final Screen lastScreen;
