@@ -53,8 +53,10 @@ public class TRCOptionsList extends ContainerObjectSelectionList<AbstractEntry> 
         addEntry(new ButtonEntry(this.minecraft.font, label, caption, tooltip, onPress));
     }
 
-    public void addFullWidthButton(Component caption, Tooltip tooltip, Button.OnPress onPress) {
-        addEntry(new FullWidthButtonEntry(caption, tooltip, onPress));
+    public FullWidthButtonEntry addFullWidthButton(Component caption, Tooltip tooltip, Button.OnPress onPress) {
+        FullWidthButtonEntry entry = new FullWidthButtonEntry(caption, tooltip, onPress);
+        addEntry(entry);
+        return entry;
     }
 
     public <T extends ICycleButtonValue> void addCycleButton(Component label,

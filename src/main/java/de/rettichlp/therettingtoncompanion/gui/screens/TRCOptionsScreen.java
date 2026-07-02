@@ -3,9 +3,9 @@ package de.rettichlp.therettingtoncompanion.gui.screens;
 import de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.AbstractTRCOptionsTab;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.ChatOptionsTab;
-import de.rettichlp.therettingtoncompanion.gui.options.tabs.GeneralOptionsTab;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.InventoryOptionsTab;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.VisualsOptionsTab;
+import de.rettichlp.therettingtoncompanion.gui.options.tabs.WidgetsOptionsTab;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -50,10 +50,10 @@ public class TRCOptionsScreen extends Screen {
     private static final Identifier INWORLD_MENU_LIST_BACKGROUND = withDefaultNamespace("textures/gui/inworld_menu_list_background.png");
 
     private static final List<AbstractTRCOptionsTab> TABS = List.of(
-            new GeneralOptionsTab(),
             new VisualsOptionsTab(),
             new ChatOptionsTab(),
-            new InventoryOptionsTab()
+            new InventoryOptionsTab(),
+            new WidgetsOptionsTab()
     );
 
     private final HeaderAndFooterLayout layout;
