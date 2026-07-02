@@ -20,6 +20,7 @@ import static de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWi
 import static de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget.Alignment.TOP_LEFT;
 import static de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget.Alignment.TOP_RIGHT;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.GSON;
+import static java.lang.Math.clamp;
 import static java.util.Objects.isNull;
 import static net.minecraft.network.chat.Component.translatable;
 
@@ -62,7 +63,9 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
             return;
         }
 
-        extractWidget(graphics, (int) this.widgetConfiguration.getX(), (int) this.widgetConfiguration.getY(), getAlignment());
+        double x = clamp(this.widgetConfiguration.getX(), 0, graphics.guiWidth() - getWidth());
+        double y = clamp(this.widgetConfiguration.getY(), 0, graphics.guiHeight() - getHeight());
+        extractWidget(graphics, (int) x, (int) y, getAlignment());
     }
 
     public boolean isMouseOver(double mouseX, double mouseY) {
