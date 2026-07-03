@@ -11,11 +11,11 @@ import org.jspecify.annotations.NonNull;
 import java.awt.Color;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
-import static java.util.Set.copyOf;
+import static java.util.Comparator.comparing;
 import static net.minecraft.network.chat.Component.literal;
 
 public class WidgetService {
@@ -30,17 +30,20 @@ public class WidgetService {
         getWidgets().forEach(AbstractTRCWidget::init);
     }
 
-    public Set<AbstractTRCWidget<?>> getWidgets() {
-        Collection<AbstractTRCWidget<?>> widgets = new ArrayList<>(this.widgets);
+    public List<AbstractTRCWidget<?>> getWidgets() {
+        List<AbstractTRCWidget<?>> widgets = new ArrayList<>();
+
+        this.widgets.stream()
+                .sorted(comparing(AbstractTRCWidget::getRegistryName))
+                .forEach(widgets::add);
 
         // load widgets from other mods
         FabricLoader.getInstance().getEntrypointContainers(MOD_ID, TheRettingtonCompanionApi.class).forEach(container -> {
             TheRettingtonCompanionApi entrypoint = container.getEntrypoint();
-            Set<AbstractTRCWidget<?>> otherModWidgets = entrypoint.getWidgets();
-            widgets.addAll(otherModWidgets);
+            widgets.addAll(entrypoint.getWidgets());
         });
 
-        return copyOf(widgets);
+        return widgets;
     }
 
     public Color getSecondaryColor(@NonNull Color color) {
