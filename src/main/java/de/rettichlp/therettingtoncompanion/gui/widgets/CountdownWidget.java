@@ -5,9 +5,12 @@ import de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCProgressT
 import de.rettichlp.therettingtoncompanion.gui.widgets.base.WidgetConfiguration;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDateTime;
 
+import static de.rettichlp.therettingtoncompanion.services.WidgetService.calculateProgress;
 import static java.time.LocalDateTime.now;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static net.minecraft.network.chat.Component.translatable;
@@ -20,7 +23,7 @@ public class CountdownWidget extends AbstractTRCProgressTextWidget<CountdownWidg
     private final long durationInMillis;
 
     @Override
-    public String getRegistryName() {
+    public @Nullable String getRegistryName() {
         return "countdown";
     }
 
@@ -45,7 +48,7 @@ public class CountdownWidget extends AbstractTRCProgressTextWidget<CountdownWidg
     }
 
     @Override
-    public void addOptions(TRCOptionsList optionsList) {}
+    public void addOptions(@NonNull TRCOptionsList optionsList) {}
 
     @Override
     public boolean isVisible() {

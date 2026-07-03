@@ -22,10 +22,12 @@ import org.jspecify.annotations.NonNull;
 import java.net.URI;
 import java.util.List;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_NAME;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getVersionString;
+import static java.net.URI.create;
 import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
 import static net.minecraft.client.gui.layouts.LinearLayout.vertical;
 import static net.minecraft.client.gui.screens.ConfirmLinkScreen.confirmLink;
@@ -44,9 +46,9 @@ public class TRCOptionsScreen extends Screen {
     public static final int SPACING_HORIZONTAL = 8;
     public static final int SPACING_VERTICAL = 4;
 
-    private static final URI DISCORD_INVITE = URI.create("https://discord.gg/mZGAAwhPHu");
+    private static final URI DISCORD_INVITE = create("https://discord.gg/mZGAAwhPHu");
     private static final int DISCORD_COLOR = 0x5865F2;
-    private static final URI MODRINTH = URI.create("https://modrinth.com/mod/ucutils");
+    private static final URI MODRINTH = create("https://modrinth.com/mod/" + MOD_ID);
     private static final int MODRINTH_COLOR = 0x1BD96B;
     private static final Identifier MENU_LIST_BACKGROUND = withDefaultNamespace("textures/gui/menu_list_background.png");
     private static final Identifier INWORLD_MENU_LIST_BACKGROUND = withDefaultNamespace("textures/gui/inworld_menu_list_background.png");

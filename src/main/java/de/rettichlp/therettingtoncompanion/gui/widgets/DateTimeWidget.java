@@ -6,6 +6,8 @@ import de.rettichlp.therettingtoncompanion.gui.widgets.base.WidgetConfiguration;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.time.format.DateTimeFormatter;
 
@@ -22,7 +24,7 @@ public class DateTimeWidget extends AbstractTRCTextWidget<DateTimeWidget.Configu
     public static final DateTimeFormatter TIME_FORMAT = ofPattern("HH:mm:ss");
 
     @Override
-    public String getRegistryName() {
+    public @Nullable String getRegistryName() {
         return "date_time";
     }
 
@@ -37,7 +39,7 @@ public class DateTimeWidget extends AbstractTRCTextWidget<DateTimeWidget.Configu
     }
 
     @Override
-    public void addOptions(TRCOptionsList optionsList) {
+    public void addOptions(@NonNull TRCOptionsList optionsList) {
         optionsList.addToggleButton(translatable("trc.widgets.date_time.options.show_date.label"), create(translatable("trc.widgets.date_time.options.show_date.tooltip")), true, (_, value) -> getWidgetConfiguration().setShowDate(value == ON));
     }
 
@@ -51,6 +53,6 @@ public class DateTimeWidget extends AbstractTRCTextWidget<DateTimeWidget.Configu
     @EqualsAndHashCode(callSuper = true)
     public static class Configuration extends WidgetConfiguration {
 
-        private boolean showDate;
+        private boolean showDate = false;
     }
 }

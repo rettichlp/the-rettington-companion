@@ -30,7 +30,8 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
     public static final int WIDGET_POSITION_SCALE = 4;
     public static final int TEXT_BOX_PADDING = 3;
 
-    protected Minecraft minecraft;
+    protected final Minecraft minecraft = Minecraft.getInstance();
+
     @Setter
     protected boolean focused;
 
@@ -50,7 +51,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
 
     public abstract void extractWidget(@NotNull GuiGraphicsExtractor graphics, int x, int y, Alignment alignment);
 
-    public abstract void addOptions(TRCOptionsList optionsList);
+    public abstract void addOptions(@NonNull TRCOptionsList optionsList);
 
     public void init() {
         loadConfiguration();
@@ -63,9 +64,28 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
             return;
         }
 
-        double x = clamp(this.widgetConfiguration.getX(), 0, graphics.guiWidth() - getWidth());
-        double y = clamp(this.widgetConfiguration.getY(), 0, graphics.guiHeight() - getHeight());
-        extractWidget(graphics, (int) x, (int) y, getAlignment());
+        int x = (int) clamp(this.widgetConfiguration.getX(), 0, graphics.guiWidth() - getWidth());
+        int y = (int) clamp(this.widgetConfiguration.getY(), 0, graphics.guiHeight() - getHeight());
+
+        if (this.focused) {
+            graphics.horizontalLine(0, graphics.guiWidth(), y, YELLOW.getRGB());
+            graphics.verticalLine(x, 0, graphics.guiHeight(), YELLOW.getRGB());
+        }
+
+        if (isWidgetPositionScreen()) {
+            graphics.fill(x, y, x + getWidth(), y + getHeight(), BLUE.getRGB());
+            graphics.outline(x, y, getWidth(), getHeight(), CYAN.getRGB());
+        }
+
+        extractWidget(graphics,  x, y, getAlignment());
+    }
+
+    public double getRight() {
+        return getWidgetConfiguration().getX() + getWidth();
+    }
+
+    public double getBottom() {
+        return getWidgetConfiguration().getY() + getHeight();
     }
 
     public boolean isMouseOver(double mouseX, double mouseY) {
@@ -97,9 +117,6 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
 
             try {
                 this.widgetConfiguration = widgetConfigurationClass.getConstructor().newInstance();
-                this.widgetConfiguration.setEnabled(false);
-                this.widgetConfiguration.setX(0.0);
-                this.widgetConfiguration.setY(0.0);
             } catch (Exception e) {
                 notificationService.sendErrorNotification(translatable("trc.notification.configuration_not_loaded"));
                 LOGGER.error("Could not load configuration for widget {}", registryName, e);
@@ -156,7 +173,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
             }
         }
 
-        throw new IllegalStateException("Widget class must be generic: AbstractUCUtilsWidget<C>");
+        throw new IllegalStateException("Widget class must be generic: AbstractTRCWidget<C>");
     }
 
     public static long toNearestScale(double value) {

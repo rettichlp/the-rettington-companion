@@ -3,7 +3,6 @@ package de.rettichlp.therettingtoncompanion.gui.widgets;
 import de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList;
 import de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCProgressTextWidget;
 import de.rettichlp.therettingtoncompanion.gui.widgets.base.WidgetConfiguration;
-import lombok.RequiredArgsConstructor;
 import net.minecraft.network.chat.Component;
 
 import java.time.LocalDateTime;
@@ -12,7 +11,6 @@ import static java.time.LocalDateTime.now;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static net.minecraft.network.chat.Component.translatable;
 
-@RequiredArgsConstructor
 public class NotificationWidget extends AbstractTRCProgressTextWidget<NotificationWidget.Configuration> {
 
     private final Component text;
