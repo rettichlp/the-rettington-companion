@@ -27,7 +27,7 @@ public class WidgetsOptionsTab extends AbstractTRCOptionsTab {
 
     @Override
     public void populateOptionsList(@NonNull TRCOptionsList optionsList) {
-        FullWidthButtonEntry fullWidthButtonEntry = optionsList.addFullWidthButton(translatable("trc.option.widgets.position.label"), create(translatable("trc.option.widgets.position.tooltip")), _ -> this.minecraft.setScreen(new WidgetPositionScreen()));
+        FullWidthButtonEntry fullWidthButtonEntry = optionsList.addFullWidthButton(translatable("trc.option.widgets.position.label"), create(translatable("trc.option.widgets.position.tooltip")), _ -> this.minecraft.setScreen(new WidgetPositionScreen(this.minecraft.screen)));
         fullWidthButtonEntry.getButton().active = this.minecraft.level != null;
 
         optionsList.addFullWidthSlider(translatable("trc.option.widgets.size.label"), 4, 16, configuration.widgets().getSize(), value -> configuration.widgets().setSize(value));
