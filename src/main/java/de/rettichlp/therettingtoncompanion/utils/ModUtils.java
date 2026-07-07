@@ -6,7 +6,9 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 
 import java.awt.Color;
@@ -17,6 +19,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Pattern;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 
 public class ModUtils {
@@ -48,5 +51,12 @@ public class ModUtils {
                 Minecraft.getInstance().execute(runnable);
             }
         }, milliseconds);
+    }
+
+    @Contract("_ -> new")
+    public static @NonNull Color colorFromChatFormatting(@NonNull ChatFormatting chatFormatting) {
+        Integer color = chatFormatting.getColor();
+        checkNotNull(color, "ChatFormatting must be a color");
+        return new Color(color);
     }
 }

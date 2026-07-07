@@ -41,6 +41,7 @@ public class WidgetService {
         List<AbstractTRCWidget<?>> widgets = new ArrayList<>();
 
         this.widgets.stream()
+                .filter(abstractTRCWidget -> abstractTRCWidget.getRegistryName() != null)
                 .sorted(comparing(AbstractTRCWidget::getRegistryName))
                 .forEach(widgets::add);
 
