@@ -31,7 +31,6 @@ import static net.minecraft.network.chat.Component.translatable;
 @Getter
 public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
 
-    public static final int WIDGET_POSITION_SCALE = 4;
     public static final int TEXT_BOX_PADDING = 3;
 
     protected final Minecraft minecraft = Minecraft.getInstance();
@@ -179,7 +178,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
     }
 
     public static long toNearestScale(@NonNull Minecraft minecraft, double value) {
-        int widgetPositionScale = configuration.widgets().getSize() / minecraft.options.guiScale().get();
+        int widgetPositionScale = configuration.widgets().getWidgetPositionScale(minecraft);
         return Math.round(value / widgetPositionScale) * widgetPositionScale;
     }
 }

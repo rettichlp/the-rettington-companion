@@ -86,7 +86,7 @@ public abstract class GuiMixin {
     private void trc$extractRenderStateTail(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         if (this.minecraft.screen instanceof WidgetPositionScreen) {
             // draw grid
-            int squareSize = configuration.widgets().getSize() / this.minecraft.options.guiScale().get();
+            int squareSize = configuration.widgets().getWidgetPositionScale(this.minecraft);
 
             for (Integer snapPosition : getSnapPositions(graphics.guiWidth(), squareSize)) {
                 graphics.verticalLine(snapPosition, -1, graphics.guiHeight(), colorFromChatFormatting(DARK_GRAY).getRGB());

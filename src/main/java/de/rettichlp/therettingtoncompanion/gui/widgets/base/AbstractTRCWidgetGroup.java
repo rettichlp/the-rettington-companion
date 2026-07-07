@@ -37,7 +37,7 @@ public abstract class AbstractTRCWidgetGroup<C extends WidgetConfiguration> exte
     @Override
     public int getHeight() {
         // only for position calculation (sub-widgets can have more height)
-        return WIDGET_POSITION_SCALE * 20;
+        return 100;
     }
 
     @Override

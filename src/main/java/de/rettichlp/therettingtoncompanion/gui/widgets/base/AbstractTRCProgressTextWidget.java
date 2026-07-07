@@ -5,13 +5,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 
+import static java.lang.Math.toIntExact;
+
 public abstract class AbstractTRCProgressTextWidget<C extends WidgetConfiguration> extends AbstractTRCTextWidget<C> {
 
     public abstract double progress();
 
     @Override
     public int getHeight() {
-        return 4 * WIDGET_POSITION_SCALE;
+        int textHeight = this.minecraft.font.lineHeight;
+        return toIntExact(toNearestScale(this.minecraft, textHeight + 3 * TEXT_BOX_PADDING));
     }
 
     @Override
