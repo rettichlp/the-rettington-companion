@@ -101,7 +101,7 @@ public abstract class GuiMixin {
 
         // render widgets
         Profiler.get().push("widget");
-        widgetService.getWidgets().forEach(abstractWidget -> abstractWidget.extractWidget(this.minecraft, graphics));
+        widgetService.getWidgets().forEach(abstractWidget -> abstractWidget.extractWidget(graphics));
         Profiler.get().pop();
 
         // render empty inventory space text

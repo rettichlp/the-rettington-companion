@@ -49,7 +49,11 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
 
     public abstract int getHeight();
 
-    public abstract void extractWidget(@NotNull GuiGraphicsExtractor graphics, int x, int y, Alignment alignment);
+    public abstract void extractWidget(@NotNull GuiGraphicsExtractor graphics,
+                                       int x,
+                                       int y,
+                                       Color color,
+                                       boolean backgroundEnabled);
 
     public abstract void addOptions(@NonNull TRCOptionsList optionsList);
 
@@ -77,7 +81,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
             graphics.outline(x, y, getWidth(), getHeight(), CYAN.getRGB());
         }
 
-        extractWidget(graphics,  x, y, getAlignment());
+        extractWidget(graphics, x, y, this.widgetConfiguration.getColor(), this.widgetConfiguration.isBackgroundEnabled());
     }
 
     public double getRight() {
@@ -144,24 +148,6 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
         configuration.getWidgets().put(registryName, widgetConfigurationMap);
     }
 
-    private Alignment getAlignment() {
-        int scaledWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
-        int widthSegment = scaledWidth / 3;
-
-        Alignment alignment;
-
-        double x = this.widgetConfiguration.getX();
-        if (x <= widthSegment) {
-            alignment = TOP_LEFT;
-        } else if (x <= widthSegment * 2) {
-            alignment = CENTER_LEFT;
-        } else {
-            alignment = TOP_RIGHT;
-        }
-
-        return alignment;
-    }
-
     @SuppressWarnings("unchecked")
     private Class<C> getConfigurationClass() {
         Type type = getClass().getGenericSuperclass();
@@ -178,17 +164,5 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
 
     public static long toNearestScale(double value) {
         return Math.round(value / WIDGET_POSITION_SCALE) * WIDGET_POSITION_SCALE;
-    }
-
-    public enum Alignment {
-
-        TOP_LEFT,
-        TOP_CENTER,
-        TOP_RIGHT,
-        CENTER_LEFT,
-        CENTER_RIGHT,
-        BOTTOM_LEFT,
-        BOTTOM_CENTER,
-        BOTTOM_RIGHT
     }
 }

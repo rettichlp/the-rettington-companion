@@ -38,6 +38,7 @@ public class WidgetsOptionsTab extends AbstractTRCOptionsTab {
                 widgetConfiguration.setColor(value);
                 button.setColor(value);
             })));
+            optionsList.addToggleButton(translatable("trc.widgets.options.background_enabled.label"), create(translatable("trc.widgets.options.background_enabled.tooltip")), widgetConfiguration.isBackgroundEnabled(), (_, value) -> widgetConfiguration.setBackgroundEnabled(value == ON));
             abstractTRCWidget.addOptions(optionsList);
         });
     }
