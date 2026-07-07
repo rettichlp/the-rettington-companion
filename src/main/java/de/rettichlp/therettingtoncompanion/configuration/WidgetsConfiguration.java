@@ -8,5 +8,6 @@ import java.util.Map;
 @Data
 public class WidgetsConfiguration {
 
+    private int size = 8;
     private Map<String, Object> widgets = new HashMap<>();
 }

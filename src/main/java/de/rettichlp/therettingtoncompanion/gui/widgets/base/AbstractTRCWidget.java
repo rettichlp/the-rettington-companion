@@ -178,7 +178,8 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
         throw new IllegalStateException("Widget class must be generic: AbstractTRCWidget<C>");
     }
 
-    public static long toNearestScale(double value) {
-        return Math.round(value / WIDGET_POSITION_SCALE) * WIDGET_POSITION_SCALE;
+    public static long toNearestScale(@NonNull Minecraft minecraft, double value) {
+        int widgetPositionScale = configuration.widgets().getSize() / minecraft.options.guiScale().get();
+        return Math.round(value / widgetPositionScale) * widgetPositionScale;
     }
 }

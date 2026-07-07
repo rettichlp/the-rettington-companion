@@ -8,6 +8,7 @@ import de.rettichlp.therettingtoncompanion.gui.widgets.base.WidgetConfiguration;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
 import static net.minecraft.client.gui.components.Tooltip.create;
@@ -28,6 +29,8 @@ public class WidgetsOptionsTab extends AbstractTRCOptionsTab {
     public void populateOptionsList(@NonNull TRCOptionsList optionsList) {
         FullWidthButtonEntry fullWidthButtonEntry = optionsList.addFullWidthButton(translatable("trc.option.widgets.position.label"), create(translatable("trc.option.widgets.position.tooltip")), _ -> this.minecraft.setScreen(new WidgetPositionScreen()));
         fullWidthButtonEntry.getButton().active = this.minecraft.level != null;
+
+        optionsList.addFullWidthSlider(translatable("trc.option.widgets.size.label"), 4, 16, configuration.widgets().getSize(), value -> configuration.widgets().setSize(value));
 
         widgetService.getWidgets().forEach(abstractTRCWidget -> {
             Component label = abstractTRCWidget.getLabel();

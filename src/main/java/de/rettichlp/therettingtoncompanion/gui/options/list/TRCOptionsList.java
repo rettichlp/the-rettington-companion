@@ -86,4 +86,8 @@ public class TRCOptionsList extends ContainerObjectSelectionList<AbstractEntry> 
     public void addChatRegexEntry(ChatRegex chatRegex, boolean editable) {
         addEntry(new ChatRegexEntry(chatRegex, editable));
     }
+
+    public void addFullWidthSlider(Component caption, int minValue, int maxValue, int initialValue, Consumer<Integer> onChange) {
+        addEntry(new FullWidthSliderEntry(caption, minValue, maxValue, initialValue, onChange));
+    }
 }
