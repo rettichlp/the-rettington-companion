@@ -126,7 +126,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
 
         Class<C> widgetConfigurationClass = getConfigurationClass();
         // load configuration from the configuration file - not from the cache
-        Object widgetConfigurationObject = configuration.loadFromFile().getWidgets().get(registryName);
+        Object widgetConfigurationObject = configuration.loadFromFile().widgets().getWidgets().get(registryName);
 
         if (isNull(widgetConfigurationObject)) {
             LOGGER.info("No configuration found for widget {}, using default configuration", registryName);
@@ -157,7 +157,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
         C widgetConfiguration = getWidgetConfiguration();
         String widgetConfigurationJson = GSON.toJson(widgetConfiguration);
         Map<String, Object> widgetConfigurationMap = GSON.fromJson(widgetConfigurationJson, MAP_TYPE);
-        configuration.getWidgets().put(registryName, widgetConfigurationMap);
+        configuration.widgets().getWidgets().put(registryName, widgetConfigurationMap);
     }
 
     protected boolean isWidgetPositionScreen() {

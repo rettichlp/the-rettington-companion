@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
@@ -29,8 +27,8 @@ public class Configuration {
     private InventoryConfiguration inventory = new InventoryConfiguration();
     @Accessors(fluent = true)
     private VisualsConfiguration visuals = new VisualsConfiguration();
-
-    private Map<String, Object> widgets = new HashMap<>();
+    @Accessors(fluent = true)
+    private WidgetsConfiguration widgets = new WidgetsConfiguration();
 
     public Configuration loadFromFile() {
         File file = CONFIG_PATH.toFile();
