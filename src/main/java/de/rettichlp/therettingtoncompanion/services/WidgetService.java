@@ -4,6 +4,7 @@ import de.rettichlp.therettingtoncompanion.TheRettingtonCompanionApi;
 import de.rettichlp.therettingtoncompanion.gui.widgets.CountdownWidget;
 import de.rettichlp.therettingtoncompanion.gui.widgets.DateTimeWidget;
 import de.rettichlp.therettingtoncompanion.gui.widgets.HearthWidget;
+import de.rettichlp.therettingtoncompanion.gui.widgets.NotificationGroupWidget;
 import de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jspecify.annotations.NonNull;
@@ -26,9 +27,10 @@ import static net.minecraft.network.chat.Component.literal;
 public class WidgetService {
 
     private final Set<AbstractTRCWidget<?>> widgets = Set.of(
+            new CountdownWidget(literal("test"), now(), 30000),
             new DateTimeWidget(),
             new HearthWidget(),
-            new CountdownWidget(literal("test"), LocalDateTime.now(), 30000)
+            new NotificationGroupWidget()
     );
 
     public void initWidgets() {

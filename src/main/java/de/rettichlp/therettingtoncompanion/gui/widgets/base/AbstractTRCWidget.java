@@ -2,13 +2,17 @@ package de.rettichlp.therettingtoncompanion.gui.widgets.base;
 
 import com.google.common.reflect.TypeToken;
 import de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList;
+import de.rettichlp.therettingtoncompanion.gui.screens.WidgetPositionScreen;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
+import java.awt.Color;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -16,10 +20,10 @@ import java.util.Map;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
-import static de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget.Alignment.CENTER_LEFT;
-import static de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget.Alignment.TOP_LEFT;
-import static de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget.Alignment.TOP_RIGHT;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.GSON;
+import static java.awt.Color.BLUE;
+import static java.awt.Color.CYAN;
+import static java.awt.Color.YELLOW;
 import static java.lang.Math.clamp;
 import static java.util.Objects.isNull;
 import static net.minecraft.network.chat.Component.translatable;
@@ -39,7 +43,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
 
     private C widgetConfiguration;
 
-    public abstract String getRegistryName();
+    public abstract @Nullable String getRegistryName();
 
     public abstract Component getLabel();
 
@@ -58,11 +62,15 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
     public abstract void addOptions(@NonNull TRCOptionsList optionsList);
 
     public void init() {
-        loadConfiguration();
+        if (getRegistryName() != null) {
+            loadConfiguration();
+        }
     }
 
-    public void extractWidget(Minecraft minecraft, @NotNull GuiGraphicsExtractor graphics) {
-        this.minecraft = minecraft;
+    public void extractWidget(@NotNull GuiGraphicsExtractor graphics) {
+        if (getRegistryName() == null) {
+            throw new IllegalStateException("Widget " + this.getClass().getName() + " is missing registry name and cannot be rendered by this method. Use extractWidget(GuiGraphicsExtractor, int, int, Color, boolean) instead.");
+        }
 
         if (!isVisible() || !this.widgetConfiguration.isEnabled() || Minecraft.getInstance().options.hideGui) {
             return;
@@ -84,12 +92,16 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
         extractWidget(graphics, x, y, this.widgetConfiguration.getColor(), this.widgetConfiguration.isBackgroundEnabled());
     }
 
-    public double getRight() {
-        return getWidgetConfiguration().getX() + getWidth();
+    public double getRight(double x) {
+        return x + getWidth();
     }
 
-    public double getBottom() {
-        return getWidgetConfiguration().getY() + getHeight();
+    public double getMiddle(double x) {
+        return x + getWidth() / 2.0;
+    }
+
+    public double getBottom(double y) {
+        return y + getHeight();
     }
 
     public boolean isMouseOver(double mouseX, double mouseY) {
@@ -146,6 +158,10 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
         String widgetConfigurationJson = GSON.toJson(widgetConfiguration);
         Map<String, Object> widgetConfigurationMap = GSON.fromJson(widgetConfigurationJson, MAP_TYPE);
         configuration.getWidgets().put(registryName, widgetConfigurationMap);
+    }
+
+    protected boolean isWidgetPositionScreen() {
+        return this.minecraft.screen instanceof WidgetPositionScreen;
     }
 
     @SuppressWarnings("unchecked")

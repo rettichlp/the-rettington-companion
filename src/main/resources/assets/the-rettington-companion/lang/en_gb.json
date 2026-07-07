@@ -73,6 +73,8 @@
   "trc.widgets.date_time.options.show_date.tooltip": "Toggles the display of the date.",
   "trc.widgets.hearth.label": "Hearth",
   "trc.widgets.hearth.tooltip": "Shows the current hearth amount.",
-  "trc.widgets.notification.label": "Notifications",
-  "trc.widgets.notification.tooltip": "Shows notifications."
+  "trc.widgets.notification_group.label": "Notifications",
+  "trc.widgets.notification_group.tooltip": "Shows notifications.",
+  "trc.widgets.notification_group.options.alignment.label": "Alignment",
+  "trc.widgets.notification_group.options.alignment.tooltip": "Alignment of the notifications."
 }
