@@ -10,14 +10,12 @@ import net.fabricmc.loader.api.FabricLoader;
 import org.jspecify.annotations.NonNull;
 
 import java.awt.Color;
-import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
 import static java.lang.Math.clamp;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;

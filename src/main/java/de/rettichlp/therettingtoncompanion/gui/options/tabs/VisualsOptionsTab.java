@@ -1,8 +1,8 @@
 package de.rettichlp.therettingtoncompanion.gui.options.tabs;
 
 import de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration;
-import de.rettichlp.therettingtoncompanion.gui.screens.ColorSelectionPopupScreen;
 import de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList;
+import de.rettichlp.therettingtoncompanion.gui.screens.ColorSelectionPopupScreen;
 import de.rettichlp.therettingtoncompanion.models.GammaPreset;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;

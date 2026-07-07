@@ -1,5 +1,8 @@
 {
   "key.category.the-rettington-companion.trc.key.category.name": "The Rettington Companion",
+  "trc.alignment.left": "Left",
+  "trc.alignment.center": "Center",
+  "trc.alignment.right": "Right",
   "trc.equipment_model_visibility.all": "All",
   "trc.equipment_model_visibility.none": "None",
   "trc.equipment_model_visibility.only_wings": "Only wings",
@@ -69,7 +72,7 @@
   "trc.widgets.countdown.label": "Countdowns",
   "trc.widgets.countdown.tooltip": "Shows countdowns.",
   "trc.widgets.date_time.label": "Date & Time",
-  "trc.widgets.date_time.tooltip": "Shows the current time and date (optional).",
+  "trc.widgets.date_time.tooltip": "Shows the current date and time.",
   "trc.widgets.date_time.options.show_date.label": "Show date",
   "trc.widgets.date_time.options.show_date.tooltip": "Toggles the display of the date.",
   "trc.widgets.hearth.label": "Hearth",

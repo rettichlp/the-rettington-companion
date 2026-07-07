@@ -12,6 +12,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
 import static net.minecraft.client.gui.components.Tooltip.create;
+import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
 
 public class WidgetsOptionsTab extends AbstractTRCOptionsTab {
@@ -33,8 +34,11 @@ public class WidgetsOptionsTab extends AbstractTRCOptionsTab {
         optionsList.addFullWidthSlider(translatable("trc.option.widgets.size.label"), 4, 16, configuration.widgets().getSize(), value -> configuration.widgets().setSize(value));
 
         widgetService.getWidgets().forEach(abstractTRCWidget -> {
-            Component label = abstractTRCWidget.getLabel();
+            Component label = abstractTRCWidget.getLabel().copy()
+                    .append(literal(" - ").withStyle(style -> style.withBold(false)))
+                    .append(abstractTRCWidget.getTooltip().copy().withStyle(style -> style.withBold(false)));
             optionsList.addHeader(label);
+
             WidgetConfiguration widgetConfiguration = abstractTRCWidget.getWidgetConfiguration();
             optionsList.addToggleButton(translatable("trc.widgets.options.enabled.label"), create(translatable("trc.widgets.options.enabled.tooltip")), widgetConfiguration.isEnabled(), (button, value) -> widgetConfiguration.setEnabled(value == ON));
             optionsList.addColorButton(translatable("trc.widgets.options.color.label"), create(translatable("trc.widgets.options.color.tooltip")), widgetConfiguration.getColor(), (button, color) -> this.minecraft.setScreen(new ColorSelectionPopupScreen(this.minecraft.screen, color, value -> {

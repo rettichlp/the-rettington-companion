@@ -42,8 +42,4 @@ public class Notification {
         LocalDateTime now = now();
         return this.timestamp.isBefore(now) && between(this.timestamp, now).compareTo(this.displayDuration) < 0;
     }
-
-//    public NotificationWidget toWidget() {
-//        return new NotificationWidget(this);
-//    }
 }

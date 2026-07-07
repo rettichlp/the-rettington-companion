@@ -1,7 +1,7 @@
 package de.rettichlp.therettingtoncompanion.gui.options.tabs;
 
-import de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen;
 import de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList;
+import de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen;
 import de.rettichlp.therettingtoncompanion.models.ChatRegex;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.network.chat.Component;
@@ -35,9 +35,7 @@ public class ChatOptionsTab extends AbstractTRCOptionsTab {
 
         optionsList.addHeader(translatable("trc.option.chat.section.message_patterns.title"));
         optionsList.addChatRegexEntry(configuration.chat().regex().getDefaulChatRegex(), false);
-        configuration.chat().regex().getChatRegexes().forEach(chatRegex -> {
-            optionsList.addChatRegexEntry(chatRegex, true);
-        });
+        configuration.chat().regex().getChatRegexes().forEach(chatRegex -> optionsList.addChatRegexEntry(chatRegex, true));
         optionsList.addFullWidthButton(literal("+"), create(empty()), _ -> {
             ChatRegex newChatRegex = new ChatRegex("");
             configuration.chat().regex().getChatRegexes().add(newChatRegex);

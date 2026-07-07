@@ -41,6 +41,11 @@ public class NotificationGroupWidget extends AbstractTRCWidgetGroup<Notification
     }
 
     @Override
+    public void addOptions(@NonNull TRCOptionsList optionsList) {
+        optionsList.addCycleButton(translatable("trc.widgets.notification_group.options.alignment.label"), create(translatable("trc.widgets.notification_group.options.alignment.tooltip")), getWidgetConfiguration().getAlignment(), List.of(Alignment.values()), (_, value) -> getWidgetConfiguration().setAlignment(value));
+    }
+
+    @Override
     public List<? extends AbstractTRCWidget<?>> widgets() {
         return notificationService.getVisibleNotifications().stream()
                 .map(NotificationWidget::new)
@@ -50,11 +55,6 @@ public class NotificationGroupWidget extends AbstractTRCWidgetGroup<Notification
     @Override
     public Alignment alignment() {
         return getWidgetConfiguration().getAlignment();
-    }
-
-    @Override
-    public void addOptions(@NonNull TRCOptionsList optionsList) {
-        optionsList.addCycleButton(translatable("trc.widgets.notification_group.options.alignment.label"), create(translatable("trc.widgets.notification_group.options.alignment.tooltip")), getWidgetConfiguration().getAlignment(), List.of(Alignment.values()), (_, value) -> getWidgetConfiguration().setAlignment(value));
     }
 
     @Data

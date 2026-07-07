@@ -2,7 +2,6 @@ package de.rettichlp.therettingtoncompanion.gui.options.list;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
@@ -41,7 +40,7 @@ public class FullWidthSliderEntry extends AbstractEntry {
         private final Consumer<Integer> onChange;
 
         public Slider(Component caption, int minValue, int maxValue, int initialValue, Consumer<Integer> onChange) {
-            double sliderValue =  (double) (initialValue - minValue) / (maxValue - minValue);
+            double sliderValue = (double) (initialValue - minValue) / (maxValue - minValue);
             super(0, 0, FullWidthSliderEntry.this.getContentWidth(), DEFAULT_HEIGHT, caption, sliderValue);
             this.caption = caption;
             this.minValue = minValue;

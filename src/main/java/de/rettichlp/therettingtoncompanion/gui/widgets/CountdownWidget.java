@@ -28,16 +28,6 @@ public class CountdownWidget extends AbstractTRCProgressTextWidget<CountdownWidg
     }
 
     @Override
-    public Component text() {
-        return this.text;
-    }
-
-    @Override
-    public double progress() {
-        return calculateProgress(this.creationTime, this.durationInMillis);
-    }
-
-    @Override
     public Component getLabel() {
         return translatable("trc.widgets.countdown.label");
     }
@@ -53,6 +43,16 @@ public class CountdownWidget extends AbstractTRCProgressTextWidget<CountdownWidg
     @Override
     public boolean isVisible() {
         return this.creationTime.plus(this.durationInMillis, MILLIS).isAfter(now());
+    }
+
+    @Override
+    public Component text() {
+        return this.text;
+    }
+
+    @Override
+    public double progress() {
+        return calculateProgress(this.creationTime, this.durationInMillis);
     }
 
     public static class Configuration extends WidgetConfiguration {}

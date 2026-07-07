@@ -46,11 +46,6 @@ public class ChatRegex {
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
     public boolean equals(Object object) {
         return object instanceof ChatRegex chatRegex
                 && this.patternString.equalsIgnoreCase(chatRegex.patternString)

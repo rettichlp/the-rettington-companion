@@ -99,10 +99,6 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
         return x + getWidth() / 2.0;
     }
 
-    public double getBottom(double y) {
-        return y + getHeight();
-    }
-
     public boolean isMouseOver(double mouseX, double mouseY) {
         double x = this.widgetConfiguration.getX();
         double y = this.widgetConfiguration.getY();

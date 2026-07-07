@@ -35,7 +35,6 @@ import java.util.function.Predicate;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.renderService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.colorFromChatFormatting;
 import static java.lang.String.valueOf;
@@ -69,9 +68,6 @@ public abstract class GuiMixin {
     @Shadow
     @Final
     private Minecraft minecraft;
-
-    @Shadow
-    public abstract Font getFont();
 
     @Shadow
     protected abstract void extractSlot(GuiGraphicsExtractor graphics,
@@ -117,7 +113,7 @@ public abstract class GuiMixin {
             Component text = literal(valueOf(emptySlotAmount));
             int y = graphics.guiHeight() - 46;
             boolean onlyFiveLeft = !showSameItemLeftAmount && emptySlotAmount <= 5;
-            renderService.renderShadowText(graphics, text, y, configuration.visuals().getExperienceLevelColor(), onlyFiveLeft ? -6946816 : -16777216);
+            renderShadowText(graphics, text, y, configuration.visuals().getExperienceLevelColor(), onlyFiveLeft ? -6946816 : -16777216);
         }
     }
 
@@ -278,5 +274,26 @@ public abstract class GuiMixin {
         }
 
         return snapPositions;
+    }
+
+    @Unique
+    private void renderShadowText(@NonNull GuiGraphicsExtractor graphics, Component text, int y, int color, int shadowColor) {
+        Font font = Minecraft.getInstance().font;
+        int textWidth = font.width(text);
+        renderShadowText(graphics, text, (graphics.guiWidth() - textWidth) / 2, y, color, shadowColor);
+    }
+
+    @Unique
+    private void renderShadowText(@NonNull GuiGraphicsExtractor graphics, Component text, int x, int y, int color, int shadowColor) {
+        Font font = Minecraft.getInstance().font;
+
+        // render shadow
+        graphics.text(font, text, x + 1, y, shadowColor, false);
+        graphics.text(font, text, x - 1, y, shadowColor, false);
+        graphics.text(font, text, x, y + 1, shadowColor, false);
+        graphics.text(font, text, x, y - 1, shadowColor, false);
+
+        // render text
+        graphics.text(font, text, x, y, color, false);
     }
 }

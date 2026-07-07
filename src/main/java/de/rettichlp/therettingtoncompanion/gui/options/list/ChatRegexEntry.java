@@ -1,8 +1,8 @@
 package de.rettichlp.therettingtoncompanion.gui.options.list;
 
 import de.rettichlp.therettingtoncompanion.gui.ColorButton;
-import de.rettichlp.therettingtoncompanion.gui.screens.ColorSelectionPopupScreen;
 import de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry;
+import de.rettichlp.therettingtoncompanion.gui.screens.ColorSelectionPopupScreen;
 import de.rettichlp.therettingtoncompanion.gui.screens.SoundSelectionPopupScreen;
 import de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen;
 import de.rettichlp.therettingtoncompanion.models.ChatRegex;
