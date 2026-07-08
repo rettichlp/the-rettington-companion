@@ -25,7 +25,6 @@ import static java.awt.Color.BLUE;
 import static java.awt.Color.CYAN;
 import static java.awt.Color.YELLOW;
 import static java.lang.Math.clamp;
-import static java.util.Objects.isNull;
 import static net.minecraft.network.chat.Component.translatable;
 
 @Getter
@@ -71,7 +70,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
             throw new IllegalStateException("Widget " + this.getClass().getName() + " is missing registry name and cannot be rendered by this method. Use extractWidget(GuiGraphicsExtractor, int, int, Color, boolean) instead.");
         }
 
-        if (!isVisible() || !this.widgetConfiguration.isEnabled() || Minecraft.getInstance().options.hideGui) {
+        if (!isVisible()) {
             return;
         }
 
@@ -108,13 +107,13 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
     }
 
     public boolean isVisible() {
-        return true;
+        return this.widgetConfiguration.isEnabled() && !this.minecraft.options.hideGui;
     }
 
     public void loadConfiguration() {
         String registryName = getRegistryName();
 
-        if (isNull(registryName)) {
+        if (registryName == null) {
             LOGGER.warn("Widget {} is missing registry name and therefore has no configuration", this.getClass().getName());
             return;
         }
@@ -123,7 +122,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
         // load configuration from the configuration file - not from the cache
         Object widgetConfigurationObject = configuration.loadFromFile().widgets().getWidgets().get(registryName);
 
-        if (isNull(widgetConfigurationObject)) {
+        if (widgetConfigurationObject == null) {
             LOGGER.info("No configuration found for widget {}, using default configuration", registryName);
 
             try {
@@ -144,7 +143,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
     public void saveConfiguration() {
         String registryName = getRegistryName();
 
-        if (isNull(registryName)) {
+        if (registryName == null) {
             LOGGER.warn("Widget {} is missing registry name and therefore has no configuration", this.getClass().getName());
             return;
         }
