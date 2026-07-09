@@ -12,7 +12,8 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
-import static de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget.toNearestScale;
+import static de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget.toNearestGridAnchorX;
+import static de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget.toNearestGridAnchorY;
 import static java.lang.Math.clamp;
 import static net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent.create;
 import static net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner.INSTANCE;
@@ -93,8 +94,8 @@ public class WidgetPositionScreen extends Screen {
 
         if (this.selectedWidget != null) {
             WidgetConfiguration widgetConfiguration = this.selectedWidget.getWidgetConfiguration();
-            widgetConfiguration.setX(toNearestScale(widgetConfiguration.getX()));
-            widgetConfiguration.setY(toNearestScale(widgetConfiguration.getY()));
+            widgetConfiguration.setX(toNearestGridAnchorX(widgetConfiguration.getX()));
+            widgetConfiguration.setY(toNearestGridAnchorY(widgetConfiguration.getY()));
             this.selectedWidget.setFocused(false);
         }
 

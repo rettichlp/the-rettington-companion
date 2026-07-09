@@ -177,4 +177,17 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
         int widgetPositionScale = configuration.widgets().getSize();
         return round(value / widgetPositionScale) * widgetPositionScale;
     }
+
+    public static long toNearestGridAnchorX(double value) {
+        return toNearestGridAnchor(value, Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2);
+    }
+
+    public static long toNearestGridAnchorY(double value) {
+        return toNearestGridAnchor(value, Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2);
+    }
+
+    private static long toNearestGridAnchor(double value, int anchorValue) {
+        int widgetPositionScale = configuration.widgets().getSize();
+        return anchorValue + round((value - anchorValue) / widgetPositionScale) * widgetPositionScale;
+    }
 }

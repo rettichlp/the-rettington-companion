@@ -15,6 +15,7 @@ import org.jspecify.annotations.NonNull;
 import java.awt.Color;
 import java.util.List;
 
+import static java.lang.Math.toIntExact;
 import static net.minecraft.client.gui.components.Tooltip.create;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.translatable;
@@ -31,13 +32,13 @@ public abstract class AbstractTRCWidgetGroup<C extends WidgetConfiguration> exte
     @Override
     public int getWidth() {
         // only for position calculation (sub-widgets can have more width)
-        return this.minecraft.getWindow().getGuiScaledWidth() / 3;
+        return toIntExact(toNearestScale(this.minecraft.getWindow().getGuiScaledWidth() / 3.0));
     }
 
     @Override
     public int getHeight() {
         // only for position calculation (sub-widgets can have more height)
-        return 100;
+        return toIntExact(toNearestScale(100));
     }
 
     @Override
