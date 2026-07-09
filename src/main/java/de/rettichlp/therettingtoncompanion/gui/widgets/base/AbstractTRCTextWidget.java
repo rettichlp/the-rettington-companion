@@ -16,13 +16,13 @@ public abstract class AbstractTRCTextWidget<C extends WidgetConfiguration> exten
     @Override
     public int getWidth() {
         int textWidth = this.minecraft.font.width(text());
-        return toIntExact(toNearestScale(this.minecraft, textWidth + 2 * TEXT_BOX_PADDING));
+        return toIntExact(toNearestScale(textWidth + 2 * TEXT_BOX_PADDING));
     }
 
     @Override
     public int getHeight() {
         int textHeight = this.minecraft.font.lineHeight;
-        return toIntExact(toNearestScale(this.minecraft, textHeight + 2 * TEXT_BOX_PADDING));
+        return toIntExact(toNearestScale(textHeight + 2 * TEXT_BOX_PADDING));
     }
 
     @Override

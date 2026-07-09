@@ -25,6 +25,7 @@ import static java.awt.Color.BLUE;
 import static java.awt.Color.CYAN;
 import static java.awt.Color.YELLOW;
 import static java.lang.Math.clamp;
+import static java.lang.Math.round;
 import static net.minecraft.network.chat.Component.translatable;
 
 @Getter
@@ -172,8 +173,8 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
         throw new IllegalStateException("Widget class must be generic: AbstractTRCWidget<C>");
     }
 
-    public static long toNearestScale(@NonNull Minecraft minecraft, double value) {
-        int widgetPositionScale = configuration.widgets().getWidgetPositionScale(minecraft);
-        return Math.round(value / widgetPositionScale) * widgetPositionScale;
+    public static long toNearestScale(double value) {
+        int widgetPositionScale = configuration.widgets().getSize();
+        return round(value / widgetPositionScale) * widgetPositionScale;
     }
 }

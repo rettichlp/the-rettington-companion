@@ -93,8 +93,8 @@ public class WidgetPositionScreen extends Screen {
 
         if (this.selectedWidget != null) {
             WidgetConfiguration widgetConfiguration = this.selectedWidget.getWidgetConfiguration();
-            widgetConfiguration.setX(toNearestScale(this.minecraft, widgetConfiguration.getX()));
-            widgetConfiguration.setY(toNearestScale(this.minecraft, widgetConfiguration.getY()));
+            widgetConfiguration.setX(toNearestScale(widgetConfiguration.getX()));
+            widgetConfiguration.setY(toNearestScale(widgetConfiguration.getY()));
             this.selectedWidget.setFocused(false);
         }
 

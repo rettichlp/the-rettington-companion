@@ -14,7 +14,7 @@ public abstract class AbstractTRCProgressTextWidget<C extends WidgetConfiguratio
     @Override
     public int getHeight() {
         int textHeight = this.minecraft.font.lineHeight;
-        return toIntExact(toNearestScale(this.minecraft, textHeight + 3 * TEXT_BOX_PADDING));
+        return toIntExact(toNearestScale(textHeight + 3 * TEXT_BOX_PADDING));
     }
 
     @Override
