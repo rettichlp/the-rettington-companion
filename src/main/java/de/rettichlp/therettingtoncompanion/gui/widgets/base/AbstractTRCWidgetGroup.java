@@ -61,11 +61,6 @@ public abstract class AbstractTRCWidgetGroup<C extends WidgetConfiguration> exte
         }
     }
 
-    @Override
-    public boolean isVisible() {
-        return widgets().stream().allMatch(AbstractTRCWidget::isVisible) || isWidgetPositionScreen();
-    }
-
     @AllArgsConstructor
     public enum Alignment implements ICycleButtonValue {
 

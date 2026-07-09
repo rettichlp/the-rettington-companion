@@ -108,7 +108,11 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
     }
 
     public boolean isVisible() {
-        return (getRegistryName() == null || this.widgetConfiguration.isEnabled()) && !this.minecraft.options.hideGui;
+        if (getRegistryName() == null) {
+            throw new IllegalStateException("Widget " + this.getClass().getName() + " is missing registry name and have to implement its own visibility check without using the WidgetConfiguration instance.");
+        }
+
+        return this.widgetConfiguration.isEnabled() && !this.minecraft.options.hideGui;
     }
 
     public void loadConfiguration() {

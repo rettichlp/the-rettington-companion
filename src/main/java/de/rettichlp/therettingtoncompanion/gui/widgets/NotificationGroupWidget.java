@@ -9,6 +9,7 @@ import de.rettichlp.therettingtoncompanion.models.Notification;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
@@ -46,6 +47,12 @@ public class NotificationGroupWidget extends AbstractTRCWidgetGroup<Notification
     }
 
     @Override
+    public boolean isVisible() {
+        return widgets().stream()
+                .allMatch(abstractTRCWidget -> abstractTRCWidget instanceof NotificationWidget notificationWidget && notificationWidget.getNotification().isVisible());
+    }
+
+    @Override
     public List<? extends AbstractTRCWidget<?>> widgets() {
         return notificationService.getVisibleNotifications().stream()
                 .map(NotificationWidget::new)
@@ -64,6 +71,7 @@ public class NotificationGroupWidget extends AbstractTRCWidgetGroup<Notification
         private Alignment alignment = LEFT;
     }
 
+    @Getter
     @AllArgsConstructor
     private static class NotificationWidget extends AbstractTRCProgressTextWidget<NotificationGroupWidget.Configuration> {
 
