@@ -103,7 +103,7 @@ public class TRCOptionsScreen extends Screen {
 
     @Override
     public void onClose() {
-        widgetService.getWidgets().forEach(AbstractTRCWidget::saveConfiguration);
+        widgetService.getInitializedWidgets().forEach(AbstractTRCWidget::saveConfiguration);
         configuration.saveToFile();
         this.minecraft.setScreen(null);
     }
@@ -146,7 +146,7 @@ public class TRCOptionsScreen extends Screen {
 
     public void onBack() {
         this.minecraft.setScreen(this.lastScreen);
-        widgetService.getWidgets().forEach(AbstractTRCWidget::saveConfiguration);
+        widgetService.getInitializedWidgets().forEach(AbstractTRCWidget::saveConfiguration);
         configuration.saveToFile();
     }
 

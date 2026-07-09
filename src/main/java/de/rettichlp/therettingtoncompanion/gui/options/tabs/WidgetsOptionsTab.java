@@ -33,7 +33,7 @@ public class WidgetsOptionsTab extends AbstractTRCOptionsTab {
 
         optionsList.addFullWidthSlider(translatable("trc.option.widgets.size.label"), 4, 16, configuration.widgets().getSize(), value -> configuration.widgets().setSize(value));
 
-        widgetService.getWidgets().forEach(abstractTRCWidget -> {
+        widgetService.getInitializedWidgets().forEach(abstractTRCWidget -> {
             Component label = abstractTRCWidget.getLabel().copy()
                     .append(literal(" - ").withStyle(style -> style.withBold(false)))
                     .append(abstractTRCWidget.getTooltip().copy().withStyle(style -> style.withBold(false)));
