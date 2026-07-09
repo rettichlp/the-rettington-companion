@@ -71,7 +71,7 @@ public class NotificationGroupWidget extends AbstractTRCWidgetGroup<Notification
 
         @Override
         public Component text() {
-            return this.notification.getText();
+            return this.notification.getComponentSupplier().get();
         }
 
         @Override
