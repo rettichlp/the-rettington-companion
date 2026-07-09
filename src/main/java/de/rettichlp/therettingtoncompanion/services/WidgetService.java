@@ -1,7 +1,6 @@
 package de.rettichlp.therettingtoncompanion.services;
 
 import de.rettichlp.therettingtoncompanion.TheRettingtonCompanionApi;
-import de.rettichlp.therettingtoncompanion.gui.widgets.CountdownWidget;
 import de.rettichlp.therettingtoncompanion.gui.widgets.DateTimeWidget;
 import de.rettichlp.therettingtoncompanion.gui.widgets.HearthWidget;
 import de.rettichlp.therettingtoncompanion.gui.widgets.NotificationGroupWidget;
@@ -23,12 +22,10 @@ import static java.lang.Math.clamp;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
 import static java.util.Comparator.comparing;
-import static net.minecraft.network.chat.Component.literal;
 
 public class WidgetService {
 
     private final Set<AbstractTRCWidget<?>> widgets = Set.of(
-            new CountdownWidget(literal("test"), now(), 30000),
             new DateTimeWidget(),
             new HearthWidget(),
             new NotificationGroupWidget()
