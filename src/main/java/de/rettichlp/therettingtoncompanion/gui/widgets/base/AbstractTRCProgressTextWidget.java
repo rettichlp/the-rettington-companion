@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static java.lang.Math.toIntExact;
 
 public abstract class AbstractTRCProgressTextWidget<C extends WidgetConfiguration> extends AbstractTRCTextWidget<C> {
@@ -14,16 +15,17 @@ public abstract class AbstractTRCProgressTextWidget<C extends WidgetConfiguratio
     @Override
     public int getHeight() {
         int textHeight = this.minecraft.font.lineHeight;
-        return toIntExact(toNearestScale(textHeight + 3 * TEXT_BOX_PADDING));
+        return toIntExact(toNearestScale(textHeight + 3 * configuration.widgets().getPadding()));
     }
 
     @Override
     public void extractWidget(@NotNull GuiGraphicsExtractor graphics, int x, int y, Color color, boolean backgroundEnabled) {
         super.extractWidget(graphics, x, y, color, backgroundEnabled);
 
-        int maxProgressWidth = getWidth() - TEXT_BOX_PADDING * 2;
-        int xProgressStart = (int) (x + TEXT_BOX_PADDING + maxProgressWidth * progress());
-        int xProgressEnd = x + getWidth() - TEXT_BOX_PADDING;
+        int padding = configuration.widgets().getPadding();
+        int maxProgressWidth = getWidth() - padding * 2;
+        int xProgressStart = (int) (x + padding + maxProgressWidth * progress());
+        int xProgressEnd = x + getWidth() - padding;
 
         graphics.horizontalLine(xProgressStart, xProgressEnd, y + getHeight() - 3, color.getRGB());
     }

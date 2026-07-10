@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
 import static java.lang.Math.toIntExact;
 
@@ -16,13 +17,13 @@ public abstract class AbstractTRCTextWidget<C extends WidgetConfiguration> exten
     @Override
     public int getWidth() {
         int textWidth = this.minecraft.font.width(text());
-        return toIntExact(toNearestScale(textWidth + 2 * TEXT_BOX_PADDING));
+        return toIntExact(toNearestScale(textWidth + 2 * configuration.widgets().getPadding()));
     }
 
     @Override
     public int getHeight() {
         int textHeight = this.minecraft.font.lineHeight;
-        return toIntExact(toNearestScale(textHeight + 2 * TEXT_BOX_PADDING));
+        return toIntExact(toNearestScale(textHeight + 2 * configuration.widgets().getPadding()));
     }
 
     @Override

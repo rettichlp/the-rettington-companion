@@ -14,6 +14,7 @@ import static de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWi
 public class WidgetsConfiguration {
 
     private int size = 4;
+    private int padding = 2;
     private Map<String, Object> widgets = new HashMap<>();
 
     public void setSize(int size) {

@@ -60,6 +60,7 @@
   "trc.option.widgets.position.label": "Position",
   "trc.option.widgets.position.tooltip": "Changes the position of the widgets. (Only possible while in-game!)",
   "trc.option.widgets.size.label": "Size",
+  "trc.option.widgets.padding.label": "Padding",
   "trc.weather_value.clear": "Clear",
   "trc.weather_value.rain": "Rain",
   "trc.weather_value.thunder": "Rain & thunder",

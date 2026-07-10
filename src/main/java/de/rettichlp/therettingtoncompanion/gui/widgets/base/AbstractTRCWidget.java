@@ -31,8 +31,6 @@ import static net.minecraft.network.chat.Component.translatable;
 @Getter
 public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
 
-    public static final int TEXT_BOX_PADDING = 3;
-
     protected final Minecraft minecraft = Minecraft.getInstance();
 
     @Setter
