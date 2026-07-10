@@ -54,7 +54,7 @@ public class WidgetService {
             this.initializedWidgets.add(abstractTRCWidget);
         });
 
-        LOGGER.info("Initialized {} widgets", this.initializedWidgets);
+        LOGGER.info("Initialized {} widgets", this.initializedWidgets.size());
     }
 
     public Color getTransparentColor(@NonNull Color color) {

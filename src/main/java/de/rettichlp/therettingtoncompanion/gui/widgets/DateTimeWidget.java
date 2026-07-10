@@ -40,7 +40,7 @@ public class DateTimeWidget extends AbstractTRCTextWidget<DateTimeWidget.Configu
 
     @Override
     public void addOptions(@NonNull TRCOptionsList optionsList) {
-        optionsList.addToggleButton(translatable("trc.widgets.date_time.options.show_date.label"), create(translatable("trc.widgets.date_time.options.show_date.tooltip")), true, (_, value) -> getWidgetConfiguration().setShowDate(value == ON));
+        optionsList.addToggleButton(translatable("trc.widgets.date_time.options.show_date.label"), create(translatable("trc.widgets.date_time.options.show_date.tooltip")), getWidgetConfiguration().isShowDate(), (_, value) -> getWidgetConfiguration().setShowDate(value == ON));
     }
 
     @Override
