@@ -1,10 +1,9 @@
 {
   "required": true,
   "package": "de.rettichlp.therettingtoncompanion.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "mixins": [
-    "ItemStackMixin",
-    "WorldMixin"
+    "ItemStackMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -13,16 +12,16 @@
     "requireAnnotations": true
   },
   "client": [
-    "BarMixin",
-    "ChatHudMixin",
-    "ClientWorldMixin",
-    "EquipmentRendererMixin",
-    "GameMenuScreenMixin",
-    "HandledScreenMixin",
-    "InGameHudMixin",
-    "KeyboardMixin",
-    "LightmapTextureManagerMixin",
-    "SimpleOptionMixin",
+    "AbstractContainerScreenMixin",
+    "ChatComponentMixin",
+    "ContextualBarRendererMixin",
+    "EquipmentLayerRendererMixin",
+    "GuiMixin",
+    "KeyboardHandlerMixin",
+    "LevelMixin",
+    "LivingEntityMixin",
+    "OptionInstanceMixin",
+    "PauseScreenMixin",
     "TitleScreenMixin"
   ]
 }
