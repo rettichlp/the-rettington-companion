@@ -57,6 +57,7 @@ public class ChatRegexEntry extends AbstractEntry {
 
         this.editBox = new EditBox(this.minecraft.font, 0, 20, empty());
         this.editBox.setValue(this.editable ? this.chatRegex.getPattern().map(Pattern::pattern).orElse("null") : this.minecraft.getGameProfile().name());
+        this.editBox.setHint(literal(this.editBox.getValue()));
         this.editBox.setEditable(this.editable);
         this.editBox.setResponder(value -> {
             if (isValidPattern(value)) {
