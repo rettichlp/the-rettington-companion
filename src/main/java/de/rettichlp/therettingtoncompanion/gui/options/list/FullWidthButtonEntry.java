@@ -1,5 +1,6 @@
 package de.rettichlp.therettingtoncompanion.gui.options.list;
 
+import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
@@ -11,6 +12,7 @@ import java.util.List;
 
 public class FullWidthButtonEntry extends AbstractEntry {
 
+    @Getter
     private final Button button;
 
     protected FullWidthButtonEntry(Component caption, Tooltip tooltip, Button.OnPress onPress) {

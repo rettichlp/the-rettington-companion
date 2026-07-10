@@ -44,6 +44,10 @@ public abstract class ItemStackMixin {
             return;
         }
 
+        if (player == null) {
+            return;
+        }
+
         int remainingUses = getMaxDamage() - newDamage;
         switch (remainingUses) {
             case 50 -> {

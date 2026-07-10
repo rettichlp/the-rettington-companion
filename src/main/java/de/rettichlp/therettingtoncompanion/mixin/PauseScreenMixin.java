@@ -1,7 +1,7 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen;
+import de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.GridLayout;
@@ -58,7 +58,7 @@ public abstract class PauseScreenMixin extends Screen {
 
     @Inject(method = "extractRenderState", at = @At("RETURN"))
     private void trc$extractRenderStateReturn(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
-        this.button = Button.builder(empty(), _ -> this.minecraft.setScreen(new TRCOptionsScreen("general", this, true)))
+        this.button = Button.builder(empty(), _ -> this.minecraft.setScreen(new TRCOptionsScreen(this)))
                 .size(20, 20)
                 .build();
         this.button.setPosition(this.settingsButtonX, this.settingsButtonY);

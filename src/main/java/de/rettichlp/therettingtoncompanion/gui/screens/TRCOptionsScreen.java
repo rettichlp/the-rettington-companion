@@ -1,11 +1,12 @@
-package de.rettichlp.therettingtoncompanion.gui.options;
+package de.rettichlp.therettingtoncompanion.gui.screens;
 
 import de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.AbstractTRCOptionsTab;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.ChatOptionsTab;
-import de.rettichlp.therettingtoncompanion.gui.options.tabs.GeneralOptionsTab;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.InventoryOptionsTab;
 import de.rettichlp.therettingtoncompanion.gui.options.tabs.VisualsOptionsTab;
+import de.rettichlp.therettingtoncompanion.gui.options.tabs.WidgetsOptionsTab;
+import de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -21,9 +22,12 @@ import org.jspecify.annotations.NonNull;
 import java.net.URI;
 import java.util.List;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_NAME;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getVersionString;
+import static java.net.URI.create;
 import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
 import static net.minecraft.client.gui.layouts.LinearLayout.vertical;
 import static net.minecraft.client.gui.screens.ConfirmLinkScreen.confirmLink;
@@ -36,32 +40,36 @@ import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
 import static net.minecraft.resources.Identifier.withDefaultNamespace;
 
+@Getter
 public class TRCOptionsScreen extends Screen {
 
     public static final int SPACING_HORIZONTAL = 8;
     public static final int SPACING_VERTICAL = 4;
 
-    private static final URI DISCORD_INVITE = URI.create("https://discord.gg/mZGAAwhPHu");
+    private static final URI DISCORD_INVITE = create("https://discord.gg/mZGAAwhPHu");
     private static final int DISCORD_COLOR = 0x5865F2;
-    private static final URI MODRINTH = URI.create("https://modrinth.com/mod/ucutils");
+    private static final URI MODRINTH = create("https://modrinth.com/mod/" + MOD_ID);
     private static final int MODRINTH_COLOR = 0x1BD96B;
     private static final Identifier MENU_LIST_BACKGROUND = withDefaultNamespace("textures/gui/menu_list_background.png");
     private static final Identifier INWORLD_MENU_LIST_BACKGROUND = withDefaultNamespace("textures/gui/inworld_menu_list_background.png");
 
     private static final List<AbstractTRCOptionsTab> TABS = List.of(
-            new GeneralOptionsTab(),
             new VisualsOptionsTab(),
             new ChatOptionsTab(),
-            new InventoryOptionsTab()
+            new InventoryOptionsTab(),
+            new WidgetsOptionsTab()
     );
 
-    @Getter
     private final HeaderAndFooterLayout layout;
     private final String selectedTabId;
     private final Screen lastScreen;
     private final boolean renderBackground;
 
     private TRCOptionsList optionsList;
+
+    public TRCOptionsScreen(Screen lastScreen) {
+        this("visuals", lastScreen, true);
+    }
 
     public TRCOptionsScreen(String selectedTabId, Screen lastScreen, boolean renderBackground) {
         MutableComponent title = empty()
@@ -95,6 +103,7 @@ public class TRCOptionsScreen extends Screen {
 
     @Override
     public void onClose() {
+        widgetService.getInitializedWidgets().forEach(AbstractTRCWidget::saveConfiguration);
         configuration.saveToFile();
         this.minecraft.setScreen(null);
     }
@@ -136,9 +145,9 @@ public class TRCOptionsScreen extends Screen {
     }
 
     public void onBack() {
-        // TODO safe
-
         this.minecraft.setScreen(this.lastScreen);
+        widgetService.getInitializedWidgets().forEach(AbstractTRCWidget::saveConfiguration);
+        configuration.saveToFile();
     }
 
     /**

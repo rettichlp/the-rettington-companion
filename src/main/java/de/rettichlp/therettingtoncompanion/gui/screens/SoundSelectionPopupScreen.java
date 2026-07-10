@@ -1,4 +1,4 @@
-package de.rettichlp.therettingtoncompanion.gui;
+package de.rettichlp.therettingtoncompanion.gui.screens;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -12,8 +12,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-import static de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen.SPACING_HORIZONTAL;
-import static de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen.SPACING_VERTICAL;
+import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_HORIZONTAL;
+import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_VERTICAL;
 import static de.rettichlp.therettingtoncompanion.models.ChatRegex.isValidSoundIdentifier;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;

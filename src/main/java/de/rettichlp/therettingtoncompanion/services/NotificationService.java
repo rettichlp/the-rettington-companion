@@ -1,14 +1,19 @@
 package de.rettichlp.therettingtoncompanion.services;
 
+import de.rettichlp.therettingtoncompanion.TheRettingtonCompanionApi;
 import de.rettichlp.therettingtoncompanion.models.Notification;
 import lombok.Getter;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.Component;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static java.awt.Color.CYAN;
 import static java.awt.Color.GREEN;
 import static java.awt.Color.ORANGE;
@@ -39,7 +44,7 @@ public class NotificationService {
 
     public void sendNotification(Component component, Color color, long durationInMillis) {
         Notification notification = Notification.builder()
-                .text(component)
+                .componentSupplier(() -> component)
                 .displayDuration(ofMillis(durationInMillis))
                 .color(color)
                 .build();
@@ -47,12 +52,16 @@ public class NotificationService {
         this.notifications.add(notification);
     }
 
-    public void sendNotification(Notification notification) {
-        this.notifications.add(notification);
-    }
-
     public List<Notification> getVisibleNotifications() {
-        return this.notifications.stream()
+        Collection<Notification> notifications = new ArrayList<>(this.notifications);
+
+        // load notifications from other mods
+        FabricLoader.getInstance().getEntrypointContainers(MOD_ID, TheRettingtonCompanionApi.class).forEach(container -> {
+            TheRettingtonCompanionApi entrypoint = container.getEntrypoint();
+            notifications.addAll(entrypoint.getNotifications());
+        });
+
+        return notifications.stream()
                 .filter(Notification::isVisible)
                 .sorted(comparing(Notification::getTimestamp))
                 .toList();

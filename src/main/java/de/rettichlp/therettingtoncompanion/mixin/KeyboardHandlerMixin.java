@@ -2,6 +2,7 @@ package de.rettichlp.therettingtoncompanion.mixin;
 
 import de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration;
 import de.rettichlp.therettingtoncompanion.models.GammaPreset;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.KeyEvent;
@@ -9,15 +10,15 @@ import net.minecraft.world.effect.MobEffectInstance;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.concurrent.CompletableFuture;
 
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.EQUIPMENT_MODEL_VISIBILITY_KEY;
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.GAMMA_PRESET_KEY;
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.SCREENSHOT_KEY;
+import static com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
@@ -26,10 +27,26 @@ import static de.rettichlp.therettingtoncompanion.utils.ScreenshotUtils.takeImgu
 import static de.rettichlp.therettingtoncompanion.utils.ScreenshotUtils.uploadImageToImgur;
 import static java.awt.Color.CYAN;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.resources.Identifier.fromNamespaceAndPath;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_G;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_H;
 import static xaero.common.effect.Effects.NO_MINIMAP;
 
 @Mixin(KeyboardHandler.class)
 public abstract class KeyboardHandlerMixin {
+
+    @Unique
+    private static final KeyMapping.Category KEY_CATEGORY = new KeyMapping.Category(fromNamespaceAndPath(MOD_ID, "trc.key.category.name"));
+
+    @Unique
+    private static final KeyMapping GAMMA_PRESET_KEY = new KeyMapping("trc.key.gamma_preset", KEYSYM, GLFW_KEY_G, KEY_CATEGORY);
+
+    @Unique
+    private static final KeyMapping EQUIPMENT_MODEL_VISIBILITY_KEY = new KeyMapping("trc.key.hide_armor", KEYSYM, GLFW_KEY_H, KEY_CATEGORY);
+
+    @Unique
+    private static final KeyMapping SCREENSHOT_KEY = new KeyMapping("trc.key.screenshot", KEYSYM, GLFW_KEY_F12, KEY_CATEGORY);
 
     @Shadow
     @Final
@@ -64,8 +81,8 @@ public abstract class KeyboardHandlerMixin {
             }
 
             if (GAMMA_PRESET_KEY.matches(event)) {
-                GammaPreset newGammaPreset = configuration.getGammaPreset().next();
-                configuration.setGammaPreset(newGammaPreset);
+                GammaPreset newGammaPreset = configuration.visuals().getGammaPreset().next();
+                configuration.visuals().setGammaPreset(newGammaPreset);
                 newGammaPreset.sendMessage();
             }
         }

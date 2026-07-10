@@ -1,6 +1,7 @@
 package de.rettichlp.therettingtoncompanion.configuration;
 
 import de.rettichlp.therettingtoncompanion.gui.ICycleButtonValue;
+import de.rettichlp.therettingtoncompanion.models.GammaPreset;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.DayTimeValue.DT_OFF;
 import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.EquipmentModelVisibility.ALL;
 import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.WeatherValue.W_OFF;
+import static de.rettichlp.therettingtoncompanion.models.GammaPreset.OWN_SETTING;
 import static net.minecraft.ChatFormatting.DARK_GRAY;
 import static net.minecraft.ChatFormatting.GRAY;
 import static net.minecraft.client.gui.components.Tooltip.create;
@@ -28,6 +30,7 @@ public class VisualsConfiguration {
     private boolean showArmorHud = true;
     private boolean showArrowHud = true;
     private EquipmentModelVisibility equipmentModelVisibility = ALL;
+    private GammaPreset gammaPreset = OWN_SETTING;
     private DayTimeValue dayTimeValue = DT_OFF;
     private WeatherValue weatherValue = W_OFF;
     private int experienceLevelColor = -8323296;

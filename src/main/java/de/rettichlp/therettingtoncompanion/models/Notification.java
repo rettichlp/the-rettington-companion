@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static java.awt.Color.WHITE;
 import static java.time.Duration.between;
@@ -21,7 +22,7 @@ import static java.util.UUID.randomUUID;
 public class Notification {
 
     private final UUID id = randomUUID();
-    private final Component text;
+    private final Supplier<Component> componentSupplier;
     private final Duration displayDuration;
     @Builder.Default
     private LocalDateTime timestamp = now();
@@ -30,7 +31,7 @@ public class Notification {
 
     @Override
     public int hashCode() {
-        return hash(this.id, this.text, this.displayDuration, this.timestamp, this.color);
+        return hash(this.id, this.componentSupplier, this.displayDuration, this.timestamp, this.color);
     }
 
     @Override
@@ -42,8 +43,4 @@ public class Notification {
         LocalDateTime now = now();
         return this.timestamp.isBefore(now) && between(this.timestamp, now).compareTo(this.displayDuration) < 0;
     }
-
-//    public NotificationWidget toWidget() {
-//        return new NotificationWidget(this);
-//    }
 }

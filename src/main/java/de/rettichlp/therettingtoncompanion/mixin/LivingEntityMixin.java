@@ -19,14 +19,14 @@ public class LivingEntityMixin {
 
     @Inject(method = "hasEffect", at = @At("HEAD"), cancellable = true)
     private void trc$hasEffectHead(Holder<MobEffect> effect, CallbackInfoReturnable<Boolean> cir) {
-        if (configuration.getGammaPreset() == FULLBRIGHT_NIGHT_VISION) {
+        if (configuration.visuals().getGammaPreset() == FULLBRIGHT_NIGHT_VISION) {
             cir.setReturnValue(effect.equals(NIGHT_VISION));
         }
     }
 
     @Inject(method = "getEffect", at = @At("HEAD"), cancellable = true)
     private void trc$getEffectHead(Holder<MobEffect> effect, CallbackInfoReturnable<MobEffectInstance> cir) {
-        if (effect.equals(NIGHT_VISION) && configuration.getGammaPreset() == FULLBRIGHT_NIGHT_VISION) {
+        if (effect.equals(NIGHT_VISION) && configuration.visuals().getGammaPreset() == FULLBRIGHT_NIGHT_VISION) {
             cir.setReturnValue(new MobEffectInstance(NIGHT_VISION, MAX_VALUE, 0, false, false));
         }
     }

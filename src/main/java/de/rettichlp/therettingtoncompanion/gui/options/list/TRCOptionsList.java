@@ -4,7 +4,7 @@ import de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration;
 import de.rettichlp.therettingtoncompanion.gui.ColorButton;
 import de.rettichlp.therettingtoncompanion.gui.ICycleButtonValue;
 import de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry;
-import de.rettichlp.therettingtoncompanion.gui.options.TRCOptionsScreen;
+import de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen;
 import de.rettichlp.therettingtoncompanion.models.ChatRegex;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -53,8 +53,10 @@ public class TRCOptionsList extends ContainerObjectSelectionList<AbstractEntry> 
         addEntry(new ButtonEntry(this.minecraft.font, label, caption, tooltip, onPress));
     }
 
-    public void addFullWidthButton(Component caption, Tooltip tooltip, Button.OnPress onPress) {
-        addEntry(new FullWidthButtonEntry(caption, tooltip, onPress));
+    public FullWidthButtonEntry addFullWidthButton(Component caption, Tooltip tooltip, Button.OnPress onPress) {
+        FullWidthButtonEntry entry = new FullWidthButtonEntry(caption, tooltip, onPress);
+        addEntry(entry);
+        return entry;
     }
 
     public <T extends ICycleButtonValue> void addCycleButton(Component label,
@@ -83,5 +85,9 @@ public class TRCOptionsList extends ContainerObjectSelectionList<AbstractEntry> 
 
     public void addChatRegexEntry(ChatRegex chatRegex, boolean editable) {
         addEntry(new ChatRegexEntry(chatRegex, editable));
+    }
+
+    public void addFullWidthSlider(Component caption, int minValue, int maxValue, int initialValue, Consumer<Integer> onChange) {
+        addEntry(new FullWidthSliderEntry(caption, minValue, maxValue, initialValue, onChange));
     }
 }

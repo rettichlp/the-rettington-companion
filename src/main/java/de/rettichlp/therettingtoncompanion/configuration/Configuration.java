@@ -1,6 +1,5 @@
 package de.rettichlp.therettingtoncompanion.configuration;
 
-import de.rettichlp.therettingtoncompanion.models.GammaPreset;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import net.fabricmc.loader.api.FabricLoader;
@@ -10,12 +9,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
-import static de.rettichlp.therettingtoncompanion.models.GammaPreset.OWN_SETTING;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.GSON;
 import static java.nio.file.Files.newBufferedReader;
 import static java.nio.file.Files.newBufferedWriter;
@@ -31,9 +27,8 @@ public class Configuration {
     private InventoryConfiguration inventory = new InventoryConfiguration();
     @Accessors(fluent = true)
     private VisualsConfiguration visuals = new VisualsConfiguration();
-
-    private Map<String, Object> widgets = new HashMap<>();
-    private GammaPreset gammaPreset = OWN_SETTING;
+    @Accessors(fluent = true)
+    private WidgetsConfiguration widgets = new WidgetsConfiguration();
 
     public Configuration loadFromFile() {
         File file = CONFIG_PATH.toFile();
