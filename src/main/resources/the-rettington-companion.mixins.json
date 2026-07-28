@@ -21,7 +21,6 @@
     "LevelMixin",
     "LivingEntityMixin",
     "OptionInstanceMixin",
-    "PauseScreenMixin",
-    "TitleScreenMixin"
+    "PauseScreenMixin"
   ]
 }
