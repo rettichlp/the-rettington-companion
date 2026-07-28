@@ -1,13 +1,13 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
-import net.minecraft.client.gui.contextualbar.ContextualBarRenderer;
+import net.minecraft.client.gui.contextualbar.ContextualBar;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 
-@Mixin(ContextualBarRenderer.class)
+@Mixin(ContextualBar.class)
 public interface ContextualBarRendererMixin {
 
     @ModifyArg(method = "extractExperienceLevel",
