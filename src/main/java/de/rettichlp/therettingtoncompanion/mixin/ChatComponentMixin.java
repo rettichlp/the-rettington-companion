@@ -88,11 +88,10 @@ public abstract class ChatComponentMixin {
             return width;
         }
 
-        // from x = 0 to hotbar (length = 182)
-        int chatWidth = this.minecraft.getWindow().getGuiScaledWidth() / 2 - 91 - 12; // for some reason there is a 12px offset
-        double minecraftChatWidth = getWidth(this.minecraft.options.chatWidth().get());
+        double originMinecraftChatWidth = getWidth(this.minecraft.options.chatWidth().get());
+        double trcMinecraftChatWidth = this.minecraft.getWindow().getGuiScaledWidth() / 2.0;
 
-        return (int) max(chatWidth, minecraftChatWidth);
+        return (int) max(originMinecraftChatWidth, trcMinecraftChatWidth);
     }
 
     @ModifyReturnValue(method = "getHeight()I", at = @At("RETURN"))
