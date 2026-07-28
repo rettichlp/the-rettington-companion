@@ -7,6 +7,7 @@ import de.rettichlp.therettingtoncompanion.models.ChatRegex;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.Identifier;
@@ -15,8 +16,10 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
@@ -27,6 +30,7 @@ import java.time.LocalDateTime;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.models.ChatRegex.getBestMatchingChatRegex;
 import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Math.ceil;
 import static java.lang.Math.max;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static net.minecraft.client.gui.components.ChatComponent.getHeight;
@@ -35,6 +39,7 @@ import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.DARK_GRAY;
 import static net.minecraft.sounds.SoundEvent.createVariableRangeEvent;
+import static net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
 
 @Mixin(ChatComponent.class)
 public abstract class ChatComponentMixin {
@@ -89,7 +94,7 @@ public abstract class ChatComponentMixin {
         }
 
         double originMinecraftChatWidth = getWidth(this.minecraft.options.chatWidth().get());
-        double trcMinecraftChatWidth = this.minecraft.getWindow().getGuiScaledWidth() / 2.0;
+        double trcMinecraftChatWidth = this.minecraft.getWindow().getGuiScaledWidth() / 2.0 - 12; // I don't know why, but 12px offset
 
         return (int) max(originMinecraftChatWidth, trcMinecraftChatWidth);
     }
@@ -105,6 +110,23 @@ public abstract class ChatComponentMixin {
         double minecraftChatHeight = getHeight(this.minecraft.options.chatHeightFocused().get());
 
         return isChatFocused() ? ((int) max(chatHeight, minecraftChatHeight)) : height;
+    }
+
+    @ModifyConstant(method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V",
+                    constant = @Constant(intValue = 40))
+    private int trc$extractRenderStateConstant(int bottomMargin) {
+        LocalPlayer localPlayer = this.minecraft.player;
+        if (localPlayer == null) {
+            return bottomMargin;
+        }
+
+        float maxHealth = max((float) localPlayer.getAttributeValue(MAX_HEALTH), localPlayer.getHealth());
+        int totalAbsorption = (int) ceil(localPlayer.getAbsorptionAmount());
+        int heartRows = (int) ceil((maxHealth + totalAbsorption) / 2.0 / 10.0);
+        int heartRowHeight = max(10 - (heartRows - 2), 3);
+        int armorRowHeight = localPlayer.getArmorValue() > 0 ? 10 : 0;
+
+        return bottomMargin + (heartRows - 1) * heartRowHeight + armorRowHeight;
     }
 
     @ModifyArgs(method = "lambda$extractRenderState$1(IILnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IFLnet/minecraft/client/multiplayer/chat/GuiMessage$Line;IF)V",
