@@ -6,7 +6,6 @@ import de.rettichlp.therettingtoncompanion.gui.screens.ColorSelectionPopupScreen
 import de.rettichlp.therettingtoncompanion.gui.screens.SoundSelectionPopupScreen;
 import de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen;
 import de.rettichlp.therettingtoncompanion.models.ChatRegex;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -15,6 +14,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.PauseScreen;
+import net.minecraft.network.chat.TextColor;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
@@ -102,7 +102,7 @@ public class ChatRegexEntry extends AbstractEntry {
         this.priorityDecreaseButton.setHeight(10);
         this.priorityDecreaseButton.active = this.editable;
 
-        this.deleteButton = Button.builder(literal("X").withStyle(ChatFormatting.RED), _ -> {
+        this.deleteButton = Button.builder(literal("X").withColor(TextColor.RED), _ -> {
             configuration.chat().regex().getChatRegexes().removeIf(cr -> cr.equals(this.chatRegex));
             this.minecraft.gui.setScreen(new TRCOptionsScreen("chat", new PauseScreen(true), true));
         }).build();

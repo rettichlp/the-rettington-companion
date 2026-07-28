@@ -36,12 +36,11 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
-import static de.rettichlp.therettingtoncompanion.utils.ModUtils.colorFromChatFormatting;
 import static java.lang.String.valueOf;
-import static net.minecraft.ChatFormatting.DARK_AQUA;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.DARK_AQUA;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
 import static net.minecraft.world.entity.EquipmentSlot.CHEST;
 import static net.minecraft.world.entity.EquipmentSlot.FEET;
 import static net.minecraft.world.entity.EquipmentSlot.HEAD;
@@ -85,15 +84,15 @@ public abstract class GuiMixin {
             int squareSize = configuration.widgets().getSize();
 
             for (Integer snapPosition : getSnapPositions(graphics.guiWidth(), squareSize)) {
-                graphics.verticalLine(snapPosition, -1, graphics.guiHeight(), colorFromChatFormatting(DARK_GRAY).getRGB());
+                graphics.verticalLine(snapPosition, -1, graphics.guiHeight(), DARK_GRAY.getValue());
             }
 
             for (Integer snapPosition : getSnapPositions(graphics.guiHeight(), squareSize)) {
-                graphics.horizontalLine(-1, graphics.guiWidth(), snapPosition, colorFromChatFormatting(DARK_GRAY).getRGB());
+                graphics.horizontalLine(-1, graphics.guiWidth(), snapPosition, DARK_GRAY.getValue());
             }
 
-            graphics.verticalLine(graphics.guiWidth() / 2, -1, graphics.guiHeight(), colorFromChatFormatting(DARK_AQUA).getRGB());
-            graphics.horizontalLine(-1, graphics.guiWidth(), graphics.guiHeight() / 2, colorFromChatFormatting(DARK_AQUA).getRGB());
+            graphics.verticalLine(graphics.guiWidth() / 2, -1, graphics.guiHeight(), DARK_AQUA.getValue());
+            graphics.horizontalLine(-1, graphics.guiWidth(), graphics.guiHeight() / 2, DARK_AQUA.getValue());
         }
 
         // render widgets

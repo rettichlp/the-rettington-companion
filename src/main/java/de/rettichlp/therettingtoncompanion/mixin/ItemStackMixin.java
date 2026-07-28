@@ -17,11 +17,11 @@ import java.util.function.Consumer;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
-import static net.minecraft.ChatFormatting.GOLD;
-import static net.minecraft.ChatFormatting.GREEN;
-import static net.minecraft.ChatFormatting.RED;
 import static net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.GREEN;
+import static net.minecraft.network.chat.TextColor.RED;
 import static net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_GENERIC;
 import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_COW_BELL;
 import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE;
@@ -51,19 +51,19 @@ public abstract class ItemStackMixin {
         int remainingUses = getMaxDamage() - newDamage;
         switch (remainingUses) {
             case 50 -> {
-                player.sendOverlayMessage(translatable("trc.message.auto_restock.tool_durability_warning", getItemName().getString(), 50).withStyle(GOLD));
+                player.sendOverlayMessage(translatable("trc.message.auto_restock.tool_durability_warning", getItemName().getString(), 50).withColor(GOLD));
                 this.minecraft.getSoundManager().play(forUI(NOTE_BLOCK_COW_BELL.value(), 2f, 2f));
             }
             case 25 -> {
-                player.sendOverlayMessage(translatable("trc.message.auto_restock.tool_durability_warning", getItemName().getString(), 25).withStyle(GOLD));
+                player.sendOverlayMessage(translatable("trc.message.auto_restock.tool_durability_warning", getItemName().getString(), 25).withColor(GOLD));
                 this.minecraft.getSoundManager().play(forUI(NOTE_BLOCK_COW_BELL.value(), 2f, 2f));
             }
             case 10, 5 -> {
                 if (inventoryService.restock((ItemStack) (Object) this)) {
-                    player.sendOverlayMessage(translatable("trc.message.auto_restock.restock_succeeded", getItemName().getString()).withStyle(GREEN));
+                    player.sendOverlayMessage(translatable("trc.message.auto_restock.restock_succeeded", getItemName().getString()).withColor(GREEN));
                     this.minecraft.getSoundManager().play(forUI(ARMOR_EQUIP_GENERIC.value(), 1f, 2f));
                 } else {
-                    player.sendOverlayMessage(translatable("trc.message.auto_restock.restock_failed", getItemName().getString()).withStyle(RED));
+                    player.sendOverlayMessage(translatable("trc.message.auto_restock.restock_failed", getItemName().getString()).withColor(RED));
                     this.minecraft.getSoundManager().play(forUI(NOTE_BLOCK_COW_BELL.value(), 2f, 2f));
                     this.minecraft.getSoundManager().play(forUI(NOTE_BLOCK_IRON_XYLOPHONE.value(), 1f, 2f));
                 }

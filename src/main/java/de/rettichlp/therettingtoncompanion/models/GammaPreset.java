@@ -3,27 +3,27 @@ package de.rettichlp.therettingtoncompanion.models;
 import de.rettichlp.therettingtoncompanion.gui.ICycleButtonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
-import static net.minecraft.ChatFormatting.AQUA;
-import static net.minecraft.ChatFormatting.BLUE;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.GOLD;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.LIGHT_PURPLE;
-import static net.minecraft.ChatFormatting.RED;
-import static net.minecraft.ChatFormatting.YELLOW;
 import static net.minecraft.client.gui.components.Tooltip.create;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.AQUA;
+import static net.minecraft.network.chat.TextColor.BLUE;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.LIGHT_PURPLE;
+import static net.minecraft.network.chat.TextColor.RED;
+import static net.minecraft.network.chat.TextColor.YELLOW;
 
 @Getter
 @AllArgsConstructor
@@ -37,12 +37,12 @@ public enum GammaPreset implements ICycleButtonValue {
     FULLBRIGHT_GAMMA(translatable("trc.gamma_preset.fullbright_gamma"), BLUE, 15.0);
 
     private final MutableComponent value;
-    private final ChatFormatting color;
+    private final TextColor color;
     private final double gammaValue;
 
     @Override
     public @NonNull Component value() {
-        return this.value.withStyle(this.color);
+        return this.value.withColor(this.color);
     }
 
     @Contract(" -> new")
@@ -57,9 +57,9 @@ public enum GammaPreset implements ICycleButtonValue {
     }
 
     public void sendMessage() {
-        MutableComponent component = empty().withStyle(this.color)
-                .append(literal("Gamma").withStyle(GRAY))
-                .append(literal(": ").withStyle(DARK_GRAY))
+        MutableComponent component = empty().withColor(this.color)
+                .append(literal("Gamma").withColor(GRAY))
+                .append(literal(": ").withColor(DARK_GRAY))
                 .append(this.value);
 
         switch (this) {

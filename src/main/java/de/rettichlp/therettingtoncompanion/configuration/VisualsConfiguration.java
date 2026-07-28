@@ -16,13 +16,13 @@ import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfigura
 import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.EquipmentModelVisibility.ALL;
 import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.WeatherValue.W_OFF;
 import static de.rettichlp.therettingtoncompanion.models.GammaPreset.OWN_SETTING;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.GRAY;
 import static net.minecraft.client.gui.components.Tooltip.create;
 import static net.minecraft.network.chat.CommonComponents.OPTION_OFF;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.GRAY;
 
 @Data
 public class VisualsConfiguration {
@@ -60,8 +60,8 @@ public class VisualsConfiguration {
 
         public void sendMessage() {
             player.sendOverlayMessage(empty()
-                    .append(literal("Equipment").withStyle(GRAY))
-                    .append(literal(": ").withStyle(DARK_GRAY))
+                    .append(literal("Equipment").withColor(GRAY))
+                    .append(literal(": ").withColor(DARK_GRAY))
                     .append(this.value));
         }
     }

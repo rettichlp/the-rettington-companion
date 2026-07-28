@@ -12,10 +12,10 @@ import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static net.minecraft.ChatFormatting.AQUA;
-import static net.minecraft.ChatFormatting.GRAY;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.AQUA;
+import static net.minecraft.network.chat.TextColor.GRAY;
 
 public class TheRettingtonCompanion implements ModInitializer {
 
@@ -68,8 +68,8 @@ public class TheRettingtonCompanion implements ModInitializer {
         }
 
         player.sendSystemMessage(empty()
-                .append(literal("[").withStyle(GRAY))
-                .append(literal(worldName).withStyle(AQUA))
-                .append(literal("]").withStyle(GRAY)));
+                .append(literal("[").withColor(GRAY))
+                .append(literal(worldName).withColor(AQUA))
+                .append(literal("]").withColor(GRAY)));
     }
 }

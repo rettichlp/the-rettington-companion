@@ -29,11 +29,11 @@ import static de.rettichlp.therettingtoncompanion.models.ChatRegex.getBestMatchi
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Math.max;
 import static java.time.format.DateTimeFormatter.ofPattern;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
 import static net.minecraft.client.gui.components.ChatComponent.getHeight;
 import static net.minecraft.client.gui.components.ChatComponent.getWidth;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
 import static net.minecraft.sounds.SoundEvent.createVariableRangeEvent;
 
 @Mixin(ChatComponent.class)
@@ -71,7 +71,7 @@ public abstract class ChatComponentMixin {
 
         return empty()
                 .append(literal(timeString).withStyle(style -> style
-                        .applyFormat(DARK_GRAY)
+                        .withColor(DARK_GRAY)
                         .withHoverEvent(new HoverEvent.ShowText(literal(dateString)))))
                 .append(contents);
     }
