@@ -80,7 +80,7 @@ public abstract class GuiMixin {
 
     @Inject(method = "extractRenderState", at = @At("TAIL"))
     private void trc$extractRenderStateTail(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if (this.minecraft.screen instanceof WidgetPositionScreen) {
+        if (this.minecraft.gui.screen() instanceof WidgetPositionScreen) {
             // draw grid
             int squareSize = configuration.widgets().getSize();
 

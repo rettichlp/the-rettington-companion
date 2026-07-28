@@ -74,12 +74,12 @@ public class ChatRegexEntry extends AbstractEntry {
                 .displayOnlyValue()
                 .create(0, 0, 30, 20, empty(), (_, value) -> (this.editable ? this.chatRegex : defaultChatRegex).setActive(value == ON));
 
-        this.colorButton = new ColorButton(0, 0, 30, 20, this.chatRegex.getColor(), button -> this.minecraft.setScreen(new ColorSelectionPopupScreen(this.minecraft.screen, this.chatRegex.getColor(), color -> {
+        this.colorButton = new ColorButton(0, 0, 30, 20, this.chatRegex.getColor(), button -> this.minecraft.gui.setScreen(new ColorSelectionPopupScreen(this.minecraft.gui.screen(), this.chatRegex.getColor(), color -> {
             (this.editable ? this.chatRegex : defaultChatRegex).setColor(color);
             ((ColorButton) button).setColor(color);
         })));
 
-        this.soundSelectionButton = Button.builder(literal("🔊"), _ -> this.minecraft.setScreen(new SoundSelectionPopupScreen(this.minecraft.screen, this.chatRegex.getSoundIdentifier(), (this.editable ? this.chatRegex : defaultChatRegex)::setSoundIdentifierString)))
+        this.soundSelectionButton = Button.builder(literal("🔊"), _ -> this.minecraft.gui.setScreen(new SoundSelectionPopupScreen(this.minecraft.gui.screen(), this.chatRegex.getSoundIdentifier(), (this.editable ? this.chatRegex : defaultChatRegex)::setSoundIdentifierString)))
                 .width(30)
                 .build();
 
@@ -104,7 +104,7 @@ public class ChatRegexEntry extends AbstractEntry {
 
         this.deleteButton = Button.builder(literal("X").withStyle(ChatFormatting.RED), _ -> {
             configuration.chat().regex().getChatRegexes().removeIf(cr -> cr.equals(this.chatRegex));
-            this.minecraft.setScreen(new TRCOptionsScreen("chat", new PauseScreen(true), true));
+            this.minecraft.gui.setScreen(new TRCOptionsScreen("chat", new PauseScreen(true), true));
         }).build();
         this.deleteButton.setWidth(20);
         this.deleteButton.active = this.editable;

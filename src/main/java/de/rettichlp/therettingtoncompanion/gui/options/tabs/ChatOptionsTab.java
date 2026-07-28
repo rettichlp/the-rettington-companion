@@ -39,7 +39,7 @@ public class ChatOptionsTab extends AbstractTRCOptionsTab {
         optionsList.addFullWidthButton(literal("+"), create(empty()), _ -> {
             ChatRegex newChatRegex = new ChatRegex("");
             configuration.chat().regex().getChatRegexes().add(newChatRegex);
-            this.minecraft.setScreen(new TRCOptionsScreen("chat", new PauseScreen(true), true));
+            this.minecraft.gui.setScreen(new TRCOptionsScreen("chat", new PauseScreen(true), true));
         });
     }
 }

@@ -47,7 +47,7 @@ public class InventoryService {
     public boolean restock(@NonNull ItemStack previousItemStack) {
         Minecraft minecraft = Minecraft.getInstance();
 
-        if (minecraft.screen != null || !configuration.inventory().isAutoRestock()) {
+        if (minecraft.gui.screen() != null || !configuration.inventory().isAutoRestock()) {
             LOGGER.debug("Auto restock is disabled or a screen is open");
             return false;
         }

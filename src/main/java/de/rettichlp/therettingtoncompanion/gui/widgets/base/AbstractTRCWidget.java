@@ -110,7 +110,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
             throw new IllegalStateException("Widget " + this.getClass().getName() + " is missing registry name and have to implement its own visibility check without using the WidgetConfiguration instance.");
         }
 
-        return this.widgetConfiguration.isEnabled() && !this.minecraft.options.hideGui;
+        return this.widgetConfiguration.isEnabled() && !this.minecraft.gui.hud.isHidden();
     }
 
     public void loadConfiguration() {
@@ -158,7 +158,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
     }
 
     protected boolean isWidgetPositionScreen() {
-        return this.minecraft.screen instanceof WidgetPositionScreen;
+        return this.minecraft.gui.screen() instanceof WidgetPositionScreen;
     }
 
     @SuppressWarnings("unchecked")
