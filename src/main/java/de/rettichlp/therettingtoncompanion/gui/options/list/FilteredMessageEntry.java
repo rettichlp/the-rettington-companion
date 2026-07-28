@@ -167,16 +167,6 @@ public class FilteredMessageEntry extends AbstractEntry {
             this.priority = 5;
         }
 
-        @Override
-        public boolean equals(Object object) {
-            return object instanceof FilteredMessage filteredMessage
-                    && this.patternString.equalsIgnoreCase(filteredMessage.patternString)
-                    && this.soundIdentifierString.equalsIgnoreCase(filteredMessage.soundIdentifierString)
-                    && this.active == filteredMessage.isActive()
-                    && this.colorValue == filteredMessage.colorValue
-                    && this.priority == filteredMessage.getPriority();
-        }
-
         public Optional<Pattern> getPattern() {
             return isValidPattern(this.patternString) ? Optional.of(compile(this.patternString, CASE_INSENSITIVE)) : Optional.empty();
         }

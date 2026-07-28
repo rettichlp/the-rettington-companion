@@ -96,14 +96,6 @@ public class HiddenMessageEntry extends AbstractEntry {
             this.active = true;
         }
 
-        @Override
-        public boolean equals(Object object) {
-            return object instanceof HiddenMessage hiddenMessage
-                    && this.providerModId.equalsIgnoreCase(hiddenMessage.providerModId)
-                    && this.patternString.equalsIgnoreCase(hiddenMessage.patternString)
-                    && this.active == hiddenMessage.isActive();
-        }
-
         public Optional<Pattern> getPattern() {
             return isValidPattern(this.patternString)
                     ? Optional.of(compile(this.patternString, CASE_INSENSITIVE))
