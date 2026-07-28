@@ -25,6 +25,7 @@
   "trc.option.chat.optimized_chat_size.label": "Optimized chat size",
   "trc.option.chat.section.general.title": "General",
   "trc.option.chat.section.message_patterns.title": "Message patterns",
+  "trc.option.chat.section.hidden_messages.title": "Hide messages",
   "trc.option.chat.title": "Chat",
   "trc.option.chat.more_messages.label": "More chat messages",
   "trc.option.chat.more_messages.tooltip": "Increases the number of chat messages that are kept in memory.",

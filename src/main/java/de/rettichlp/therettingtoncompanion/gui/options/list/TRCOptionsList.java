@@ -87,6 +87,10 @@ public class TRCOptionsList extends ContainerObjectSelectionList<AbstractEntry> 
         addEntry(new ChatRegexEntry(chatRegex, editable));
     }
 
+    public void addHiddenMessageEntry(HiddenMessageEntry.HiddenMessage hiddenMessage) {
+        addEntry(new HiddenMessageEntry(hiddenMessage));
+    }
+
     public void addFullWidthSlider(Component caption, int minValue, int maxValue, int initialValue, Consumer<Integer> onChange) {
         addEntry(new FullWidthSliderEntry(caption, minValue, maxValue, initialValue, onChange));
     }
