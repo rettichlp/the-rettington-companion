@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_HORIZONTAL;
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_VERTICAL;
-import static de.rettichlp.therettingtoncompanion.models.ChatRegex.isValidSoundIdentifier;
+import static de.rettichlp.therettingtoncompanion.utils.ModUtils.isValidSoundIdentifier;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
 import static net.minecraft.client.gui.layouts.FrameLayout.centerInRectangle;
