@@ -13,6 +13,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MessageSignature;
+import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,6 +42,7 @@ import static net.minecraft.client.gui.components.ChatComponent.getWidth;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.sounds.SoundEvent.createVariableRangeEvent;
 import static net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
 
 @Mixin(ChatComponent.class)
@@ -66,6 +68,12 @@ public abstract class ChatComponentMixin {
                                     GuiMessageSource source,
                                     GuiMessageTag tag,
                                     CallbackInfo ci) {
+        FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(contents.getString());
+        if (bestMatchingFilteredMessage != null && this.minecraft.player != null) {
+            Identifier chatRegexSoundIdentifier = bestMatchingFilteredMessage.getSoundIdentifier();
+            this.minecraft.player.playSound(createVariableRangeEvent(chatRegexSoundIdentifier), 1.0f, 1.5f);
+        }
+
         boolean shouldBeHidden = shouldBeHidden(contents.getString());
         if (shouldBeHidden) {
             ci.cancel();
@@ -74,12 +82,6 @@ public abstract class ChatComponentMixin {
 
     @ModifyVariable(method = "addMessage", at = @At("HEAD"), argsOnly = true, name = "contents")
     private @NonNull Component trc$addMessageHead(@NonNull Component contents) {
-        ChatRegex bestMatchingChatRegex = getBestMatchingChatRegex(contents.getString());
-        if (bestMatchingChatRegex != null && this.minecraft.player != null) {
-            Identifier chatRegexSoundIdentifier = bestMatchingChatRegex.getSoundIdentifier();
-            this.minecraft.player.playSound(createVariableRangeEvent(chatRegexSoundIdentifier), 1.0f, 1.5f);
-        }
-
         if (!configuration.chat().isChatTime()) {
             return contents;
         }
