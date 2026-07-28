@@ -26,6 +26,7 @@ import static de.rettichlp.therettingtoncompanion.utils.ScreenshotUtils.takeImgu
 import static de.rettichlp.therettingtoncompanion.utils.ScreenshotUtils.uploadImageToImgur;
 import static java.awt.Color.CYAN;
 import static net.minecraft.network.chat.Component.translatable;
+import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 import static xaero.common.effect.Effects.NO_MINIMAP;
 
 @Mixin(KeyboardHandler.class)
@@ -37,8 +38,8 @@ public abstract class KeyboardHandlerMixin {
 
     @Inject(method = "keyPress",
             at = @At(value = "INVOKE",
-                     target = "Lnet/minecraft/client/KeyMapping;matches(Lnet/minecraft/client/input/KeyEvent;)Z",
-                     ordinal = 0))
+                     target = "Lnet/minecraft/client/KeyMapping;click(Lcom/mojang/blaze3d/platform/InputConstants$Key;)V",
+                     shift = AFTER))
     private void trc$keyPressInvoke(long handle, int action, KeyEvent event, CallbackInfo ci) {
         // support focused chat
         if (SCREENSHOT_KEY.matches(event)) {
