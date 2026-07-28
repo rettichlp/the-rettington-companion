@@ -94,7 +94,7 @@ public abstract class ChatComponentMixin {
         }
 
         double originMinecraftChatWidth = getWidth(this.minecraft.options.chatWidth().get());
-        double trcMinecraftChatWidth = this.minecraft.getWindow().getGuiScaledWidth() / 2.0;
+        double trcMinecraftChatWidth = this.minecraft.getWindow().getGuiScaledWidth() / 2.0 - 12; // I don't know why, but 12px offset
 
         return (int) max(originMinecraftChatWidth, trcMinecraftChatWidth);
     }
