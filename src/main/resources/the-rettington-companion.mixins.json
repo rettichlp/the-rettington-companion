@@ -16,7 +16,7 @@
     "ChatComponentMixin",
     "ContextualBarRendererMixin",
     "EquipmentLayerRendererMixin",
-    "GuiMixin",
+    "HudMixin",
     "KeyboardHandlerMixin",
     "LevelMixin",
     "LivingEntityMixin",

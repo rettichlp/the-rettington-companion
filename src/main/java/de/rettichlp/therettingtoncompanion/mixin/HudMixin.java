@@ -5,8 +5,8 @@ import de.rettichlp.therettingtoncompanion.gui.screens.WidgetPositionScreen;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -50,8 +50,8 @@ import static net.minecraft.world.item.Items.ARROW;
 import static net.minecraft.world.item.Items.SPECTRAL_ARROW;
 import static net.minecraft.world.item.Items.TIPPED_ARROW;
 
-@Mixin(Gui.class)
-public abstract class GuiMixin {
+@Mixin(Hud.class)
+public abstract class HudMixin {
 
     @Unique
     private static final Predicate<ItemStack> ARROW_ITEM_PREDICATE = itemStack -> itemStack.is(ARROW) || itemStack.is(SPECTRAL_ARROW) || itemStack.is(TIPPED_ARROW);
