@@ -5,8 +5,8 @@ import de.rettichlp.therettingtoncompanion.gui.screens.WidgetPositionScreen;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -36,12 +36,11 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
-import static de.rettichlp.therettingtoncompanion.utils.ModUtils.colorFromChatFormatting;
 import static java.lang.String.valueOf;
-import static net.minecraft.ChatFormatting.DARK_AQUA;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.DARK_AQUA;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
 import static net.minecraft.world.entity.EquipmentSlot.CHEST;
 import static net.minecraft.world.entity.EquipmentSlot.FEET;
 import static net.minecraft.world.entity.EquipmentSlot.HEAD;
@@ -51,8 +50,8 @@ import static net.minecraft.world.item.Items.ARROW;
 import static net.minecraft.world.item.Items.SPECTRAL_ARROW;
 import static net.minecraft.world.item.Items.TIPPED_ARROW;
 
-@Mixin(Gui.class)
-public abstract class GuiMixin {
+@Mixin(Hud.class)
+public abstract class HudMixin {
 
     @Unique
     private static final Predicate<ItemStack> ARROW_ITEM_PREDICATE = itemStack -> itemStack.is(ARROW) || itemStack.is(SPECTRAL_ARROW) || itemStack.is(TIPPED_ARROW);
@@ -80,20 +79,20 @@ public abstract class GuiMixin {
 
     @Inject(method = "extractRenderState", at = @At("TAIL"))
     private void trc$extractRenderStateTail(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if (this.minecraft.screen instanceof WidgetPositionScreen) {
+        if (this.minecraft.gui.screen() instanceof WidgetPositionScreen) {
             // draw grid
             int squareSize = configuration.widgets().getSize();
 
             for (Integer snapPosition : getSnapPositions(graphics.guiWidth(), squareSize)) {
-                graphics.verticalLine(snapPosition, -1, graphics.guiHeight(), colorFromChatFormatting(DARK_GRAY).getRGB());
+                graphics.verticalLine(snapPosition, -1, graphics.guiHeight(), DARK_GRAY.getValue());
             }
 
             for (Integer snapPosition : getSnapPositions(graphics.guiHeight(), squareSize)) {
-                graphics.horizontalLine(-1, graphics.guiWidth(), snapPosition, colorFromChatFormatting(DARK_GRAY).getRGB());
+                graphics.horizontalLine(-1, graphics.guiWidth(), snapPosition, DARK_GRAY.getValue());
             }
 
-            graphics.verticalLine(graphics.guiWidth() / 2, -1, graphics.guiHeight(), colorFromChatFormatting(DARK_AQUA).getRGB());
-            graphics.horizontalLine(-1, graphics.guiWidth(), graphics.guiHeight() / 2, colorFromChatFormatting(DARK_AQUA).getRGB());
+            graphics.verticalLine(graphics.guiWidth() / 2, -1, graphics.guiHeight(), DARK_AQUA.getValue());
+            graphics.horizontalLine(-1, graphics.guiWidth(), graphics.guiHeight() / 2, DARK_AQUA.getValue());
         }
 
         // render widgets

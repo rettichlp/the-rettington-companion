@@ -11,14 +11,13 @@ import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList.ENTRY_HEADER_PADDING_TOP;
 import static java.awt.Color.WHITE;
-import static net.minecraft.ChatFormatting.BOLD;
 
 public class HeaderEntry extends AbstractEntry {
 
     private final StringWidget stringWidget;
 
     protected HeaderEntry(Font font, @NonNull Component text) {
-        this.stringWidget = new StringWidget(text.copy().withStyle(BOLD), font);
+        this.stringWidget = new StringWidget(text.copy().withStyle(style -> style.withBold(true)), font);
     }
 
     @Override

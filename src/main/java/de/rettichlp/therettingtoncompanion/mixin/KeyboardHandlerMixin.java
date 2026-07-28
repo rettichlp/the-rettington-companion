@@ -73,7 +73,7 @@ public abstract class KeyboardHandlerMixin {
         }
 
         // only with closed chat
-        if (!this.minecraft.gui.getChat().isChatFocused()) {
+        if (!this.minecraft.gui.hud.getChat().isChatFocused()) {
             if (EQUIPMENT_MODEL_VISIBILITY_KEY.matches(event)) {
                 VisualsConfiguration.EquipmentModelVisibility equipmentModelVisibility = configuration.visuals().getEquipmentModelVisibility().next();
                 configuration.visuals().setEquipmentModelVisibility(equipmentModelVisibility);

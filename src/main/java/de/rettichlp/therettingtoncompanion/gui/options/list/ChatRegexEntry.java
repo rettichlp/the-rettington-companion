@@ -6,7 +6,6 @@ import de.rettichlp.therettingtoncompanion.gui.screens.ColorSelectionPopupScreen
 import de.rettichlp.therettingtoncompanion.gui.screens.SoundSelectionPopupScreen;
 import de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen;
 import de.rettichlp.therettingtoncompanion.models.ChatRegex;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -15,6 +14,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.PauseScreen;
+import net.minecraft.network.chat.TextColor;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
@@ -74,12 +74,12 @@ public class ChatRegexEntry extends AbstractEntry {
                 .displayOnlyValue()
                 .create(0, 0, 30, 20, empty(), (_, value) -> (this.editable ? this.chatRegex : defaultChatRegex).setActive(value == ON));
 
-        this.colorButton = new ColorButton(0, 0, 30, 20, this.chatRegex.getColor(), button -> this.minecraft.setScreen(new ColorSelectionPopupScreen(this.minecraft.screen, this.chatRegex.getColor(), color -> {
+        this.colorButton = new ColorButton(0, 0, 30, 20, this.chatRegex.getColor(), button -> this.minecraft.gui.setScreen(new ColorSelectionPopupScreen(this.minecraft.gui.screen(), this.chatRegex.getColor(), color -> {
             (this.editable ? this.chatRegex : defaultChatRegex).setColor(color);
             ((ColorButton) button).setColor(color);
         })));
 
-        this.soundSelectionButton = Button.builder(literal("🔊"), _ -> this.minecraft.setScreen(new SoundSelectionPopupScreen(this.minecraft.screen, this.chatRegex.getSoundIdentifier(), (this.editable ? this.chatRegex : defaultChatRegex)::setSoundIdentifierString)))
+        this.soundSelectionButton = Button.builder(literal("🔊"), _ -> this.minecraft.gui.setScreen(new SoundSelectionPopupScreen(this.minecraft.gui.screen(), this.chatRegex.getSoundIdentifier(), (this.editable ? this.chatRegex : defaultChatRegex)::setSoundIdentifierString)))
                 .width(30)
                 .build();
 
@@ -102,9 +102,9 @@ public class ChatRegexEntry extends AbstractEntry {
         this.priorityDecreaseButton.setHeight(10);
         this.priorityDecreaseButton.active = this.editable;
 
-        this.deleteButton = Button.builder(literal("X").withStyle(ChatFormatting.RED), _ -> {
+        this.deleteButton = Button.builder(literal("X").withColor(TextColor.RED), _ -> {
             configuration.chat().regex().getChatRegexes().removeIf(cr -> cr.equals(this.chatRegex));
-            this.minecraft.setScreen(new TRCOptionsScreen("chat", new PauseScreen(true), true));
+            this.minecraft.gui.setScreen(new TRCOptionsScreen("chat", new PauseScreen(true), true));
         }).build();
         this.deleteButton.setWidth(20);
         this.deleteButton.active = this.editable;

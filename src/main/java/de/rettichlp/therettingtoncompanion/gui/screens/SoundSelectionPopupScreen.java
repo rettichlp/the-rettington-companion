@@ -47,7 +47,7 @@ public class SoundSelectionPopupScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreen(this.backgroundScreen);
+        this.minecraft.gui.setScreen(this.backgroundScreen);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class SoundSelectionPopupScreen extends Screen {
 
         // buttons
         LinearLayout buttonRow = horizontal().spacing(SPACING_HORIZONTAL);
-        buttonRow.addChild(Button.builder(GUI_CANCEL, _ -> this.minecraft.setScreen(this.backgroundScreen)).width(144).build());
+        buttonRow.addChild(Button.builder(GUI_CANCEL, _ -> this.minecraft.gui.setScreen(this.backgroundScreen)).width(144).build());
         buttonRow.addChild(Button.builder(GUI_DONE, _ -> onDone()).width(144).build());
         this.layout.addChild(buttonRow);
 

@@ -8,8 +8,8 @@
     "RettichLP"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://rettichlp.de/",
+    "sources": "https://github.com/rettichlp/the-rettington-companion"
   },
   "license": "Apache-2.0",
   "icon": "assets/the-rettington-companion/icon.png",
@@ -27,11 +27,11 @@
   ],
   "depends": {
     "fabricloader": ">=0.19.3",
-    "minecraft": "~26.1.2",
+    "minecraft": "~26.2",
     "java": ">=25",
     "fabric-api": "*"
   },
   "recommends": {
-    "modmenu": ">=18.0.0"
+    "modmenu": ">=20.0.0"
   }
 }
