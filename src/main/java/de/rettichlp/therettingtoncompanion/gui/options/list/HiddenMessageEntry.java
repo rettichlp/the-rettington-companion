@@ -1,9 +1,11 @@
 package de.rettichlp.therettingtoncompanion.gui.options.list;
 
+import de.rettichlp.therettingtoncompanion.TheRettingtonCompanionApi;
 import de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry;
 import de.rettichlp.therettingtoncompanion.gui.PatternEditBox;
 import de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen;
 import lombok.Data;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -13,6 +15,8 @@ import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.network.chat.TextColor;
 import org.jspecify.annotations.NonNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -104,6 +108,22 @@ public class HiddenMessageEntry extends AbstractEntry {
             return isValidPattern(this.patternString)
                     ? Optional.of(compile(this.patternString, CASE_INSENSITIVE))
                     : Optional.empty();
+        }
+
+        public static boolean shouldBeHidden(CharSequence message) {
+            Collection<HiddenMessage> hiddenMessages = new ArrayList<>(configuration.chat().getHiddenMessages());
+            // load notifications from other mods
+            FabricLoader.getInstance().getEntrypointContainers(MOD_ID, TheRettingtonCompanionApi.class).forEach(container -> {
+                TheRettingtonCompanionApi entrypoint = container.getEntrypoint();
+                hiddenMessages.addAll(entrypoint.getHiddenMessages());
+            });
+
+            return hiddenMessages.stream()
+                    .filter(HiddenMessage::isActive)
+                    .map(HiddenMessage::getPattern)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .anyMatch(pattern -> pattern.matcher(message).find());
         }
     }
 }

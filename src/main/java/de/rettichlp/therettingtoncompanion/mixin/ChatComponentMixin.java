@@ -3,14 +3,16 @@ package de.rettichlp.therettingtoncompanion.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import de.rettichlp.therettingtoncompanion.models.ChatRegex;
+import de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessageSource;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.resources.Identifier;
+import net.minecraft.network.chat.MessageSignature;
 import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,7 +30,8 @@ import java.awt.Color;
 import java.time.LocalDateTime;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.models.ChatRegex.getBestMatchingChatRegex;
+import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage.getBestMatchingFilteredMessage;
+import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Math.ceil;
 import static java.lang.Math.max;
@@ -38,7 +41,6 @@ import static net.minecraft.client.gui.components.ChatComponent.getWidth;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.DARK_GRAY;
-import static net.minecraft.sounds.SoundEvent.createVariableRangeEvent;
 import static net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
 
 @Mixin(ChatComponent.class)
@@ -54,6 +56,18 @@ public abstract class ChatComponentMixin {
     @Inject(method = "clearMessages", at = @At("HEAD"), cancellable = true)
     public void trc$clearHead(boolean history, CallbackInfo ci) {
         if (configuration.chat().isKeepMessagesOnDisconnect() && history) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "addMessage", at = @At("HEAD"), cancellable = true)
+    private void trc$addMessageHead(@NonNull Component contents,
+                                    MessageSignature signature,
+                                    GuiMessageSource source,
+                                    GuiMessageTag tag,
+                                    CallbackInfo ci) {
+        boolean shouldBeHidden = shouldBeHidden(contents.getString());
+        if (shouldBeHidden) {
             ci.cancel();
         }
     }
@@ -139,13 +153,13 @@ public abstract class ChatComponentMixin {
         // extract alpha value
         int alpha = (originalColor >> 24) & 0xFF;
 
-        ChatRegex bestMatchingChatRegex = getBestMatchingChatRegex(arg5.parent().content().getString());
+        FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(arg5.parent().content().getString());
 
-        if (bestMatchingChatRegex == null) {
+        if (bestMatchingFilteredMessage == null) {
             return;
         }
 
-        Color chatRegexColor = bestMatchingChatRegex.getColor();
+        Color chatRegexColor = bestMatchingFilteredMessage.getColor();
         int highlightColorWithAlpha = (alpha << 24) | (chatRegexColor.getRed() << 16) | (chatRegexColor.getGreen() << 8) | chatRegexColor.getBlue();
         args.set(4, highlightColorWithAlpha);
     }
