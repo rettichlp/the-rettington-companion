@@ -30,6 +30,8 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import java.awt.Color;
 import java.time.LocalDateTime;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_NAME;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage.getBestMatchingFilteredMessage;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
@@ -68,15 +70,16 @@ public abstract class ChatComponentMixin {
                                     GuiMessageSource source,
                                     GuiMessageTag tag,
                                     CallbackInfo ci) {
+        boolean shouldBeHidden = shouldBeHidden(contents.getString());
+        if (shouldBeHidden) {
+            ci.cancel();
+            LOGGER.info("{} has hidden following message: {}", MOD_NAME, contents.getString());
+        }
+
         FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(contents.getString());
         if (bestMatchingFilteredMessage != null && this.minecraft.player != null) {
             Identifier chatRegexSoundIdentifier = bestMatchingFilteredMessage.getSoundIdentifier();
             this.minecraft.player.playSound(createVariableRangeEvent(chatRegexSoundIdentifier), 1.0f, 1.5f);
-        }
-
-        boolean shouldBeHidden = shouldBeHidden(contents.getString());
-        if (shouldBeHidden) {
-            ci.cancel();
         }
     }
 
