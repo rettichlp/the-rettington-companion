@@ -14,7 +14,7 @@
   "client": [
     "AbstractContainerScreenMixin",
     "ChatComponentMixin",
-    "ContextualBarRendererMixin",
+    "ContextualBarMixin",
     "EquipmentLayerRendererMixin",
     "HudMixin",
     "KeyboardHandlerMixin",
