@@ -47,7 +47,7 @@ public class ScreenshotUtils {
         File screenshotsDirectory = minecraft.gameDirectory.toPath().resolve(SCREENSHOT_DIR).resolve(IMGUR_SCREENSHOT_DIR).toFile();
         screenshotsDirectory.mkdirs();
 
-        takeScreenshot(minecraft.getMainRenderTarget(), nativeImage -> {
+        takeScreenshot(minecraft.gameRenderer.mainRenderTarget(), nativeImage -> {
             File screenshotFile = getFile(screenshotsDirectory);
 
             Util.ioPool().execute(() -> {
