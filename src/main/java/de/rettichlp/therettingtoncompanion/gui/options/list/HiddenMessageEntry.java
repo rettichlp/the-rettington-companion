@@ -75,7 +75,7 @@ public class HiddenMessageEntry extends AbstractEntry {
 
         String providerModId = this.hiddenMessage.getProviderModId();
         if (!providerModId.equals(MOD_ID)) {
-            graphics.blit(GUI_TEXTURED, fromNamespaceAndPath(providerModId, "icon.png"), this.patternEditBox.getRight() - 20, this.patternEditBox.getY() + 2, 0, 0, 16, 16, 16, 16);
+            graphics.blit(GUI_TEXTURED, fromNamespaceAndPath(providerModId, "icon.png"), this.patternEditBox.getRight() - 18, this.patternEditBox.getY() + 2, 0, 0, 16, 16, 16, 16);
         }
 
         this.toggleButton.setPosition(this.deleteButton.getX() - 8 - this.toggleButton.getWidth(), getContentYMiddle() - this.toggleButton.getHeight() / 2);
