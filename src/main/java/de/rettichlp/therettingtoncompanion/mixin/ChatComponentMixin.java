@@ -106,7 +106,7 @@ public abstract class ChatComponentMixin {
 
     @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))
     private int trc$getWidthReturn(int width) {
-        if (!configuration.chat().isOptimizedChatSize()) {
+        if (!configuration.chat().isOptimizedChat()) {
             return width;
         }
 
@@ -118,7 +118,7 @@ public abstract class ChatComponentMixin {
 
     @ModifyReturnValue(method = "getHeight()I", at = @At("RETURN"))
     private int trc$getHeightReturn(int height) {
-        if (!configuration.chat().isOptimizedChatSize()) {
+        if (!configuration.chat().isOptimizedChat()) {
             return height;
         }
 
@@ -134,7 +134,7 @@ public abstract class ChatComponentMixin {
                                     target = "Lnet/minecraft/util/Mth;floor(F)I"))
     private int trc$extractRenderStateExpressionValue(int original) {
         LocalPlayer player = this.minecraft.player;
-        if (!configuration.chat().isOptimizedChatSize() || player == null) {
+        if (!configuration.chat().isOptimizedChat() || player == null) {
             return original;
         }
 

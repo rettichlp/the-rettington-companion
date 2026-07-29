@@ -14,7 +14,7 @@ public class ChatConfiguration {
     @Accessors(fluent = true)
     private FilteredMessageConfiguration filteredMessage = new FilteredMessageConfiguration();
     private Set<HiddenMessageEntry.HiddenMessage> hiddenMessages = new HashSet<>();
-    private boolean optimizedChatSize = true;
+    private boolean optimizedChat = true;
     private boolean moreMessages = true;
     private boolean keepMessagesOnDisconnect = true;
     private boolean chatTime = false;
