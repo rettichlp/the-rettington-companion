@@ -7,6 +7,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
 import java.awt.Color;
@@ -16,8 +17,12 @@ import java.time.LocalTime;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
+import static java.util.regex.Pattern.compile;
+import static net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT;
+import static net.minecraft.resources.Identifier.parse;
 
 public class ModUtils {
 
@@ -48,5 +53,27 @@ public class ModUtils {
                 Minecraft.getInstance().execute(runnable);
             }
         }, milliseconds);
+    }
+
+    public static boolean isValidPattern(String pattern) {
+        if (pattern == null) {
+            return false;
+        }
+
+        try {
+            compile(pattern);
+            return true;
+        } catch (PatternSyntaxException e) {
+            return false;
+        }
+    }
+
+    public static boolean isValidSoundIdentifier(String identifierString) {
+        if (identifierString == null) {
+            return false;
+        }
+
+        Identifier parsed = parse(identifierString);
+        return SOUND_EVENT.containsKey(parsed);
     }
 }

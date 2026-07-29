@@ -5,7 +5,6 @@ import de.rettichlp.therettingtoncompanion.gui.ColorButton;
 import de.rettichlp.therettingtoncompanion.gui.ICycleButtonValue;
 import de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry;
 import de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen;
-import de.rettichlp.therettingtoncompanion.models.ChatRegex;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -83,8 +82,12 @@ public class TRCOptionsList extends ContainerObjectSelectionList<AbstractEntry> 
         addEntry(new ColorButtonEntry(this.minecraft.font, label, tooltip, initialValue, onPress));
     }
 
-    public void addChatRegexEntry(ChatRegex chatRegex, boolean editable) {
-        addEntry(new ChatRegexEntry(chatRegex, editable));
+    public void addFilteredMessageEntry(FilteredMessageEntry.FilteredMessage filteredMessage, boolean editable) {
+        addEntry(new FilteredMessageEntry(filteredMessage, editable));
+    }
+
+    public void addHiddenMessageEntry(HiddenMessageEntry.HiddenMessage hiddenMessage) {
+        addEntry(new HiddenMessageEntry(hiddenMessage));
     }
 
     public void addFullWidthSlider(Component caption, int minValue, int maxValue, int initialValue, Consumer<Integer> onChange) {
