@@ -20,10 +20,8 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
@@ -36,8 +34,8 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage.getBestMatchingFilteredMessage;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
 import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Math.ceil;
 import static java.lang.Math.max;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static net.minecraft.client.gui.components.ChatComponent.getHeight;
@@ -46,7 +44,6 @@ import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.DARK_GRAY;
 import static net.minecraft.sounds.SoundEvent.createVariableRangeEvent;
-import static net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
 
 @Mixin(ChatComponent.class)
 public abstract class ChatComponentMixin {
@@ -132,21 +129,16 @@ public abstract class ChatComponentMixin {
         return isChatFocused() ? ((int) max(chatHeight, minecraftChatHeight)) : height;
     }
 
-    @ModifyConstant(method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V",
-                    constant = @Constant(intValue = 40))
-    private int trc$extractRenderStateConstant(int bottomMargin) {
-        LocalPlayer localPlayer = this.minecraft.player;
-        if (localPlayer == null) {
-            return bottomMargin;
+    @ModifyExpressionValue(method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V",
+                           at = @At(value = "INVOKE",
+                                    target = "Lnet/minecraft/util/Mth;floor(F)I"))
+    private int trc$extractRenderStateExpressionValue(int original) {
+        LocalPlayer player = this.minecraft.player;
+        if (!configuration.chat().isOptimizedChatSize() || player == null) {
+            return original;
         }
 
-        float maxHealth = max((float) localPlayer.getAttributeValue(MAX_HEALTH), localPlayer.getHealth());
-        int totalAbsorption = (int) ceil(localPlayer.getAbsorptionAmount());
-        int heartRows = (int) ceil((maxHealth + totalAbsorption) / 2.0 / 10.0);
-        int heartRowHeight = max(10 - (heartRows - 2), 3);
-        int armorRowHeight = localPlayer.getArmorValue() > 0 ? 10 : 0;
-
-        return bottomMargin + (heartRows - 1) * heartRowHeight + armorRowHeight;
+        return getChatBottomHeight(this.minecraft, player);
     }
 
     @ModifyArgs(method = "lambda$extractRenderState$1(IILnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IFLnet/minecraft/client/multiplayer/chat/GuiMessage$Line;IF)V",
