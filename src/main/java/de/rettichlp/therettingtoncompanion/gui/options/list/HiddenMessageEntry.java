@@ -28,8 +28,12 @@ import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.isValidPattern;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.compile;
+import static net.minecraft.client.gui.components.Tooltip.create;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.resources.Identifier.fromNamespaceAndPath;
 
 public class HiddenMessageEntry extends AbstractEntry {
 
@@ -45,6 +49,11 @@ public class HiddenMessageEntry extends AbstractEntry {
         this.hiddenMessage = hiddenMessage;
 
         this.patternEditBox = new PatternEditBox(this.minecraft.font, this.hiddenMessage.getPatternString(), this.hiddenMessage::setPatternString);
+        String providerModId = this.hiddenMessage.getProviderModId();
+        if (!providerModId.equals(MOD_ID)) {
+            this.patternEditBox.setEditable(false);
+            this.patternEditBox.setTooltip(create(translatable("trc.option.chat.hidden_messages.managed_by_other_mod", providerModId)));
+        }
 
         this.toggleButton = CycleButton.builder(OnOffCycleButtonEntry::value, this.hiddenMessage.isActive() ? ON : OFF)
                 .withValues(OnOffCycleButtonEntry.values())
@@ -63,6 +72,11 @@ public class HiddenMessageEntry extends AbstractEntry {
         this.patternEditBox.setWidth(this.toggleButton.getX() - 8 - getContentX());
         this.patternEditBox.setPosition(getContentX(), getContentYMiddle() - this.patternEditBox.getHeight() / 2);
         this.patternEditBox.extractRenderState(graphics, mouseX, mouseY, a);
+
+        String providerModId = this.hiddenMessage.getProviderModId();
+        if (!providerModId.equals(MOD_ID)) {
+            graphics.blit(GUI_TEXTURED, fromNamespaceAndPath(providerModId, "icon.png"), this.patternEditBox.getRight() - 20, this.patternEditBox.getY() + 2, 0, 0, 16, 16, 16, 16);
+        }
 
         this.toggleButton.setPosition(this.deleteButton.getX() - 8 - this.toggleButton.getWidth(), getContentYMiddle() - this.toggleButton.getHeight() / 2);
         this.toggleButton.extractRenderState(graphics, mouseX, mouseY, a);
