@@ -32,7 +32,7 @@ public class ChatOptionsTab extends AbstractTRCOptionsTab {
     @Override
     public void populateOptionsList(@NonNull TRCOptionsList optionsList) {
         optionsList.addHeader(translatable("trc.option.chat.general.section_title"));
-        optionsList.addToggleButton(translatable("trc.option.chat.optimized_chat_size.label"), create(translatable("trc.option.chat.optimized_chat_size.tooltip")), configuration.chat().isOptimizedChatSize(), (_, value) -> configuration.chat().setOptimizedChatSize(value == ON));
+        optionsList.addToggleButton(translatable("trc.option.chat.optimized_chat.label"), create(translatable("trc.option.chat.optimized_chat.tooltip")), configuration.chat().isOptimizedChat(), (_, value) -> configuration.chat().setOptimizedChat(value == ON));
         optionsList.addToggleButton(translatable("trc.option.chat.general.more_messages.label"), create(translatable("trc.option.chat.general.more_messages.tooltip")), configuration.chat().isMoreMessages(), (_, value) -> configuration.chat().setMoreMessages(value == ON));
         optionsList.addToggleButton(translatable("trc.option.chat.general.keep_messages_on_disconnect.label"), create(translatable("trc.option.chat.general.keep_messages_on_disconnect.tooltip")), configuration.chat().isKeepMessagesOnDisconnect(), (_, value) -> configuration.chat().setKeepMessagesOnDisconnect(value == ON));
         optionsList.addToggleButton(translatable("trc.option.chat.general.chat_time.label"), create(translatable("trc.option.chat.general.chat_time.tooltip")), configuration.chat().isChatTime(), (_, value) -> configuration.chat().setChatTime(value == ON));

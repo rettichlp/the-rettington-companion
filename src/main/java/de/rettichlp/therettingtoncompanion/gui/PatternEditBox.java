@@ -7,7 +7,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-import static de.rettichlp.therettingtoncompanion.utils.ModUtils.isValidPattern;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.isValidPattern;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
 import static java.lang.String.valueOf;

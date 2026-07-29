@@ -31,8 +31,8 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.OFF;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
-import static de.rettichlp.therettingtoncompanion.utils.ModUtils.isValidPattern;
-import static de.rettichlp.therettingtoncompanion.utils.ModUtils.isValidSoundIdentifier;
+import static de.rettichlp.therettingtoncompanion.gui.screens.SoundSelectionPopupScreen.isValidSoundIdentifier;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.isValidPattern;
 import static java.awt.Color.GREEN;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
