@@ -14,17 +14,18 @@ import java.util.function.Consumer;
 
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_HORIZONTAL;
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_VERTICAL;
-import static de.rettichlp.therettingtoncompanion.utils.ModUtils.isValidSoundIdentifier;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
 import static net.minecraft.client.gui.layouts.FrameLayout.centerInRectangle;
 import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
 import static net.minecraft.client.gui.layouts.LinearLayout.vertical;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
+import static net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT;
 import static net.minecraft.network.chat.CommonComponents.GUI_CANCEL;
 import static net.minecraft.network.chat.CommonComponents.GUI_DONE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.resources.Identifier.parse;
 
 public class SoundSelectionPopupScreen extends Screen {
 
@@ -105,5 +106,14 @@ public class SoundSelectionPopupScreen extends Screen {
     private void onDone() {
         this.onClose.accept(this.input.getValue());
         onClose();
+    }
+
+    public static boolean isValidSoundIdentifier(String identifierString) {
+        if (identifierString == null) {
+            return false;
+        }
+
+        Identifier parsed = parse(identifierString);
+        return SOUND_EVENT.containsKey(parsed);
     }
 }

@@ -25,7 +25,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.OFF;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
-import static de.rettichlp.therettingtoncompanion.utils.ModUtils.isValidPattern;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.isValidPattern;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.client.gui.components.Tooltip.create;
