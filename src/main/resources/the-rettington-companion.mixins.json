@@ -14,14 +14,14 @@
   "client": [
     "AbstractContainerScreenMixin",
     "ChatComponentMixin",
-    "ContextualBarRendererMixin",
+    "ChatScreenMixin",
+    "ContextualBarMixin",
     "EquipmentLayerRendererMixin",
-    "GuiMixin",
+    "HudMixin",
     "KeyboardHandlerMixin",
     "LevelMixin",
     "LivingEntityMixin",
     "OptionInstanceMixin",
-    "PauseScreenMixin",
-    "TitleScreenMixin"
+    "PauseScreenMixin"
   ]
 }

@@ -1,7 +1,6 @@
 package de.rettichlp.therettingtoncompanion.gui.screens;
 
 import de.rettichlp.therettingtoncompanion.gui.ColorButton;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -9,11 +8,13 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_HORIZONTAL;
@@ -21,7 +22,6 @@ import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.S
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.clamp;
 import static java.lang.String.valueOf;
-import static java.util.Objects.requireNonNull;
 import static net.minecraft.client.gui.layouts.FrameLayout.centerInRectangle;
 import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
 import static net.minecraft.client.gui.layouts.LinearLayout.vertical;
@@ -30,6 +30,22 @@ import static net.minecraft.network.chat.CommonComponents.GUI_CANCEL;
 import static net.minecraft.network.chat.CommonComponents.GUI_DONE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.AQUA;
+import static net.minecraft.network.chat.TextColor.BLACK;
+import static net.minecraft.network.chat.TextColor.BLUE;
+import static net.minecraft.network.chat.TextColor.DARK_AQUA;
+import static net.minecraft.network.chat.TextColor.DARK_BLUE;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.DARK_GREEN;
+import static net.minecraft.network.chat.TextColor.DARK_PURPLE;
+import static net.minecraft.network.chat.TextColor.DARK_RED;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.GREEN;
+import static net.minecraft.network.chat.TextColor.LIGHT_PURPLE;
+import static net.minecraft.network.chat.TextColor.RED;
+import static net.minecraft.network.chat.TextColor.WHITE;
+import static net.minecraft.network.chat.TextColor.YELLOW;
 
 public class ColorSelectionPopupScreen extends Screen {
 
@@ -54,7 +70,7 @@ public class ColorSelectionPopupScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreen(this.backgroundScreen);
+        this.minecraft.gui.setScreen(this.backgroundScreen);
     }
 
     @Override
@@ -68,12 +84,8 @@ public class ColorSelectionPopupScreen extends Screen {
         // Minecraft colors
         int currentLength = 0;
         LinearLayout currentRow = horizontal().spacing(SPACING_HORIZONTAL);
-        for (ChatFormatting chatFormatting : ChatFormatting.values()) {
-            if (!chatFormatting.isColor()) {
-                continue;
-            }
-
-            Color color = new Color(requireNonNull(chatFormatting.getColor()));
+        for (TextColor textColor : List.of(BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY, DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE)) {
+            Color color = new Color(textColor.getValue());
 
             ColorButton colorButton = currentRow.addChild(new ColorButton(0, 0, 30, 20, color, button -> {
                 button.setFocused(!button.isFocused());
@@ -107,7 +119,7 @@ public class ColorSelectionPopupScreen extends Screen {
 
         // buttons
         LinearLayout buttonRow = horizontal().spacing(SPACING_HORIZONTAL);
-        buttonRow.addChild(Button.builder(GUI_CANCEL, _ -> this.minecraft.setScreen(this.backgroundScreen)).width(144).build());
+        buttonRow.addChild(Button.builder(GUI_CANCEL, _ -> this.minecraft.gui.setScreen(this.backgroundScreen)).width(144).build());
         buttonRow.addChild(Button.builder(GUI_DONE, _ -> onDone()).width(144).build());
         this.layout.addChild(buttonRow);
 

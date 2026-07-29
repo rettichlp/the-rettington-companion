@@ -14,17 +14,18 @@ import java.util.function.Consumer;
 
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_HORIZONTAL;
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_VERTICAL;
-import static de.rettichlp.therettingtoncompanion.models.ChatRegex.isValidSoundIdentifier;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
 import static net.minecraft.client.gui.layouts.FrameLayout.centerInRectangle;
 import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
 import static net.minecraft.client.gui.layouts.LinearLayout.vertical;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
+import static net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT;
 import static net.minecraft.network.chat.CommonComponents.GUI_CANCEL;
 import static net.minecraft.network.chat.CommonComponents.GUI_DONE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.resources.Identifier.parse;
 
 public class SoundSelectionPopupScreen extends Screen {
 
@@ -47,7 +48,7 @@ public class SoundSelectionPopupScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreen(this.backgroundScreen);
+        this.minecraft.gui.setScreen(this.backgroundScreen);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class SoundSelectionPopupScreen extends Screen {
 
         // buttons
         LinearLayout buttonRow = horizontal().spacing(SPACING_HORIZONTAL);
-        buttonRow.addChild(Button.builder(GUI_CANCEL, _ -> this.minecraft.setScreen(this.backgroundScreen)).width(144).build());
+        buttonRow.addChild(Button.builder(GUI_CANCEL, _ -> this.minecraft.gui.setScreen(this.backgroundScreen)).width(144).build());
         buttonRow.addChild(Button.builder(GUI_DONE, _ -> onDone()).width(144).build());
         this.layout.addChild(buttonRow);
 
@@ -105,5 +106,14 @@ public class SoundSelectionPopupScreen extends Screen {
     private void onDone() {
         this.onClose.accept(this.input.getValue());
         onClose();
+    }
+
+    public static boolean isValidSoundIdentifier(String identifierString) {
+        if (identifierString == null) {
+            return false;
+        }
+
+        Identifier parsed = parse(identifierString);
+        return SOUND_EVENT.containsKey(parsed);
     }
 }

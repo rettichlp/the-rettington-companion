@@ -32,7 +32,7 @@ public class VisualsOptionsTab extends AbstractTRCOptionsTab {
         optionsList.addHeader(translatable("debug.entry.overlay"));
         optionsList.addToggleButton(translatable("trc.option.visuals.show_armor_hud.label"), create(translatable("trc.option.visuals.show_armor_hud.tooltip")), configuration.visuals().isShowArmorHud(), (_, value) -> configuration.visuals().setShowArmorHud(value == ON));
         optionsList.addToggleButton(translatable("trc.option.visuals.show_arrow_hud.label"), create(translatable("trc.option.visuals.show_arrow_hud.tooltip")), configuration.visuals().isShowArrowHud(), (_, value) -> configuration.visuals().setShowArrowHud(value == ON));
-        optionsList.addColorButton(translatable("trc.option.visuals.experience_level_color.label"), create(translatable("trc.option.visuals.experience_level_color.tooltip")), new Color(configuration.visuals().getExperienceLevelColor()), (colorButton, value) -> this.minecraft.setScreen(new ColorSelectionPopupScreen(optionsList.getScreen(), value, color -> {
+        optionsList.addColorButton(translatable("trc.option.visuals.experience_level_color.label"), create(translatable("trc.option.visuals.experience_level_color.tooltip")), new Color(configuration.visuals().getExperienceLevelColor()), (colorButton, value) -> this.minecraft.gui.setScreen(new ColorSelectionPopupScreen(optionsList.getScreen(), value, color -> {
             configuration.visuals().setExperienceLevelColor(color.getRGB());
             colorButton.setColor(color);
         })));

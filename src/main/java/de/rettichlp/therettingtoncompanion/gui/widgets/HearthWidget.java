@@ -11,11 +11,11 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import static java.lang.String.format;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.RED;
-import static net.minecraft.ChatFormatting.YELLOW;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.RED;
+import static net.minecraft.network.chat.TextColor.YELLOW;
 
 public class HearthWidget extends AbstractTRCTextWidget<HearthWidget.Configuration> {
 
@@ -46,8 +46,8 @@ public class HearthWidget extends AbstractTRCTextWidget<HearthWidget.Configurati
         float overallAmount = player.getHealth() + absorptionAmount;
 
         String overallAmountString = format("%.1f", overallAmount / 2).replaceAll(",0$", "");
-        MutableComponent text = literal(overallAmountString).withStyle(absorptionAmount > 0 ? YELLOW : GRAY);
-        return text.append(literal("❤").withStyle(RED));
+        MutableComponent text = literal(overallAmountString).withColor(absorptionAmount > 0 ? YELLOW : GRAY);
+        return text.append(literal("❤").withColor(RED));
     }
 
     public static class Configuration extends WidgetConfiguration {}
