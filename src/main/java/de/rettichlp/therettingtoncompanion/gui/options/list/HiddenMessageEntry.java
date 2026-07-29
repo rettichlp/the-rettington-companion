@@ -102,7 +102,7 @@ public class HiddenMessageEntry extends AbstractEntry {
                     : Optional.empty();
         }
 
-        public static boolean shouldBeHidden(CharSequence message) {
+        public static @NonNull Optional<HiddenMessage> shouldBeHidden(CharSequence message) {
             Collection<HiddenMessage> hiddenMessages = new ArrayList<>(configuration.chat().getHiddenMessages());
             // load notifications from other mods
             FabricLoader.getInstance().getEntrypointContainers(MOD_ID, TheRettingtonCompanionApi.class).forEach(container -> {
@@ -112,10 +112,10 @@ public class HiddenMessageEntry extends AbstractEntry {
 
             return hiddenMessages.stream()
                     .filter(HiddenMessage::isActive)
-                    .map(HiddenMessage::getPattern)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .anyMatch(pattern -> pattern.matcher(message).find());
+                    .filter(hiddenMessage -> hiddenMessage.getPattern()
+                            .map(pattern -> pattern.matcher(message).find())
+                            .orElse(false))
+                    .findFirst();
         }
     }
 }

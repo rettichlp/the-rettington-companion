@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry;
+import de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
@@ -29,9 +30,9 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.awt.Color;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_NAME;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage.getBestMatchingFilteredMessage;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
@@ -70,11 +71,11 @@ public abstract class ChatComponentMixin {
                                     GuiMessageSource source,
                                     GuiMessageTag tag,
                                     CallbackInfo ci) {
-        boolean shouldBeHidden = shouldBeHidden(contents.getString());
-        if (shouldBeHidden) {
+        Optional<HiddenMessageEntry.HiddenMessage> shouldBeHidden = shouldBeHidden(contents.getString());
+        shouldBeHidden.ifPresent(hiddenMessage -> {
             ci.cancel();
-            LOGGER.info("{} has hidden following message: {}", MOD_NAME, contents.getString());
-        }
+            LOGGER.info("Hidden following message (commissioned by {}): {} ", hiddenMessage.getProviderModId(), contents.getString());
+        });
 
         FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(contents.getString());
         if (bestMatchingFilteredMessage != null && this.minecraft.player != null) {
