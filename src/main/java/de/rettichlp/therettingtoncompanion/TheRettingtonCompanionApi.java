@@ -13,5 +13,5 @@ public interface TheRettingtonCompanionApi {
 
     List<AbstractTRCWidget<?>> getWidgets();
 
-    Set<HiddenMessageEntry.HiddenMessage> getHiddenMessages();
+    List<HiddenMessageEntry.HiddenMessage> getHiddenMessages();
 }
