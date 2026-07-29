@@ -21,9 +21,11 @@ public class PatternEditBox extends EditBox {
     public PatternEditBox(Font font, @Nullable String patternString, Consumer<String> onChange) {
         super(font, empty());
         this.onChange = onChange;
+        setMaxLength(256);
         setValue(valueOf(patternString));
         setHint(literal(valueOf(patternString)));
         setResponder(_ -> {});
+        moveCursorToStart(false);
     }
 
     // prevent overriding the responder
