@@ -60,11 +60,11 @@ public class HiddenMessageEntry extends AbstractEntry {
 
     @Override
     public void extractContent(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
-        this.patternEditBox.setWidth(getContentWidth() / 2);
+        this.patternEditBox.setWidth(this.toggleButton.getX() - 8 - getContentX());
         this.patternEditBox.setPosition(getContentX(), getContentYMiddle() - this.patternEditBox.getHeight() / 2);
         this.patternEditBox.extractRenderState(graphics, mouseX, mouseY, a);
 
-        this.toggleButton.setPosition(this.patternEditBox.getX() + this.patternEditBox.getWidth() + 8, getContentYMiddle() - this.toggleButton.getHeight() / 2);
+        this.toggleButton.setPosition(this.deleteButton.getX() - 8 - this.toggleButton.getWidth(), getContentYMiddle() - this.toggleButton.getHeight() / 2);
         this.toggleButton.extractRenderState(graphics, mouseX, mouseY, a);
 
         this.deleteButton.setPosition(getContentRight() - this.deleteButton.getWidth(), getContentYMiddle() - this.deleteButton.getHeight() / 2);
