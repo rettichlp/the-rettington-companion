@@ -13,6 +13,7 @@
   },
   "client": [
     "AbstractContainerScreenMixin",
+    "ChatComponentAccessor",
     "ChatComponentMixin",
     "ChatScreenMixin",
     "ContextualBarMixin",
