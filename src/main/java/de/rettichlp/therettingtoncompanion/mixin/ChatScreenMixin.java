@@ -85,12 +85,13 @@ public abstract class ChatScreenMixin extends Screen {
         this.copyButton = Button.builder(translatable("trc.chat_screen.context_menu.copy_message"), _ -> copyToClipboard(false))
                 .size(150, 14)
                 .build();
-
+        this.copyButton.visible = false;
         addRenderableWidget(this.copyButton);
 
         this.copyButtonWithOutTimestamp = Button.builder(translatable("trc.chat_screen.context_menu.copy_message_without_timestamp"), _ -> copyToClipboard(true))
                 .size(150, 14)
                 .build();
+        this.copyButtonWithOutTimestamp.visible = false;
         addRenderableWidget(this.copyButtonWithOutTimestamp);
 
         LocalPlayer player = this.minecraft.player;
