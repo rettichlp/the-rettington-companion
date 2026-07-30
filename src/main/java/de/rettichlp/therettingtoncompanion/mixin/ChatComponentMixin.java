@@ -35,7 +35,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage.getBestMatchingFilteredMessage;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
-import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.HOVERED_GUI_MESSAGE;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.LAST_HOVERED_GUI_MESSAGE;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getGuiMessageBounds;
 import static java.awt.Color.CYAN;
@@ -187,7 +187,7 @@ public abstract class ChatComponentMixin {
         boolean isMouseOver = mouseX >= guiMessageBounds.left() && mouseX <= guiMessageBounds.right() && mouseY >= guiMessageBounds.top() && mouseY <= guiMessageBounds.bottom();
 
         if (isMouseOver) {
-            HOVERED_GUI_MESSAGE = line.parent();
+            LAST_HOVERED_GUI_MESSAGE = line.parent();
             graphics.fill(guiMessageBounds.left(), guiMessageBounds.top(), guiMessageBounds.right(), guiMessageBounds.top() + 1, CYAN.getRGB());
             graphics.fill(guiMessageBounds.left(), guiMessageBounds.bottom() - 1, guiMessageBounds.right(), guiMessageBounds.bottom(), CYAN.getRGB());
             graphics.fill(guiMessageBounds.left(), guiMessageBounds.top(), guiMessageBounds.left() + 1, guiMessageBounds.bottom(), CYAN.getRGB());

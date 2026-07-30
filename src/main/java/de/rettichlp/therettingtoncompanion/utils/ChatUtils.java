@@ -19,7 +19,7 @@ import static net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
 
 public class ChatUtils {
 
-    public static GuiMessage HOVERED_GUI_MESSAGE;
+    public static GuiMessage LAST_HOVERED_GUI_MESSAGE;
 
     public static boolean isValidPattern(String pattern) {
         if (pattern == null) {

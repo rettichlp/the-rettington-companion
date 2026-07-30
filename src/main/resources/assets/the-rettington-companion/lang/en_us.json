@@ -3,6 +3,8 @@
   "trc.alignment.left": "Left",
   "trc.alignment.center": "Center",
   "trc.alignment.right": "Right",
+  "trc.chat_screen.context_menu.copy_message": "Copy message",
+  "trc.chat_screen.context_menu.copy_message_without_timestamp": "Copy message without timestamp",
   "trc.equipment_model_visibility.all": "All",
   "trc.equipment_model_visibility.none": "None",
   "trc.equipment_model_visibility.only_wings": "Only wings",
