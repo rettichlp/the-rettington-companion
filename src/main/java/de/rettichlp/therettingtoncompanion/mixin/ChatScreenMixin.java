@@ -22,6 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.LAST_HOVERED_GUI_MESSAGE;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatHeight;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatWidth;
 import static java.lang.Integer.MIN_VALUE;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.network.chat.Component.translatable;
@@ -94,7 +96,7 @@ public abstract class ChatScreenMixin extends Screen {
         LocalPlayer player = this.minecraft.player;
         if (configuration.chat().isOptimizedChat() && player != null) {
             this.patternEditBox.setSize(this.minecraft.getWindow().getGuiScaledWidth() / 2 - 91 - 7 - 2, 12); // right end of left offhand slot
-            this.patternEditBox.setPosition(4, getChatBottomHeight(this.minecraft, player) + 4);
+            this.patternEditBox.setPosition(4, getChatBottomHeight() + 4);
             this.patternEditBox.setHint(translatable("debug.options.search"));
             this.patternEditBox.setMaxLength(256);
             this.patternEditBox.setBordered(false);

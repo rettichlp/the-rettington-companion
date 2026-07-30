@@ -11,7 +11,6 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.client.multiplayer.chat.GuiMessageSource;
 import net.minecraft.client.multiplayer.chat.GuiMessageTag;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MessageSignature;
@@ -37,13 +36,12 @@ import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessa
 import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.LAST_HOVERED_GUI_MESSAGE;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatHeight;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatWidth;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getGuiMessageBounds;
 import static java.awt.Color.CYAN;
 import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Math.max;
 import static java.time.format.DateTimeFormatter.ofPattern;
-import static net.minecraft.client.gui.components.ChatComponent.getHeight;
-import static net.minecraft.client.gui.components.ChatComponent.getWidth;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.DARK_GRAY;
@@ -56,9 +54,6 @@ public abstract class ChatComponentMixin {
     @Shadow
     @Final
     private Minecraft minecraft;
-
-    @Shadow
-    public abstract boolean isChatFocused();
 
     @Inject(method = "clearMessages", at = @At("HEAD"), cancellable = true)
     public void trc$clearHead(boolean history, CallbackInfo ci) {
@@ -111,39 +106,19 @@ public abstract class ChatComponentMixin {
 
     @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))
     private int trc$getWidthReturn(int width) {
-        if (!configuration.chat().isOptimizedChat()) {
-            return width;
-        }
-
-        double originMinecraftChatWidth = getWidth(this.minecraft.options.chatWidth().get());
-        double trcMinecraftChatWidth = this.minecraft.getWindow().getGuiScaledWidth() / 2.0 - 12; // I don't know why, but 12px offset
-
-        return (int) max(originMinecraftChatWidth, trcMinecraftChatWidth);
+        return getChatWidth();
     }
 
     @ModifyReturnValue(method = "getHeight()I", at = @At("RETURN"))
     private int trc$getHeightReturn(int height) {
-        if (!configuration.chat().isOptimizedChat()) {
-            return height;
-        }
-
-        // half of the screen height
-        int chatHeight = this.minecraft.getWindow().getGuiScaledHeight() / 2;
-        double minecraftChatHeight = getHeight(this.minecraft.options.chatHeightFocused().get());
-
-        return isChatFocused() ? ((int) max(chatHeight, minecraftChatHeight)) : height;
+        return getChatHeight();
     }
 
     @ModifyExpressionValue(method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V",
                            at = @At(value = "INVOKE",
                                     target = "Lnet/minecraft/util/Mth;floor(F)I"))
     private int trc$extractRenderStateExpressionValue(int original) {
-        LocalPlayer player = this.minecraft.player;
-        if (!configuration.chat().isOptimizedChat() || player == null) {
-            return original;
-        }
-
-        return getChatBottomHeight(this.minecraft, player);
+        return getChatBottomHeight();
     }
 
     @ModifyArgs(method = "lambda$extractRenderState$1(IILnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IFLnet/minecraft/client/multiplayer/chat/GuiMessage$Line;IF)V",
@@ -178,7 +153,7 @@ public abstract class ChatComponentMixin {
                                                int lineIndex,
                                                float alpha,
                                                CallbackInfo ci) {
-        ScreenRectangle guiMessageBounds = getGuiMessageBounds(line, chatBottom, maxWidth, entryHeight);
+        ScreenRectangle guiMessageBounds = getGuiMessageBounds(line, entryHeight);
 
         Minecraft minecraft = Minecraft.getInstance();
         double mouseX = minecraft.mouseHandler.getScaledXPos(minecraft.getWindow());
