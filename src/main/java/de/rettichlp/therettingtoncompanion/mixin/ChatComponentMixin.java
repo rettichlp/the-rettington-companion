@@ -7,6 +7,7 @@ import de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry
 import de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.client.multiplayer.chat.GuiMessageSource;
 import net.minecraft.client.multiplayer.chat.GuiMessageTag;
@@ -35,6 +36,8 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage.getBestMatchingFilteredMessage;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getGuiMessageBounds;
+import static java.awt.Color.CYAN;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Math.max;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -44,6 +47,7 @@ import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.DARK_GRAY;
 import static net.minecraft.sounds.SoundEvent.createVariableRangeEvent;
+import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 @Mixin(ChatComponent.class)
 public abstract class ChatComponentMixin {
@@ -157,6 +161,35 @@ public abstract class ChatComponentMixin {
             Color chatRegexColor = bestMatchingFilteredMessage.getColor();
             int highlightColorWithAlpha = (alpha << 24) | (chatRegexColor.getRed() << 16) | (chatRegexColor.getGreen() << 8) | chatRegexColor.getBlue();
             args.set(4, highlightColorWithAlpha);
+        }
+    }
+
+    @Inject(method = "lambda$extractRenderState$1(IILnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IFLnet/minecraft/client/multiplayer/chat/GuiMessage$Line;IF)V",
+            at = @At(value = "INVOKE",
+                     target = "Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;fill(IIIII)V",
+                     shift = AFTER))
+    private static void trc$method_75802Invoke(int chatBottom,
+                                               int entryHeight,
+                                               ChatComponent.@NonNull ChatGraphicsAccess graphics,
+                                               int maxWidth,
+                                               float backgroundOpacity,
+                                               GuiMessage.Line line,
+                                               int lineIndex,
+                                               float alpha,
+                                               CallbackInfo ci) {
+        ScreenRectangle guiMessageBounds = getGuiMessageBounds(line, chatBottom, maxWidth, entryHeight);
+
+        Minecraft minecraft = Minecraft.getInstance();
+        double mouseX = minecraft.mouseHandler.getScaledXPos(minecraft.getWindow());
+        double mouseY = minecraft.mouseHandler.getScaledYPos(minecraft.getWindow());
+
+        boolean isMouseOver = mouseX >= guiMessageBounds.left() && mouseX <= guiMessageBounds.right() && mouseY >= guiMessageBounds.top() && mouseY <= guiMessageBounds.bottom();
+
+        if (isMouseOver) {
+            graphics.fill(guiMessageBounds.left(), guiMessageBounds.top(), guiMessageBounds.right(), guiMessageBounds.top() + 1, CYAN.getRGB());
+            graphics.fill(guiMessageBounds.left(), guiMessageBounds.bottom() - 1, guiMessageBounds.right(), guiMessageBounds.bottom(), CYAN.getRGB());
+            graphics.fill(guiMessageBounds.left(), guiMessageBounds.top(), guiMessageBounds.left() + 1, guiMessageBounds.bottom(), CYAN.getRGB());
+            graphics.fill(guiMessageBounds.right() - 1, guiMessageBounds.top(), guiMessageBounds.right(), guiMessageBounds.bottom(), CYAN.getRGB());
         }
     }
 }
