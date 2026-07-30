@@ -53,7 +53,7 @@ public class ChatUtils {
         Minecraft minecraft = Minecraft.getInstance();
 
         if (!configuration.chat().isOptimizedChat()) {
-            return floor((minecraft.getWindow().getScreenHeight() - 40) / minecraft.options.chatScale().get());
+            return floor((minecraft.getWindow().getGuiScaledHeight() - 40) / minecraft.options.chatScale().get());
         }
 
         int yLineBase = minecraft.getWindow().getGuiScaledHeight() - 39;
