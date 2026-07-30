@@ -146,19 +146,17 @@ public abstract class ChatComponentMixin {
                          target = "Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;fill(IIIII)V"))
     private static void trc$method_75802Invoke(@NonNull Args args,
                                                @Local(argsOnly = true, name = "arg5") GuiMessage.@NonNull Line arg5) {
-        int originalColor = args.get(4);
-
-        // extract alpha value
-        int alpha = (originalColor >> 24) & 0xFF;
-
+        // check for filtered message
         FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(arg5.parent().content().getString());
+        if (bestMatchingFilteredMessage != null) {
+            int originalColor = args.get(4);
 
-        if (bestMatchingFilteredMessage == null) {
-            return;
+            // extract alpha value
+            int alpha = (originalColor >> 24) & 0xFF;
+
+            Color chatRegexColor = bestMatchingFilteredMessage.getColor();
+            int highlightColorWithAlpha = (alpha << 24) | (chatRegexColor.getRed() << 16) | (chatRegexColor.getGreen() << 8) | chatRegexColor.getBlue();
+            args.set(4, highlightColorWithAlpha);
         }
-
-        Color chatRegexColor = bestMatchingFilteredMessage.getColor();
-        int highlightColorWithAlpha = (alpha << 24) | (chatRegexColor.getRed() << 16) | (chatRegexColor.getGreen() << 8) | chatRegexColor.getBlue();
-        args.set(4, highlightColorWithAlpha);
     }
 }
