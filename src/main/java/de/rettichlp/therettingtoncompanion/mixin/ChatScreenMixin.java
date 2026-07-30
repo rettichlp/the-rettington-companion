@@ -58,7 +58,7 @@ public abstract class ChatScreenMixin extends Screen {
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     public void trc$mouseClickedHead(@NonNull MouseButtonEvent event, boolean doubleClick, CallbackInfoReturnable<Boolean> cir) {
-        if (HOVERED_GUI_MESSAGE == null) {
+        if (LAST_HOVERED_GUI_MESSAGE == null) {
             return;
         }
 
@@ -66,8 +66,9 @@ public abstract class ChatScreenMixin extends Screen {
         double mouseY = event.y();
 
         if (this.selectedMessage == null) { // context menu closed
-            if (event.button() == 1) {
-                openContextMenu(HOVERED_GUI_MESSAGE, mouseX, mouseY);
+            boolean isOverChatWindow = mouseX <= getChatWidth() && mouseY <= getChatBottomHeight() && mouseY >= getChatBottomHeight() - getChatHeight();
+            if (event.button() == 1 && isOverChatWindow) {
+                openContextMenu(LAST_HOVERED_GUI_MESSAGE, mouseX, mouseY);
             }
         } else { // context menu open
             if (this.copyButton != null && this.copyButton.isMouseOver(mouseX, mouseY)) {
