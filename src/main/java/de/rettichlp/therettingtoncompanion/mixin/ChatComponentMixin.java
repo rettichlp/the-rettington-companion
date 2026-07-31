@@ -101,7 +101,7 @@ public abstract class ChatComponentMixin {
 
     @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))
     private int trc$getWidthReturn(int width) {
-        return getChatWidth();
+        return getChatWidth() - 12; // I don't know why, but 12px offset'
     }
 
     @ModifyReturnValue(method = "getHeight()I", at = @At("RETURN"))

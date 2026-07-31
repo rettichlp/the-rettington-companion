@@ -33,7 +33,7 @@ public class ChatUtils {
             return (int) originMinecraftChatWidth;
         }
 
-        double trcMinecraftChatWidth = minecraft.getWindow().getGuiScaledWidth() / 2.0 - 12; // I don't know why, but 12px offset
+        double trcMinecraftChatWidth = minecraft.getWindow().getGuiScaledWidth() / 2.0;
         return (int) max(originMinecraftChatWidth, trcMinecraftChatWidth);
     }
 
@@ -134,8 +134,8 @@ public class ChatUtils {
         // get boundary values
         int bottom = getChatBottomHeight() - bottomLineIndex * entryHeight;
         int top = getChatBottomHeight() - (topLineIndex + 1) * entryHeight;
-        int left = -4;
-        int right = getChatWidth() + 4 + 4;
+        int left = 2; // 2 because indicator offset
+        int right = getChatWidth();
 
         return new ScreenRectangle(left, top, right - left, bottom - top);
     }
