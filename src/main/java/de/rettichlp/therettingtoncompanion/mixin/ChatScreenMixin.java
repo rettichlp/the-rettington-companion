@@ -79,6 +79,16 @@ public abstract class ChatScreenMixin extends Screen {
         double mouseX = event.x();
         double mouseY = event.y();
 
+        // check and handle mouse over context menu
+        if (this.copyButton != null && this.copyButton.isMouseOver(mouseX, mouseY)) {
+            cir.setReturnValue(this.copyButton.mouseClicked(event, doubleClick));
+            return;
+        } else if (this.copyButtonWithOutTimestamp != null && this.copyButtonWithOutTimestamp.isMouseOver(mouseX, mouseY)) {
+            cir.setReturnValue(this.copyButtonWithOutTimestamp.mouseClicked(event, doubleClick));
+            return;
+        }
+
+        // handle mouse over message
         GuiMessage hoveredGuiMessage = getHoveredGuiMessage(mouseX, mouseY);
         if (hoveredGuiMessage == null) {
             closeContextMenu();
@@ -87,14 +97,9 @@ public abstract class ChatScreenMixin extends Screen {
 
         if (event.button() == 1) {
             openContextMenu(hoveredGuiMessage, mouseX, mouseY);
+            cir.setReturnValue(true);
         } else {
-            if (this.copyButton != null && this.copyButton.isMouseOver(mouseX, mouseY)) {
-                cir.setReturnValue(this.copyButton.mouseClicked(event, doubleClick));
-            } else if (this.copyButtonWithOutTimestamp != null && this.copyButtonWithOutTimestamp.isMouseOver(mouseX, mouseY)) {
-                cir.setReturnValue(this.copyButtonWithOutTimestamp.mouseClicked(event, doubleClick));
-            } else {
-                closeContextMenu();
-            }
+            closeContextMenu();
         }
     }
 
@@ -165,7 +170,7 @@ public abstract class ChatScreenMixin extends Screen {
         }
 
         String text = this.contextMenuMessage.content().getString();
-        this.minecraft.keyboardHandler.setClipboard(hideTimestamp && text.matches("^\\d{2}:\\d{2}:\\d{2} ") ? text.substring(9) : text);
+        this.minecraft.keyboardHandler.setClipboard(hideTimestamp && text.matches("^\\d{2}:\\d{2}:\\d{2} .*") ? text.substring(9) : text);
         closeContextMenu();
     }
 }
