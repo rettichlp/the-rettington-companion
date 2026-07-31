@@ -4,6 +4,7 @@ import de.rettichlp.therettingtoncompanion.gui.PatternEditBox;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -20,13 +21,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.LAST_HOVERED_GUI_MESSAGE;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
-import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatHeight;
-import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatWidth;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getGuiMessageBounds;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getHoveredGuiMessage;
+import static java.awt.Color.CYAN;
 import static java.lang.Integer.MIN_VALUE;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.network.chat.Component.translatable;
+import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 @Mixin(ChatScreen.class)
 public abstract class ChatScreenMixin extends Screen {
@@ -41,16 +43,32 @@ public abstract class ChatScreenMixin extends Screen {
     private @Nullable Button copyButtonWithOutTimestamp;
 
     @Unique
-    private @Nullable GuiMessage selectedMessage;
+    private @Nullable GuiMessage contextMenuMessage;
 
     protected ChatScreenMixin(Component title) {
         super(title);
     }
 
-    @Inject(method = "extractRenderState", at = @At("HEAD"))
-    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
+    @Inject(method = "extractRenderState",
+            at = @At(value = "INVOKE",
+                     target = "Lnet/minecraft/client/gui/components/ChatComponent;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V",
+                     shift = AFTER))
+    public void trc$extractRenderStateInvoke(@NonNull GuiGraphicsExtractor graphics,
+                                             int mouseX,
+                                             int mouseY,
+                                             float a,
+                                             CallbackInfo ci) {
         if (!configuration.chat().isOptimizedChat()) {
             return;
+        }
+
+        GuiMessage hoveredGuiMessage = getHoveredGuiMessage(mouseX, mouseY);
+        if (hoveredGuiMessage != null) {
+            ScreenRectangle guiMessageBounds = getGuiMessageBounds(hoveredGuiMessage, 9);
+            graphics.fill(guiMessageBounds.left(), guiMessageBounds.top(), guiMessageBounds.right(), guiMessageBounds.top() + 1, CYAN.getRGB());
+            graphics.fill(guiMessageBounds.left(), guiMessageBounds.bottom() - 1, guiMessageBounds.right(), guiMessageBounds.bottom(), CYAN.getRGB());
+            graphics.fill(guiMessageBounds.left(), guiMessageBounds.top(), guiMessageBounds.left() + 1, guiMessageBounds.bottom(), CYAN.getRGB());
+            graphics.fill(guiMessageBounds.right() - 1, guiMessageBounds.top(), guiMessageBounds.right(), guiMessageBounds.bottom(), CYAN.getRGB());
         }
 
         graphics.fill(this.patternEditBox.getX() - 2, this.patternEditBox.getY() - 2, this.patternEditBox.getX() + this.patternEditBox.getWidth() - 2, this.patternEditBox.getY() + this.patternEditBox.getHeight() - 2, this.minecraft.options.getBackgroundColor(MIN_VALUE));
@@ -58,19 +76,18 @@ public abstract class ChatScreenMixin extends Screen {
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     public void trc$mouseClickedHead(@NonNull MouseButtonEvent event, boolean doubleClick, CallbackInfoReturnable<Boolean> cir) {
-        if (LAST_HOVERED_GUI_MESSAGE == null) {
-            return;
-        }
-
         double mouseX = event.x();
         double mouseY = event.y();
 
-        if (this.selectedMessage == null) { // context menu closed
-            boolean isOverChatWindow = mouseX <= getChatWidth() && mouseY <= getChatBottomHeight() && mouseY >= getChatBottomHeight() - getChatHeight();
-            if (event.button() == 1 && isOverChatWindow) {
-                openContextMenu(LAST_HOVERED_GUI_MESSAGE, mouseX, mouseY);
-            }
-        } else { // context menu open
+        GuiMessage hoveredGuiMessage = getHoveredGuiMessage(mouseX, mouseY);
+        if (hoveredGuiMessage == null) {
+            closeContextMenu();
+            return;
+        }
+
+        if (event.button() == 1) {
+            openContextMenu(hoveredGuiMessage, mouseX, mouseY);
+        } else {
             if (this.copyButton != null && this.copyButton.isMouseOver(mouseX, mouseY)) {
                 cir.setReturnValue(this.copyButton.mouseClicked(event, doubleClick));
             } else if (this.copyButtonWithOutTimestamp != null && this.copyButtonWithOutTimestamp.isMouseOver(mouseX, mouseY)) {
@@ -79,6 +96,12 @@ public abstract class ChatScreenMixin extends Screen {
                 closeContextMenu();
             }
         }
+    }
+
+    @Inject(method = "removed", at = @At("HEAD"))
+    public void trc$removedHead(CallbackInfo ci) {
+        this.minecraft.gui.hud.getChat().setVisibleMessageFilter(_ -> true);
+        closeContextMenu();
     }
 
     @Inject(method = "init", at = @At("TAIL"))
@@ -107,12 +130,6 @@ public abstract class ChatScreenMixin extends Screen {
         }
     }
 
-    @Inject(method = "removed", at = @At("HEAD"))
-    public void trc$removedHead(CallbackInfo ci) {
-        this.minecraft.gui.hud.getChat().setVisibleMessageFilter(_ -> true);
-        closeContextMenu();
-    }
-
     @Unique
     private void onSearchChanged(String patternString) {
         ChatComponent chat = this.minecraft.gui.hud.getChat();
@@ -121,7 +138,7 @@ public abstract class ChatScreenMixin extends Screen {
 
     @Unique
     private void openContextMenu(GuiMessage message, double mouseX, double mouseY) {
-        this.selectedMessage = message;
+        this.contextMenuMessage = message;
 
         if (this.copyButton != null && this.copyButtonWithOutTimestamp != null) {
             this.copyButton.setPosition((int) mouseX, (int) mouseY);
@@ -133,7 +150,7 @@ public abstract class ChatScreenMixin extends Screen {
 
     @Unique
     private void closeContextMenu() {
-        this.selectedMessage = null;
+        this.contextMenuMessage = null;
 
         if (this.copyButton != null && this.copyButtonWithOutTimestamp != null) {
             this.copyButton.visible = false;
@@ -143,11 +160,11 @@ public abstract class ChatScreenMixin extends Screen {
 
     @Unique
     private void copyToClipboard(boolean hideTimestamp) {
-        if (this.selectedMessage == null) {
+        if (this.contextMenuMessage == null) {
             return;
         }
 
-        String text = this.selectedMessage.content().getString();
+        String text = this.contextMenuMessage.content().getString();
         this.minecraft.keyboardHandler.setClipboard(hideTimestamp && text.matches("^\\d{2}:\\d{2}:\\d{2} ") ? text.substring(9) : text);
         closeContextMenu();
     }
