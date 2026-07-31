@@ -89,6 +89,11 @@ public class ChatUtils {
         return ((ChatComponentAccessor) chat).getTrimmedMessages();
     }
 
+    public static int getChatScrollbarPos() {
+        ChatComponent chat = Minecraft.getInstance().gui.hud.getChat();
+        return ((ChatComponentAccessor) chat).getChatScrollbarPos();
+    }
+
     public static @Nullable GuiMessage getHoveredGuiMessage(double mouseX, double mouseY) {
         return ofNullable(getHoveredGuiMessageLine(mouseX, mouseY))
                 .map(GuiMessage.Line::parent)
@@ -104,10 +109,14 @@ public class ChatUtils {
         }
 
         // verify mouseY
-        int currentLineIndex = 0;
+        if (mouseY < (getChatBottomHeight() - getChatHeight()) || mouseY > getChatBottomHeight()) {
+            return null;
+        }
+
+        int currentLineIndex = getChatScrollbarPos();
         while (currentLineIndex < getTrimmedMessages().size()) {
-            int lineYStart = getChatBottomHeight() - (currentLineIndex + 1) * entryHeight;
-            int lineYEnd = getChatBottomHeight() - currentLineIndex * entryHeight;
+            int lineYStart = getChatBottomHeight() - (currentLineIndex - getChatScrollbarPos() + 1) * entryHeight;
+            int lineYEnd = getChatBottomHeight() - (currentLineIndex - getChatScrollbarPos()) * entryHeight;
 
             if (mouseY >= lineYStart && mouseY <= lineYEnd) {
                 return getTrimmedMessages().get(currentLineIndex);
@@ -131,9 +140,11 @@ public class ChatUtils {
         GuiMessage.Line topLine = lines.getLast();
         int topLineIndex = getTrimmedMessages().indexOf(topLine);
 
+        int scrollOffset = getChatScrollbarPos();
+
         // get boundary values
-        int bottom = getChatBottomHeight() - bottomLineIndex * entryHeight;
-        int top = getChatBottomHeight() - (topLineIndex + 1) * entryHeight;
+        int bottom = getChatBottomHeight() - bottomLineIndex * entryHeight + scrollOffset * entryHeight;
+        int top = getChatBottomHeight() - (topLineIndex + 1) * entryHeight + scrollOffset * entryHeight;
         int left = 2; // 2 because indicator offset
         int right = getChatWidth();
 
