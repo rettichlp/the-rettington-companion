@@ -6,6 +6,7 @@ import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
@@ -14,6 +15,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.client.gui.components.ChatComponent.getHeight;
 import static net.minecraft.client.gui.components.ChatComponent.getWidth;
@@ -22,8 +24,6 @@ import static net.minecraft.util.Mth.floor;
 import static net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
 
 public class ChatUtils {
-
-    public static GuiMessage LAST_HOVERED_GUI_MESSAGE;
 
     public static int getChatWidth() {
         Minecraft minecraft = Minecraft.getInstance();
@@ -89,10 +89,40 @@ public class ChatUtils {
         return ((ChatComponentAccessor) chat).getTrimmedMessages();
     }
 
-    public static @NonNull ScreenRectangle getGuiMessageBounds(GuiMessage.Line line, int entryHeight) {
+    public static @Nullable GuiMessage getHoveredGuiMessage(double mouseX, double mouseY) {
+        return ofNullable(getHoveredGuiMessageLine(mouseX, mouseY))
+                .map(GuiMessage.Line::parent)
+                .orElse(null);
+    }
+
+    public static GuiMessage.@Nullable Line getHoveredGuiMessageLine(double mouseX, double mouseY) {
+        int entryHeight = 9;
+
+        // verify mouseX
+        if (mouseX < 2 || mouseX > getChatWidth()) { // 2 because indicator offset
+            return null;
+        }
+
+        // verify mouseY
+        int currentLineIndex = 0;
+        while (currentLineIndex < getTrimmedMessages().size()) {
+            int lineYStart = getChatBottomHeight() - (currentLineIndex + 1) * entryHeight;
+            int lineYEnd = getChatBottomHeight() - currentLineIndex * entryHeight;
+
+            if (mouseY >= lineYStart && mouseY <= lineYEnd) {
+                return getTrimmedMessages().get(currentLineIndex);
+            }
+
+            currentLineIndex++;
+        }
+
+        return null;
+    }
+
+    public static @NonNull ScreenRectangle getGuiMessageBounds(GuiMessage guiMessage, int entryHeight) {
         // get all lines for this GuiMessage
         List<GuiMessage.Line> lines = getTrimmedMessages().stream()
-                .filter(l -> l.parent().equals(line.parent()))
+                .filter(l -> l.parent().equals(guiMessage))
                 .toList();
 
         // get boundary lines and indexes
