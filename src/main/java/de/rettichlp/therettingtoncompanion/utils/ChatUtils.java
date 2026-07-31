@@ -109,6 +109,10 @@ public class ChatUtils {
         }
 
         // verify mouseY
+        if (mouseY < (getChatBottomHeight() - getChatHeight()) || mouseY > getChatBottomHeight()) {
+            return null;
+        }
+
         int currentLineIndex = getChatScrollbarPos();
         while (currentLineIndex < getTrimmedMessages().size()) {
             int lineYStart = getChatBottomHeight() - (currentLineIndex - getChatScrollbarPos() + 1) * entryHeight;

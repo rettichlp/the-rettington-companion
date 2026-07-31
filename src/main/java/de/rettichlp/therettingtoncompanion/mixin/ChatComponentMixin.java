@@ -95,7 +95,7 @@ public abstract class ChatComponentMixin {
 
     @ModifyExpressionValue(method = { "addMessageToDisplayQueue", "addMessageToQueue", "addRecentChat" },
                            at = @At(value = "CONSTANT", args = "intValue=100"))
-    private int moreMessages(int hundred) {
+    private int trc$addMessageExpressionValue(int hundred) {
         return configuration.chat().isMoreMessages() ? MAX_VALUE : 100;
     }
 
