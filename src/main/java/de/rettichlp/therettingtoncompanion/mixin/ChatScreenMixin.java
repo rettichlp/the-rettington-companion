@@ -170,7 +170,7 @@ public abstract class ChatScreenMixin extends Screen {
         }
 
         String text = this.contextMenuMessage.content().getString();
-        this.minecraft.keyboardHandler.setClipboard(hideTimestamp && text.matches("^\\d{2}:\\d{2}:\\d{2} ") ? text.substring(9) : text);
+        this.minecraft.keyboardHandler.setClipboard(hideTimestamp && text.matches("^\\d{2}:\\d{2}:\\d{2} .*") ? text.substring(9) : text);
         closeContextMenu();
     }
 }
