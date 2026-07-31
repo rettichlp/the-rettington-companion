@@ -1,7 +1,9 @@
 package de.rettichlp.therettingtoncompanion.gui;
 
+import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.navigation.FocusNavigationEvent;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -39,5 +41,14 @@ public class PatternEditBox extends EditBox {
                 setTextColor(RED.getRGB());
             }
         });
+    }
+
+    @Override
+    public @Nullable ComponentPath nextFocusPath(@NonNull FocusNavigationEvent navigationEvent) {
+        if (navigationEvent instanceof FocusNavigationEvent.ArrowNavigation) {
+            return null;
+        }
+
+        return super.nextFocusPath(navigationEvent);
     }
 }

@@ -68,7 +68,7 @@ public class FilteredMessageEntry extends AbstractEntry {
         this.filteredMessage = filteredMessage;
         this.editable = editable;
 
-        this.patternEditBox = new PatternEditBox(this.minecraft.font, this.editable ? this.filteredMessage.getPattern().map(Pattern::pattern).orElse("null") : this.minecraft.getGameProfile().name(), this.filteredMessage::setPatternString);
+        this.patternEditBox = new PatternEditBox(this.minecraft.font, this.editable ? this.filteredMessage.getPatternString() : this.minecraft.getGameProfile().name(), this.filteredMessage::setPatternString);
         this.patternEditBox.setEditable(this.editable);
 
         boolean enabled = this.editable ? this.filteredMessage.isActive() : defaultFilteredMessage.isActive();

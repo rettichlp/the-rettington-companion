@@ -10,7 +10,6 @@ import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.client.multiplayer.chat.GuiMessageSource;
 import net.minecraft.client.multiplayer.chat.GuiMessageTag;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MessageSignature;
@@ -35,11 +34,10 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage.getBestMatchingFilteredMessage;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatHeight;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatWidth;
 import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Math.max;
 import static java.time.format.DateTimeFormatter.ofPattern;
-import static net.minecraft.client.gui.components.ChatComponent.getHeight;
-import static net.minecraft.client.gui.components.ChatComponent.getWidth;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.DARK_GRAY;
@@ -51,9 +49,6 @@ public abstract class ChatComponentMixin {
     @Shadow
     @Final
     private Minecraft minecraft;
-
-    @Shadow
-    public abstract boolean isChatFocused();
 
     @Inject(method = "clearMessages", at = @At("HEAD"), cancellable = true)
     public void trc$clearHead(boolean history, CallbackInfo ci) {
@@ -100,45 +95,25 @@ public abstract class ChatComponentMixin {
 
     @ModifyExpressionValue(method = { "addMessageToDisplayQueue", "addMessageToQueue", "addRecentChat" },
                            at = @At(value = "CONSTANT", args = "intValue=100"))
-    private int moreMessages(int hundred) {
+    private int trc$addMessageExpressionValue(int hundred) {
         return configuration.chat().isMoreMessages() ? MAX_VALUE : 100;
     }
 
     @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))
     private int trc$getWidthReturn(int width) {
-        if (!configuration.chat().isOptimizedChat()) {
-            return width;
-        }
-
-        double originMinecraftChatWidth = getWidth(this.minecraft.options.chatWidth().get());
-        double trcMinecraftChatWidth = this.minecraft.getWindow().getGuiScaledWidth() / 2.0 - 12; // I don't know why, but 12px offset
-
-        return (int) max(originMinecraftChatWidth, trcMinecraftChatWidth);
+        return getChatWidth() - 12; // I don't know why, but 12px offset'
     }
 
     @ModifyReturnValue(method = "getHeight()I", at = @At("RETURN"))
     private int trc$getHeightReturn(int height) {
-        if (!configuration.chat().isOptimizedChat()) {
-            return height;
-        }
-
-        // half of the screen height
-        int chatHeight = this.minecraft.getWindow().getGuiScaledHeight() / 2;
-        double minecraftChatHeight = getHeight(this.minecraft.options.chatHeightFocused().get());
-
-        return isChatFocused() ? ((int) max(chatHeight, minecraftChatHeight)) : height;
+        return getChatHeight();
     }
 
     @ModifyExpressionValue(method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V",
                            at = @At(value = "INVOKE",
                                     target = "Lnet/minecraft/util/Mth;floor(F)I"))
     private int trc$extractRenderStateExpressionValue(int original) {
-        LocalPlayer player = this.minecraft.player;
-        if (!configuration.chat().isOptimizedChat() || player == null) {
-            return original;
-        }
-
-        return getChatBottomHeight(this.minecraft, player);
+        return getChatBottomHeight();
     }
 
     @ModifyArgs(method = "lambda$extractRenderState$1(IILnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IFLnet/minecraft/client/multiplayer/chat/GuiMessage$Line;IF)V",
@@ -146,19 +121,17 @@ public abstract class ChatComponentMixin {
                          target = "Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;fill(IIIII)V"))
     private static void trc$method_75802Invoke(@NonNull Args args,
                                                @Local(argsOnly = true, name = "arg5") GuiMessage.@NonNull Line arg5) {
-        int originalColor = args.get(4);
-
-        // extract alpha value
-        int alpha = (originalColor >> 24) & 0xFF;
-
+        // check for filtered message
         FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(arg5.parent().content().getString());
+        if (bestMatchingFilteredMessage != null) {
+            int originalColor = args.get(4);
 
-        if (bestMatchingFilteredMessage == null) {
-            return;
+            // extract alpha value
+            int alpha = (originalColor >> 24) & 0xFF;
+
+            Color chatRegexColor = bestMatchingFilteredMessage.getColor();
+            int highlightColorWithAlpha = (alpha << 24) | (chatRegexColor.getRed() << 16) | (chatRegexColor.getGreen() << 8) | chatRegexColor.getBlue();
+            args.set(4, highlightColorWithAlpha);
         }
-
-        Color chatRegexColor = bestMatchingFilteredMessage.getColor();
-        int highlightColorWithAlpha = (alpha << 24) | (chatRegexColor.getRed() << 16) | (chatRegexColor.getGreen() << 8) | chatRegexColor.getBlue();
-        args.set(4, highlightColorWithAlpha);
     }
 }
