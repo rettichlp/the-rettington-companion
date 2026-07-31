@@ -43,7 +43,7 @@ public abstract class ChatScreenMixin extends Screen {
     private @Nullable Button copyButtonWithOutTimestamp;
 
     @Unique
-    private @Nullable GuiMessage selectedMessage;
+    private @Nullable GuiMessage contextMenuMessage;
 
     protected ChatScreenMixin(Component title) {
         super(title);
@@ -53,7 +53,11 @@ public abstract class ChatScreenMixin extends Screen {
             at = @At(value = "INVOKE",
                      target = "Lnet/minecraft/client/gui/components/ChatComponent;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V",
                      shift = AFTER))
-    public void trc$extractRenderStateInvoke(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
+    public void trc$extractRenderStateInvoke(@NonNull GuiGraphicsExtractor graphics,
+                                             int mouseX,
+                                             int mouseY,
+                                             float a,
+                                             CallbackInfo ci) {
         if (!configuration.chat().isOptimizedChat()) {
             return;
         }
@@ -94,6 +98,12 @@ public abstract class ChatScreenMixin extends Screen {
         }
     }
 
+    @Inject(method = "removed", at = @At("HEAD"))
+    public void trc$removedHead(CallbackInfo ci) {
+        this.minecraft.gui.hud.getChat().setVisibleMessageFilter(_ -> true);
+        closeContextMenu();
+    }
+
     @Inject(method = "init", at = @At("TAIL"))
     protected void trc$initTail(CallbackInfo ci) {
         this.copyButton = Button.builder(translatable("trc.chat_screen.context_menu.copy_message"), _ -> copyToClipboard(false))
@@ -120,12 +130,6 @@ public abstract class ChatScreenMixin extends Screen {
         }
     }
 
-    @Inject(method = "removed", at = @At("HEAD"))
-    public void trc$removedHead(CallbackInfo ci) {
-        this.minecraft.gui.hud.getChat().setVisibleMessageFilter(_ -> true);
-        closeContextMenu();
-    }
-
     @Unique
     private void onSearchChanged(String patternString) {
         ChatComponent chat = this.minecraft.gui.hud.getChat();
@@ -134,7 +138,7 @@ public abstract class ChatScreenMixin extends Screen {
 
     @Unique
     private void openContextMenu(GuiMessage message, double mouseX, double mouseY) {
-        this.selectedMessage = message;
+        this.contextMenuMessage = message;
 
         if (this.copyButton != null && this.copyButtonWithOutTimestamp != null) {
             this.copyButton.setPosition((int) mouseX, (int) mouseY);
@@ -146,7 +150,7 @@ public abstract class ChatScreenMixin extends Screen {
 
     @Unique
     private void closeContextMenu() {
-        this.selectedMessage = null;
+        this.contextMenuMessage = null;
 
         if (this.copyButton != null && this.copyButtonWithOutTimestamp != null) {
             this.copyButton.visible = false;
@@ -156,11 +160,11 @@ public abstract class ChatScreenMixin extends Screen {
 
     @Unique
     private void copyToClipboard(boolean hideTimestamp) {
-        if (this.selectedMessage == null) {
+        if (this.contextMenuMessage == null) {
             return;
         }
 
-        String text = this.selectedMessage.content().getString();
+        String text = this.contextMenuMessage.content().getString();
         this.minecraft.keyboardHandler.setClipboard(hideTimestamp && text.matches("^\\d{2}:\\d{2}:\\d{2} ") ? text.substring(9) : text);
         closeContextMenu();
     }
