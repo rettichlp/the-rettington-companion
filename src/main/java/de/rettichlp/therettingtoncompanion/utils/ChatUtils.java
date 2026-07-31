@@ -131,7 +131,7 @@ public class ChatUtils {
     public static @NonNull ScreenRectangle getGuiMessageBounds(GuiMessage guiMessage, int entryHeight) {
         // get all lines for this GuiMessage
         List<GuiMessage.Line> lines = getTrimmedMessages().stream()
-                .filter(l -> l.parent().equals(guiMessage))
+                .filter(l -> l.parent() == guiMessage)
                 .toList();
 
         // get boundary lines and indexes
