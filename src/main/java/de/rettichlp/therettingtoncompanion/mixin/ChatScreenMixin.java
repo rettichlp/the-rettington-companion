@@ -62,9 +62,8 @@ public abstract class ChatScreenMixin extends Screen {
             return;
         }
 
-        GuiMessage hoveredGuiMessage = getHoveredGuiMessage(mouseX, mouseY);
-        if (hoveredGuiMessage != null) {
-            ScreenRectangle guiMessageBounds = getGuiMessageBounds(hoveredGuiMessage, 9);
+        if (this.contextMenuMessage != null) {
+            ScreenRectangle guiMessageBounds = getGuiMessageBounds(this.contextMenuMessage, 9);
             graphics.fill(guiMessageBounds.left(), guiMessageBounds.top(), guiMessageBounds.right(), guiMessageBounds.top() + 1, CYAN.getRGB());
             graphics.fill(guiMessageBounds.left(), guiMessageBounds.bottom() - 1, guiMessageBounds.right(), guiMessageBounds.bottom(), CYAN.getRGB());
             graphics.fill(guiMessageBounds.left(), guiMessageBounds.top(), guiMessageBounds.left() + 1, guiMessageBounds.bottom(), CYAN.getRGB());
