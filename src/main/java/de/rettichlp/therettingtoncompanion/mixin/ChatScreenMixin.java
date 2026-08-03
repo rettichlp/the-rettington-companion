@@ -58,10 +58,6 @@ public abstract class ChatScreenMixin extends Screen {
                                              int mouseY,
                                              float a,
                                              CallbackInfo ci) {
-        if (!configuration.chat().isOptimizedChat()) {
-            return;
-        }
-
         if (this.contextMenuMessage != null) {
             ScreenRectangle guiMessageBounds = getGuiMessageBounds(this.contextMenuMessage, 9);
             graphics.fill(guiMessageBounds.left(), guiMessageBounds.top(), guiMessageBounds.right(), guiMessageBounds.top() + 1, CYAN.getRGB());
@@ -70,7 +66,9 @@ public abstract class ChatScreenMixin extends Screen {
             graphics.fill(guiMessageBounds.right() - 1, guiMessageBounds.top(), guiMessageBounds.right(), guiMessageBounds.bottom(), CYAN.getRGB());
         }
 
-        graphics.fill(this.patternEditBox.getX() - 2, this.patternEditBox.getY() - 2, this.patternEditBox.getX() + this.patternEditBox.getWidth() - 2, this.patternEditBox.getY() + this.patternEditBox.getHeight() - 2, this.minecraft.options.getBackgroundColor(MIN_VALUE));
+        if (configuration.chat().isChatSearch()) {
+            graphics.fill(this.patternEditBox.getX() - 2, this.patternEditBox.getY() - 2, this.patternEditBox.getX() + this.patternEditBox.getWidth() - 2, this.patternEditBox.getY() + this.patternEditBox.getHeight() - 2, this.minecraft.options.getBackgroundColor(MIN_VALUE));
+        }
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
@@ -123,7 +121,7 @@ public abstract class ChatScreenMixin extends Screen {
         addRenderableWidget(this.copyButtonWithOutTimestamp);
 
         LocalPlayer player = this.minecraft.player;
-        if (configuration.chat().isOptimizedChat() && player != null) {
+        if (configuration.chat().isChatSearch() && player != null) {
             this.patternEditBox.setSize(this.minecraft.getWindow().getGuiScaledWidth() / 2 - 91 - 7 - 2, 12); // right end of left offhand slot
             this.patternEditBox.setPosition(4, getChatBottomHeight() + 4);
             this.patternEditBox.setHint(translatable("debug.options.search"));
