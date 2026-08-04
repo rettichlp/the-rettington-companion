@@ -21,7 +21,7 @@ public class WidgetsConfiguration {
         this.size = size;
 
         // update widget positions
-        widgetService.getInitializedWidgets().forEach(abstractTRCWidget -> {
+        widgetService.getInitializedWidgets().keySet().forEach(abstractTRCWidget -> {
             WidgetConfiguration widgetConfiguration = abstractTRCWidget.getWidgetConfiguration();
             widgetConfiguration.setX(toNearestGridAnchorX(widgetConfiguration.getX()));
             widgetConfiguration.setY(toNearestGridAnchorY(widgetConfiguration.getY()));
