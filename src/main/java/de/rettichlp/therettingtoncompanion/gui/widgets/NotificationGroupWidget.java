@@ -58,17 +58,6 @@ public class NotificationGroupWidget extends AbstractTRCWidgetGroup<Notification
     }
 
     @Override
-    public void extractWidget(@NotNull GuiGraphicsExtractor graphics, int x, int y, Color color, boolean backgroundEnabled) {
-        super.extractWidget(graphics, x, y, color, backgroundEnabled);
-
-        if (isWidgetPositionScreen()) {
-            // render caption to tell users what this blue box is
-            MutableComponent label = translatable("trc.widgets.notification_group.label");
-            graphics.text(this.minecraft.font, label, x + getWidth() / 2 - this.minecraft.font.width(label) / 2, y + getHeight() / 2 - this.minecraft.font.lineHeight / 2, color.getRGB(), false);
-        }
-    }
-
-    @Override
     public List<? extends AbstractTRCWidget<?>> widgets() {
         return notificationService.getVisibleNotifications().stream()
                 .map(NotificationWidget::new)
@@ -78,6 +67,17 @@ public class NotificationGroupWidget extends AbstractTRCWidgetGroup<Notification
     @Override
     public Alignment alignment() {
         return getWidgetConfiguration().getAlignment();
+    }
+
+    @Override
+    public void extractWidget(@NotNull GuiGraphicsExtractor graphics, int x, int y, Color color, boolean backgroundEnabled) {
+        super.extractWidget(graphics, x, y, color, backgroundEnabled);
+
+        if (isWidgetPositionScreen()) {
+            // render caption to tell users what this blue box is
+            MutableComponent label = translatable("trc.widgets.notification_group.label");
+            graphics.text(this.minecraft.font, label, x + getWidth() / 2 - this.minecraft.font.width(label) / 2, y + getHeight() / 2 - this.minecraft.font.lineHeight / 2, color.getRGB(), false);
+        }
     }
 
     @Data
