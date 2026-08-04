@@ -47,12 +47,6 @@ public class NotificationGroupWidget extends AbstractTRCWidgetGroup<Notification
     }
 
     @Override
-    public boolean isVisible() {
-        return widgets().stream()
-                .allMatch(abstractTRCWidget -> abstractTRCWidget instanceof NotificationWidget notificationWidget && notificationWidget.getNotification().isVisible());
-    }
-
-    @Override
     public List<? extends AbstractTRCWidget<?>> widgets() {
         return notificationService.getVisibleNotifications().stream()
                 .map(NotificationWidget::new)
