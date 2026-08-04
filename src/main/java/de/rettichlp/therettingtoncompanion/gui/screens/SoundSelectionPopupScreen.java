@@ -3,6 +3,7 @@ package de.rettichlp.therettingtoncompanion.gui.screens;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
@@ -25,6 +26,8 @@ import static net.minecraft.network.chat.CommonComponents.GUI_CANCEL;
 import static net.minecraft.network.chat.CommonComponents.GUI_DONE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.GRAY;
 import static net.minecraft.resources.Identifier.parse;
 
 public class SoundSelectionPopupScreen extends Screen {
@@ -61,6 +64,8 @@ public class SoundSelectionPopupScreen extends Screen {
         this.input = this.layout.addChild(new EditBox(this.font, 296, 20, empty()), LayoutSettings::alignHorizontallyCenter);
         this.input.setValue(this.initialSound != null ? this.initialSound.toString() : "");
         this.input.setResponder(value -> this.input.setTextColor((value.isBlank() || isValidSoundIdentifier(value) ? WHITE : RED).getRGB()));
+
+        this.layout.addChild(new StringWidget(translatable("trc.option.chat.filtered_messages.popup.sound.hint").withStyle(style -> style.withColor(GRAY).withItalic(true)), this.font), LayoutSettings::alignHorizontallyCenter);
 
         // buttons
         LinearLayout buttonRow = horizontal().spacing(SPACING_HORIZONTAL);

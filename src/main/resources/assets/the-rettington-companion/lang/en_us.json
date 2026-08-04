@@ -38,6 +38,7 @@
   "trc.option.chat.filtered_messages.section_title": "Filter messages",
   "trc.option.chat.filtered_messages.popup.color.title": "Color",
   "trc.option.chat.filtered_messages.popup.sound.title": "Sound",
+  "trc.option.chat.filtered_messages.popup.sound.hint": "Leave empty for no sound",
   "trc.option.chat.hidden_messages.section_title": "Hide messages",
   "trc.option.chat.hidden_messages.managed_by_other_mod": "This hidden message is handled by another mod (%s)",
   "trc.option.inventory.auto_restock.label": "Auto restock",
