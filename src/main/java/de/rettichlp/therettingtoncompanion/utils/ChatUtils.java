@@ -19,6 +19,8 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
+import static net.minecraft.client.gui.components.ChatComponent.getHeight;
+import static net.minecraft.client.gui.components.ChatComponent.getWidth;
 import static net.minecraft.util.Mth.ceil;
 import static net.minecraft.util.Mth.floor;
 import static net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
@@ -28,7 +30,7 @@ public class ChatUtils {
     public static double getMaxChatWidth(Window window, double defaultChatWidth) {
         return !configuration.chat().isOptimizedChat()
                 ? defaultChatWidth
-                : window.getGuiScaledWidth() / 2.0 - 40 - 12; // minus min width and an offset I don't know from where it comes
+                : window.getGuiScaledWidth() / 2.0 - 40 - 12; // minus min width; I don't know from where the offset of 12 comes
     }
 
     public static double getMaxChatHeight(Window window, double defaultChatHeight) {
@@ -91,8 +93,8 @@ public class ChatUtils {
     public static GuiMessage.@Nullable Line getHoveredGuiMessageLine(double mouseX, double mouseY) {
         int entryHeight = 9;
         Options options = Minecraft.getInstance().options;
-        Double chatWidth = options.chatWidth().get();
-        Double chatHeight = options.chatHeightFocused().get();
+        int chatWidth = getWidth(options.chatWidth().get());
+        int chatHeight = getHeight(options.chatHeightFocused().get());
 
         // verify mouseX
         if (mouseX < 2 || mouseX > chatWidth) { // 2 because indicator offset
@@ -136,9 +138,9 @@ public class ChatUtils {
         // get boundary values
         int bottom = getChatBottomHeight() - bottomLineIndex * entryHeight + scrollOffset * entryHeight;
         int top = getChatBottomHeight() - (topLineIndex + 1) * entryHeight + scrollOffset * entryHeight;
-        int left = 2; // 2 because indicator offset
-        int right = Minecraft.getInstance().options.chatWidth().get().intValue();
+        int left = 0;
+        int width = getWidth(Minecraft.getInstance().options.chatWidth().get()) + 12; // I don't know from where the offset of 12 comes
 
-        return new ScreenRectangle(left, top, right - left, bottom - top);
+        return new ScreenRectangle(left + 2, top, width - 2, bottom - top); // 2 because indicator offset
     }
 }
