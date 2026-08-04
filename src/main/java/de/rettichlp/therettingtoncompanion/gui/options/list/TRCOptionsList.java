@@ -48,6 +48,10 @@ public class TRCOptionsList extends ContainerObjectSelectionList<AbstractEntry> 
         addEntry(new HeaderEntry(this.minecraft.font, text), ENTRY_HEIGHT + ENTRY_HEADER_PADDING_TOP);
     }
 
+    public void addText(Component text) {
+        addEntry(new TextEntry(this.minecraft.font, text));
+    }
+
     public void addButton(Component label, Component caption, Tooltip tooltip, Button.OnPress onPress) {
         addEntry(new ButtonEntry(this.minecraft.font, label, caption, tooltip, onPress));
     }

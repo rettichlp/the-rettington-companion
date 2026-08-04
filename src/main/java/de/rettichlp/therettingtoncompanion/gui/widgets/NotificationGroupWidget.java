@@ -4,6 +4,7 @@ import de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList;
 import de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCProgressTextWidget;
 import de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget;
 import de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidgetGroup;
+import de.rettichlp.therettingtoncompanion.gui.widgets.base.AlwaysEnabled;
 import de.rettichlp.therettingtoncompanion.gui.widgets.base.WidgetConfiguration;
 import de.rettichlp.therettingtoncompanion.models.Notification;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ import static net.minecraft.client.gui.components.Tooltip.create;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.translatable;
 
+@AlwaysEnabled
 public class NotificationGroupWidget extends AbstractTRCWidgetGroup<NotificationGroupWidget.Configuration> {
 
     @Override
@@ -44,6 +46,11 @@ public class NotificationGroupWidget extends AbstractTRCWidgetGroup<Notification
     @Override
     public void addOptions(@NonNull TRCOptionsList optionsList) {
         optionsList.addCycleButton(translatable("trc.widgets.notification_group.options.alignment.label"), create(translatable("trc.widgets.notification_group.options.alignment.tooltip")), getWidgetConfiguration().getAlignment(), List.of(Alignment.values()), (_, value) -> getWidgetConfiguration().setAlignment(value));
+    }
+
+    @Override
+    public boolean isVisible() {
+        return true;
     }
 
     @Override
