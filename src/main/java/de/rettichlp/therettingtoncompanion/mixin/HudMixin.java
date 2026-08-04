@@ -97,7 +97,7 @@ public abstract class HudMixin {
 
         // render widgets
         Profiler.get().push("widget");
-        widgetService.getInitializedWidgets().forEach(abstractWidget -> abstractWidget.extractWidget(graphics));
+        widgetService.getInitializedWidgets().keySet().forEach(abstractWidget -> abstractWidget.extractWidget(graphics));
         Profiler.get().pop();
 
         // render empty inventory space text

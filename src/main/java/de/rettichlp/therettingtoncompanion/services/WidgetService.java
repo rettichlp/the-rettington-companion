@@ -11,9 +11,8 @@ import org.jspecify.annotations.NonNull;
 
 import java.awt.Color;
 import java.time.temporal.Temporal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
@@ -32,26 +31,26 @@ public class WidgetService {
     );
 
     @Getter
-    private final Set<AbstractTRCWidget<?>> initializedWidgets = new HashSet<>();
+    private final Map<AbstractTRCWidget<?>, String> initializedWidgets = new LinkedHashMap<>();
 
     public void initWidgets() {
-        List<AbstractTRCWidget<?>> widgets = new ArrayList<>();
+        LinkedHashMap<AbstractTRCWidget<?>, String> widgetsToInitialize = new LinkedHashMap<>();
 
         // load widgets from this mod
         this.widgets.stream()
                 .filter(abstractTRCWidget -> abstractTRCWidget.getRegistryName() != null)
                 .sorted(comparing(AbstractTRCWidget::getRegistryName))
-                .forEach(widgets::add);
+                .forEach(abstractTRCWidget -> widgetsToInitialize.put(abstractTRCWidget, MOD_ID));
 
         // load widgets from other mods
         FabricLoader.getInstance().getEntrypointContainers(MOD_ID, TheRettingtonCompanionApi.class).forEach(container -> {
-            TheRettingtonCompanionApi entrypoint = container.getEntrypoint();
-            widgets.addAll(entrypoint.getWidgets());
+            String providerId = container.getProvider().getMetadata().getId();
+            container.getEntrypoint().getWidgets().forEach(widget -> widgetsToInitialize.put(widget, providerId));
         });
 
-        widgets.forEach(abstractTRCWidget -> {
+        widgetsToInitialize.forEach((abstractTRCWidget, providingModId) -> {
             abstractTRCWidget.init();
-            this.initializedWidgets.add(abstractTRCWidget);
+            this.initializedWidgets.put(abstractTRCWidget, providingModId);
         });
 
         LOGGER.info("Initialized {} widgets", this.initializedWidgets.size());
