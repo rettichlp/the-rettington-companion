@@ -173,8 +173,8 @@ public class FilteredMessageEntry extends AbstractEntry {
                     : Optional.empty();
         }
 
-        public Identifier getSoundIdentifier() {
-            return isValidSoundIdentifier(this.soundIdentifierString) ? parse(this.soundIdentifierString) : DEFAULT_SOUND.location();
+        public @Nullable Identifier getSoundIdentifier() {
+            return isValidSoundIdentifier(this.soundIdentifierString) ? parse(this.soundIdentifierString) : null;
         }
 
         public Color getColor() {

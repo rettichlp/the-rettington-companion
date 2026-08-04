@@ -34,12 +34,12 @@ public class SoundSelectionPopupScreen extends Screen {
     private final LinearLayout layout = vertical().spacing(SPACING_VERTICAL);
 
     private final @Nullable Screen backgroundScreen;
-    private final Identifier initialSound;
+    private final @Nullable Identifier initialSound;
     private final Consumer<String> onClose;
 
     private EditBox input;
 
-    public SoundSelectionPopupScreen(@Nullable Screen backgroundScreen, Identifier initialSound, Consumer<String> onClose) {
+    public SoundSelectionPopupScreen(@Nullable Screen backgroundScreen, @Nullable Identifier initialSound, Consumer<String> onClose) {
         super(literal("sound"));
         this.backgroundScreen = backgroundScreen;
         this.initialSound = initialSound;
@@ -59,8 +59,8 @@ public class SoundSelectionPopupScreen extends Screen {
 
         this.layout.newCellSettings().alignHorizontallyCenter();
         this.input = this.layout.addChild(new EditBox(this.font, 296, 20, empty()), LayoutSettings::alignHorizontallyCenter);
-        this.input.setValue(this.initialSound.toString());
-        this.input.setResponder(value -> this.input.setTextColor((isValidSoundIdentifier(value) ? WHITE : RED).getRGB()));
+        this.input.setValue(this.initialSound != null ? this.initialSound.toString() : "");
+        this.input.setResponder(value -> this.input.setTextColor((value.isBlank() || isValidSoundIdentifier(value) ? WHITE : RED).getRGB()));
 
         // buttons
         LinearLayout buttonRow = horizontal().spacing(SPACING_HORIZONTAL);
@@ -108,7 +108,7 @@ public class SoundSelectionPopupScreen extends Screen {
         onClose();
     }
 
-    public static boolean isValidSoundIdentifier(String identifierString) {
+    public static boolean isValidSoundIdentifier(@Nullable String identifierString) {
         if (identifierString == null) {
             return false;
         }

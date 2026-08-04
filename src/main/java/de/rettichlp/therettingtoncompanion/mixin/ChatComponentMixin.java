@@ -74,7 +74,9 @@ public abstract class ChatComponentMixin {
         FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(contents.getString());
         if (bestMatchingFilteredMessage != null && this.minecraft.player != null) {
             Identifier chatRegexSoundIdentifier = bestMatchingFilteredMessage.getSoundIdentifier();
-            this.minecraft.player.playSound(createVariableRangeEvent(chatRegexSoundIdentifier), 1.0f, 1.5f);
+            if (chatRegexSoundIdentifier != null) {
+                this.minecraft.player.playSound(createVariableRangeEvent(chatRegexSoundIdentifier), 1.0f, 1.5f);
+            }
         }
     }
 
