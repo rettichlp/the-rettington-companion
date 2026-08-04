@@ -1,7 +1,9 @@
 package de.rettichlp.therettingtoncompanion.utils;
 
+import com.mojang.blaze3d.platform.Window;
 import de.rettichlp.therettingtoncompanion.mixin.ChatComponentAccessor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
@@ -17,36 +19,22 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
-import static net.minecraft.client.gui.components.ChatComponent.getHeight;
-import static net.minecraft.client.gui.components.ChatComponent.getWidth;
 import static net.minecraft.util.Mth.ceil;
 import static net.minecraft.util.Mth.floor;
 import static net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
 
 public class ChatUtils {
 
-    public static int getChatWidth() {
-        Minecraft minecraft = Minecraft.getInstance();
-        double originMinecraftChatWidth = getWidth(minecraft.options.chatWidth().get());
-
-        if (!configuration.chat().isOptimizedChat()) {
-            return (int) originMinecraftChatWidth;
-        }
-
-        double trcMinecraftChatWidth = minecraft.getWindow().getGuiScaledWidth() / 2.0;
-        return (int) max(originMinecraftChatWidth, trcMinecraftChatWidth);
+    public static double getMaxChatWidth(Window window, double defaultChatWidth) {
+        return !configuration.chat().isOptimizedChat()
+                ? defaultChatWidth
+                : window.getGuiScaledWidth() / 2.0 - 40 - 12; // minus min width and an offset I don't know from where it comes
     }
 
-    public static int getChatHeight() {
-        Minecraft minecraft = Minecraft.getInstance();
-        double originMinecraftChatHeight = getHeight(minecraft.options.chatHeightFocused().get());
-
-        if (!configuration.chat().isOptimizedChat()) {
-            return (int) originMinecraftChatHeight;
-        }
-
-        double trcMinecraftChatHeight = minecraft.getWindow().getGuiScaledHeight() / 2.0;
-        return (int) (minecraft.gui.hud.getChat().isChatFocused() ? (max(trcMinecraftChatHeight, originMinecraftChatHeight)) : originMinecraftChatHeight);
+    public static double getMaxChatHeight(Window window, double defaultChatHeight) {
+        return !configuration.chat().isOptimizedChat()
+                ? defaultChatHeight
+                : window.getGuiScaledHeight() / 2.0 - 20; // minus min height
     }
 
     public static int getChatBottomHeight() {
@@ -102,14 +90,17 @@ public class ChatUtils {
 
     public static GuiMessage.@Nullable Line getHoveredGuiMessageLine(double mouseX, double mouseY) {
         int entryHeight = 9;
+        Options options = Minecraft.getInstance().options;
+        Double chatWidth = options.chatWidth().get();
+        Double chatHeight = options.chatHeightFocused().get();
 
         // verify mouseX
-        if (mouseX < 2 || mouseX > getChatWidth()) { // 2 because indicator offset
+        if (mouseX < 2 || mouseX > chatWidth) { // 2 because indicator offset
             return null;
         }
 
         // verify mouseY
-        if (mouseY < (getChatBottomHeight() - getChatHeight()) || mouseY > getChatBottomHeight()) {
+        if (mouseY < (getChatBottomHeight() - chatHeight) || mouseY > getChatBottomHeight()) {
             return null;
         }
 
@@ -146,7 +137,7 @@ public class ChatUtils {
         int bottom = getChatBottomHeight() - bottomLineIndex * entryHeight + scrollOffset * entryHeight;
         int top = getChatBottomHeight() - (topLineIndex + 1) * entryHeight + scrollOffset * entryHeight;
         int left = 2; // 2 because indicator offset
-        int right = getChatWidth();
+        int right = Minecraft.getInstance().options.chatWidth().get().intValue();
 
         return new ScreenRectangle(left, top, right - left, bottom - top);
     }
