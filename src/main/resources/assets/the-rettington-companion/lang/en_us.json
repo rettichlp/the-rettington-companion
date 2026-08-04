@@ -72,6 +72,7 @@
   "trc.weather_value.thunder": "Rain & thunder",
   "trc.widgets.options.enabled.label": "Enabled",
   "trc.widgets.options.enabled.tooltip": "Toggles the widget.",
+  "trc.widgets.options.always_enabled": "This widget is always enabled.",
   "trc.widgets.options.color.label": "Color",
   "trc.widgets.options.color.tooltip": "Color of the widget.",
   "trc.widgets.options.background_enabled.label": "Draw background",
