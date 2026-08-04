@@ -1,8 +1,8 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.platform.Window;
 import de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry;
 import de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry;
 import net.minecraft.client.Minecraft;
@@ -19,8 +19,10 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
@@ -34,8 +36,8 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage.getBestMatchingFilteredMessage;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
-import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatHeight;
-import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatWidth;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMaxChatHeight;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMaxChatWidth;
 import static java.lang.Integer.MAX_VALUE;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static net.minecraft.network.chat.Component.empty;
@@ -99,21 +101,23 @@ public abstract class ChatComponentMixin {
         return configuration.chat().isMoreMessages() ? MAX_VALUE : 100;
     }
 
-    @ModifyReturnValue(method = "getWidth()I", at = @At("RETURN"))
-    private int trc$getWidthReturn(int width) {
-        return getChatWidth() - 12; // I don't know why, but 12px offset'
-    }
-
-    @ModifyReturnValue(method = "getHeight()I", at = @At("RETURN"))
-    private int trc$getHeightReturn(int height) {
-        return getChatHeight();
-    }
-
     @ModifyExpressionValue(method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V",
                            at = @At(value = "INVOKE",
                                     target = "Lnet/minecraft/util/Mth;floor(F)I"))
     private int trc$extractRenderStateExpressionValue(int original) {
         return getChatBottomHeight();
+    }
+
+    @ModifyConstant(method = "getWidth(D)I", constant = @Constant(doubleValue = 280.0D))
+    private static double trc$getWidthConstant(double constant) {
+        Window window = Minecraft.getInstance().getWindow();
+        return window == null ? constant : getMaxChatWidth(window, constant);
+    }
+
+    @ModifyConstant(method = "getHeight(D)I", constant = @Constant(doubleValue = 160.0D))
+    private static double trc$getHeightConstant(double constant) {
+        Window window = Minecraft.getInstance().getWindow();
+        return window == null ? constant : getMaxChatHeight(window, constant);
     }
 
     @ModifyArgs(method = "lambda$extractRenderState$1(IILnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IFLnet/minecraft/client/multiplayer/chat/GuiMessage$Line;IF)V",
