@@ -77,7 +77,7 @@ public class WidgetPositionScreen extends Screen {
     public boolean mouseClicked(@NonNull MouseButtonEvent event, boolean doubleClick) {
         boolean mouseClicked = super.mouseClicked(event, doubleClick);
 
-        widgetService.getInitializedWidgets().stream()
+        widgetService.getInitializedWidgets().keySet().stream()
                 .filter(abstractTRCWidget -> abstractTRCWidget.isMouseOver(event.x(), event.y()))
                 .findFirst()
                 .ifPresent(abstractTRCWidget -> {

@@ -4,6 +4,7 @@ import de.rettichlp.therettingtoncompanion.gui.options.list.FullWidthButtonEntry
 import de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList;
 import de.rettichlp.therettingtoncompanion.gui.screens.ColorSelectionPopupScreen;
 import de.rettichlp.therettingtoncompanion.gui.screens.WidgetPositionScreen;
+import de.rettichlp.therettingtoncompanion.gui.widgets.base.AlwaysEnabled;
 import de.rettichlp.therettingtoncompanion.gui.widgets.base.WidgetConfiguration;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
@@ -14,6 +15,7 @@ import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
 import static net.minecraft.client.gui.components.Tooltip.create;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.GRAY;
 
 public class WidgetsOptionsTab extends AbstractTRCOptionsTab {
 
@@ -33,14 +35,21 @@ public class WidgetsOptionsTab extends AbstractTRCOptionsTab {
         optionsList.addFullWidthSlider(translatable("trc.option.widgets.size.label"), 4, 16, configuration.widgets().getSize(), value -> configuration.widgets().setSize(value));
         optionsList.addFullWidthSlider(translatable("trc.option.widgets.padding.label"), 0, 5, configuration.widgets().getPadding(), value -> configuration.widgets().setPadding(value));
 
-        widgetService.getInitializedWidgets().forEach(abstractTRCWidget -> {
+        widgetService.getInitializedWidgets().forEach((abstractTRCWidget, providingModId) -> {
             Component label = abstractTRCWidget.getLabel().copy()
                     .append(literal(" - ").withStyle(style -> style.withBold(false)))
                     .append(abstractTRCWidget.getTooltip().copy().withStyle(style -> style.withBold(false)));
-            optionsList.addHeader(label);
+            optionsList.addHeader(label, providingModId);
 
             WidgetConfiguration widgetConfiguration = abstractTRCWidget.getWidgetConfiguration();
-            optionsList.addToggleButton(translatable("trc.widgets.options.enabled.label"), create(translatable("trc.widgets.options.enabled.tooltip")), widgetConfiguration.isEnabled(), (button, value) -> widgetConfiguration.setEnabled(value == ON));
+
+            boolean alwaysEnabled = abstractTRCWidget.getClass().isAnnotationPresent(AlwaysEnabled.class);
+            if (alwaysEnabled) {
+                optionsList.addText(translatable("trc.widgets.options.always_enabled").withStyle(style -> style.withColor(GRAY).withItalic(true)));
+            } else {
+                optionsList.addToggleButton(translatable("trc.widgets.options.enabled.label"), create(translatable("trc.widgets.options.enabled.tooltip")), alwaysEnabled, (_, value) -> widgetConfiguration.setEnabled(value == ON));
+            }
+
             optionsList.addColorButton(translatable("trc.widgets.options.color.label"), create(translatable("trc.widgets.options.color.tooltip")), widgetConfiguration.getColor(), (button, color) -> this.minecraft.gui.setScreen(new ColorSelectionPopupScreen(this.minecraft.gui.screen(), color, value -> {
                 widgetConfiguration.setColor(value);
                 button.setColor(value);

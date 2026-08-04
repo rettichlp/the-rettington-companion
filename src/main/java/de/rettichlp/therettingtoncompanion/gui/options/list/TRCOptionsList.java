@@ -13,6 +13,7 @@ import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.Color;
 import java.util.Collection;
@@ -44,8 +45,12 @@ public class TRCOptionsList extends ContainerObjectSelectionList<AbstractEntry> 
         return max(424, this.screen.width / 3);
     }
 
-    public void addHeader(Component text) {
-        addEntry(new HeaderEntry(this.minecraft.font, text), ENTRY_HEIGHT + ENTRY_HEADER_PADDING_TOP);
+    public void addHeader(Component text, @Nullable String iconPath) {
+        addEntry(new HeaderEntry(this.minecraft.font, text, iconPath), ENTRY_HEIGHT + ENTRY_HEADER_PADDING_TOP);
+    }
+
+    public void addText(Component text) {
+        addEntry(new TextEntry(this.minecraft.font, text));
     }
 
     public void addButton(Component label, Component caption, Tooltip tooltip, Button.OnPress onPress) {
