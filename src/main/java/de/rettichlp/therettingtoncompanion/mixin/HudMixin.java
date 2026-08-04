@@ -84,15 +84,15 @@ public abstract class HudMixin {
             int squareSize = configuration.widgets().getSize();
 
             for (Integer snapPosition : getSnapPositions(graphics.guiWidth(), squareSize)) {
-                graphics.verticalLine(snapPosition, -1, graphics.guiHeight(), DARK_GRAY.getValue());
+                graphics.verticalLine(snapPosition, -1, graphics.guiHeight(), DARK_GRAY.getValue() | 0xFF000000);
             }
 
             for (Integer snapPosition : getSnapPositions(graphics.guiHeight(), squareSize)) {
-                graphics.horizontalLine(-1, graphics.guiWidth(), snapPosition, DARK_GRAY.getValue());
+                graphics.horizontalLine(-1, graphics.guiWidth(), snapPosition, DARK_GRAY.getValue() | 0xFF000000);
             }
 
-            graphics.verticalLine(graphics.guiWidth() / 2, -1, graphics.guiHeight(), DARK_AQUA.getValue());
-            graphics.horizontalLine(-1, graphics.guiWidth(), graphics.guiHeight() / 2, DARK_AQUA.getValue());
+            graphics.verticalLine(graphics.guiWidth() / 2, -1, graphics.guiHeight(), DARK_AQUA.getValue() | 0xFF000000);
+            graphics.horizontalLine(-1, graphics.guiWidth(), graphics.guiHeight() / 2, DARK_AQUA.getValue() | 0xFF000000);
         }
 
         // render widgets
