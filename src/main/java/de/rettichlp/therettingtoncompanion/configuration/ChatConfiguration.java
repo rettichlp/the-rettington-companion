@@ -19,6 +19,7 @@ public class ChatConfiguration {
     private boolean keepMessagesOnDisconnect = true;
     private boolean chatTime = false;
     private boolean chatSearch = true;
+    private boolean mergeDuplicateMessages = true;
 
     @Data
     public static class FilteredMessageConfiguration {
