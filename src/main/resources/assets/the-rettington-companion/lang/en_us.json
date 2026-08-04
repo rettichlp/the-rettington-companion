@@ -35,6 +35,8 @@
   "trc.option.chat.general.chat_time.tooltip": "Adds a timestamp to each chat message",
   "trc.option.chat.general.chat_search.label": "Chat search",
   "trc.option.chat.general.chat_search.tooltip": "Shows a search field below the chat box to filter messages",
+  "trc.option.chat.general.merge_duplicate_messages.label": "Merge duplicate messages",
+  "trc.option.chat.general.merge_duplicate_messages.tooltip": "Shows repeated identical messages only once with a multiplier (e.g. x3) instead of listing each one separately",
   "trc.option.chat.filtered_messages.section_title": "Filter messages",
   "trc.option.chat.filtered_messages.popup.color.title": "Color",
   "trc.option.chat.filtered_messages.popup.sound.title": "Sound",

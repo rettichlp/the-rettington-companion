@@ -13,11 +13,13 @@ import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MessageSignature;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,7 +31,10 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.awt.Color;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
@@ -39,18 +44,30 @@ import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomH
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMaxChatHeight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMaxChatWidth;
 import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Integer.parseInt;
+import static java.lang.String.valueOf;
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.regex.Pattern.compile;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.YELLOW;
 import static net.minecraft.sounds.SoundEvent.createVariableRangeEvent;
 
 @Mixin(ChatComponent.class)
 public abstract class ChatComponentMixin {
 
+    @Unique
+    private static final Pattern MESSAGE_PATTERN = compile("^(?<timestamp>\\d{2}:\\d{2}:\\d{2} )?(?<message>.*?)(?: — (?<mergeCount>\\d+))?$");
+
     @Shadow
     @Final
     private Minecraft minecraft;
+
+    @Shadow
+    @Final
+    private List<GuiMessage> allMessages;
 
     @Inject(method = "clearMessages", at = @At("HEAD"), cancellable = true)
     public void trc$clearHead(boolean history, CallbackInfo ci) {
@@ -58,6 +75,9 @@ public abstract class ChatComponentMixin {
             ci.cancel();
         }
     }
+
+    @Shadow
+    protected abstract void refreshTrimmedMessages();
 
     @Inject(method = "addMessage", at = @At("HEAD"), cancellable = true)
     private void trc$addMessageHead(@NonNull Component contents,
@@ -82,19 +102,39 @@ public abstract class ChatComponentMixin {
 
     @ModifyVariable(method = "addMessage", at = @At("HEAD"), argsOnly = true, name = "contents")
     private @NonNull Component trc$addMessageHead(@NonNull Component contents) {
-        if (!configuration.chat().isChatTime()) {
-            return contents;
+        MutableComponent newComponent = empty();
+
+        if (configuration.chat().isChatTime()) {
+            LocalDateTime now = LocalDateTime.now();
+            String timeString = now.format(ofPattern("HH:mm:ss "));
+            String dateString = now.format(ofPattern("dd.MM.yyyy"));
+
+            newComponent
+                    .append(literal(timeString).withStyle(style -> style
+                            .withColor(DARK_GRAY)
+                            .withHoverEvent(new HoverEvent.ShowText(literal(dateString)))))
+                    .append(contents);
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        String timeString = now.format(ofPattern("HH:mm:ss "));
-        String dateString = now.format(ofPattern("dd.MM.yyyy"));
+        if (configuration.chat().isMergeDuplicateMessages() && !this.allMessages.isEmpty()) {
+            String lastMessageInChat = this.allMessages.getFirst().content().getString();
 
-        return empty()
-                .append(literal(timeString).withStyle(style -> style
-                        .withColor(DARK_GRAY)
-                        .withHoverEvent(new HoverEvent.ShowText(literal(dateString)))))
-                .append(contents);
+            Matcher messageMatcher = MESSAGE_PATTERN.matcher(lastMessageInChat);
+            if (messageMatcher.find()) {
+                String lastMessageStringRaw = messageMatcher.group("message");
+                int currentMergeCount = messageMatcher.group("mergeCount") == null ? 1 : parseInt(messageMatcher.group("mergeCount"));
+
+                if (lastMessageStringRaw.equals(contents.getString())) {
+                    this.allMessages.removeFirst();
+                    refreshTrimmedMessages();
+                    newComponent
+                            .append(literal(" — ").withColor(GRAY))
+                            .append(literal(valueOf((currentMergeCount + 1))).withColor(YELLOW));
+                }
+            }
+        }
+
+        return newComponent;
     }
 
     @ModifyExpressionValue(method = { "addMessageToDisplayQueue", "addMessageToQueue", "addRecentChat" },
