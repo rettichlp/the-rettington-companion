@@ -11,11 +11,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.awt.Color;
 import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
@@ -51,6 +55,17 @@ public class NotificationGroupWidget extends AbstractTRCWidgetGroup<Notification
     @Override
     public boolean isVisible() {
         return true;
+    }
+
+    @Override
+    public void extractWidget(@NotNull GuiGraphicsExtractor graphics, int x, int y, Color color, boolean backgroundEnabled) {
+        super.extractWidget(graphics, x, y, color, backgroundEnabled);
+
+        if (isWidgetPositionScreen()) {
+            // render caption to tell users what this blue box is
+            MutableComponent label = translatable("trc.widgets.notification_group.label");
+            graphics.text(this.minecraft.font, label, x + getWidth() / 2 - this.minecraft.font.width(label) / 2, y + getHeight() / 2 - this.minecraft.font.lineHeight / 2, color.getRGB(), false);
+        }
     }
 
     @Override
