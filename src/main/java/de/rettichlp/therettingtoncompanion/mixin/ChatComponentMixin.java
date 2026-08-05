@@ -112,9 +112,10 @@ public abstract class ChatComponentMixin {
             newComponent
                     .append(literal(timeString).withStyle(style -> style
                             .withColor(DARK_GRAY)
-                            .withHoverEvent(new HoverEvent.ShowText(literal(dateString)))))
-                    .append(contents);
+                            .withHoverEvent(new HoverEvent.ShowText(literal(dateString)))));
         }
+
+        newComponent.append(contents);
 
         if (configuration.chat().isMergeDuplicateMessages() && !this.allMessages.isEmpty()) {
             String lastMessageInChat = this.allMessages.getFirst().content().getString();
