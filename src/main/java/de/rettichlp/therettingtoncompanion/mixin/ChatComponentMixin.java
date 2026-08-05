@@ -128,9 +128,13 @@ public abstract class ChatComponentMixin {
                 if (lastMessageStringRaw.equals(contents.getString())) {
                     this.allMessages.removeFirst();
                     refreshTrimmedMessages();
-                    newComponent
-                            .append(literal(" — ").withColor(GRAY))
-                            .append(literal(valueOf((currentMergeCount + 1))).withColor(YELLOW));
+
+                    // only append suffix if message is no empty message
+                    if (!contents.getString().isEmpty()) {
+                        newComponent
+                                .append(literal(" — ").withColor(GRAY))
+                                .append(literal(valueOf((currentMergeCount + 1))).withColor(YELLOW));
+                    }
                 }
             }
         }
