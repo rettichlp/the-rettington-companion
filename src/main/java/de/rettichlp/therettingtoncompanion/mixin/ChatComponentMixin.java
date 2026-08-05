@@ -112,9 +112,10 @@ public abstract class ChatComponentMixin {
             newComponent
                     .append(literal(timeString).withStyle(style -> style
                             .withColor(DARK_GRAY)
-                            .withHoverEvent(new HoverEvent.ShowText(literal(dateString)))))
-                    .append(contents);
+                            .withHoverEvent(new HoverEvent.ShowText(literal(dateString)))));
         }
+
+        newComponent.append(contents);
 
         if (configuration.chat().isMergeDuplicateMessages() && !this.allMessages.isEmpty()) {
             String lastMessageInChat = this.allMessages.getFirst().content().getString();
@@ -127,9 +128,13 @@ public abstract class ChatComponentMixin {
                 if (lastMessageStringRaw.equals(contents.getString())) {
                     this.allMessages.removeFirst();
                     refreshTrimmedMessages();
-                    newComponent
-                            .append(literal(" — ").withColor(GRAY))
-                            .append(literal(valueOf((currentMergeCount + 1))).withColor(YELLOW));
+
+                    // only append suffix if message is no empty message
+                    if (!contents.getString().isEmpty()) {
+                        newComponent
+                                .append(literal(" — ").withColor(GRAY))
+                                .append(literal(valueOf((currentMergeCount + 1))).withColor(YELLOW));
+                    }
                 }
             }
         }
