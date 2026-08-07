@@ -54,7 +54,8 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
                                        int x,
                                        int y,
                                        Color color,
-                                       boolean backgroundEnabled);
+                                       boolean backgroundEnabled,
+                                       boolean textShadowEnabled);
 
     public abstract void addOptions(@NonNull TRCOptionsList optionsList);
 
@@ -95,7 +96,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
             graphics.outline(x, y, getWidth(), getHeight(), CYAN.getRGB());
         }
 
-        extractWidget(graphics, x, y, this.widgetConfiguration.getColor(), this.widgetConfiguration.isBackgroundEnabled());
+        extractWidget(graphics, x, y, this.widgetConfiguration.getColor(), this.widgetConfiguration.isBackgroundEnabled(), this.widgetConfiguration.isTextShadowEnabled());
     }
 
     public double getRight(double x) {

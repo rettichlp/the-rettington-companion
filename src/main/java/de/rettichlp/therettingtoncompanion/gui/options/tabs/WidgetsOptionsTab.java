@@ -55,6 +55,7 @@ public class WidgetsOptionsTab extends AbstractTRCOptionsTab {
                 button.setColor(value);
             })));
             optionsList.addToggleButton(translatable("trc.widgets.options.background_enabled.label"), create(translatable("trc.widgets.options.background_enabled.tooltip")), widgetConfiguration.isBackgroundEnabled(), (_, value) -> widgetConfiguration.setBackgroundEnabled(value == ON));
+            optionsList.addToggleButton(translatable("trc.widgets.options.text_shadow_enabled.label"), create(translatable("trc.widgets.options.text_shadow_enabled.tooltip")), widgetConfiguration.isTextShadowEnabled(), (_, value) -> widgetConfiguration.setTextShadowEnabled(value == ON));
             abstractTRCWidget.addOptions(optionsList);
         });
     }

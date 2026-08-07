@@ -27,12 +27,12 @@ public abstract class AbstractTRCTextWidget<C extends WidgetConfiguration> exten
     }
 
     @Override
-    public void extractWidget(@NotNull GuiGraphicsExtractor graphics, int x, int y, Color color, boolean backgroundEnabled) {
+    public void extractWidget(@NotNull GuiGraphicsExtractor graphics, int x, int y, Color color, boolean backgroundEnabled, boolean textShadowEnabled) {
         if (backgroundEnabled) {
             Color transparentColor = widgetService.getTransparentColor(color);
             graphics.fill(x, y, x + getWidth(), y + getHeight(), transparentColor.getRGB());
         }
 
-        graphics.text(this.minecraft.font, text(), x + getWidth() / 2 - this.minecraft.font.width(text()) / 2, y + getHeight() / 2 - this.minecraft.font.lineHeight / 2, color.getRGB(), false);
+        graphics.text(this.minecraft.font, text(), x + getWidth() / 2 - this.minecraft.font.width(text()) / 2, y + getHeight() / 2 - this.minecraft.font.lineHeight / 2, color.getRGB(), textShadowEnabled);
     }
 }
