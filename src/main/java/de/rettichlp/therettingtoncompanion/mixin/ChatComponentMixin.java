@@ -159,6 +159,12 @@ public abstract class ChatComponentMixin {
         return getChatBottomHeight();
     }
 
+    @WrapOperation(method = "getHeight()I",
+                   at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;getHeight(D)I"))
+    private int trc$getHeight(double pct, Operation<Integer> original) {
+        return getHeight(CHAT_PEEK_KEY.isDown() ? this.minecraft.options.chatHeightFocused().get() : pct);
+    }
+
     @ModifyConstant(method = "getWidth(D)I", constant = @Constant(doubleValue = 280.0D))
     private static double trc$getWidthConstant(double constant) {
         Window window = Minecraft.getInstance().getWindow();
@@ -188,10 +194,5 @@ public abstract class ChatComponentMixin {
             int highlightColorWithAlpha = (alpha << 24) | (chatRegexColor.getRed() << 16) | (chatRegexColor.getGreen() << 8) | chatRegexColor.getBlue();
             args.set(4, highlightColorWithAlpha);
         }
-    }
-
-    @WrapOperation(method = "getHeight()I", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;getHeight(D)I"))
-    private int trc$getHeight(double pct, Operation<Integer> original) {
-        return getHeight(CHAT_PEEK_KEY.isDown() ? minecraft.options.chatHeightFocused().get() : pct);
     }
 }

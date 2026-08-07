@@ -41,6 +41,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.invento
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
 import static java.lang.String.valueOf;
+import static net.minecraft.client.gui.components.ChatComponent.DisplayMode.FOREGROUND;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.DARK_AQUA;
@@ -176,20 +177,16 @@ public abstract class HudMixin {
     @WrapOperation(method = "extractChat",
                    at = @At(value = "INVOKE",
                             target = "Lnet/minecraft/client/gui/components/ChatComponent;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V"))
-    private void trc$onRenderChat(ChatComponent instance,
-                                  GuiGraphicsExtractor graphics,
-                                  Font font,
-                                  int ticks,
-                                  int mouseX,
-                                  int mouseY,
-                                  ChatComponent.DisplayMode displayMode,
-                                  boolean changeCursorOnInsertions,
-                                  Operation<Void> original) {
-        original.call(instance, graphics, font, ticks, mouseX, mouseY,
-                CHAT_PEEK_KEY.isDown()
-                        ? ChatComponent.DisplayMode.FOREGROUND
-                        : displayMode,
-                changeCursorOnInsertions);
+    private void trc$extractChatInvoke(ChatComponent instance,
+                                       GuiGraphicsExtractor graphics,
+                                       Font font,
+                                       int ticks,
+                                       int mouseX,
+                                       int mouseY,
+                                       ChatComponent.DisplayMode displayMode,
+                                       boolean changeCursorOnInsertions,
+                                       @NonNull Operation<Void> original) {
+        original.call(instance, graphics, font, ticks, mouseX, mouseY, CHAT_PEEK_KEY.isDown() ? FOREGROUND : displayMode, changeCursorOnInsertions);
     }
 
     @Unique
