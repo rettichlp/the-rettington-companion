@@ -20,21 +20,21 @@ import static net.minecraft.network.chat.TextColor.GOLD;
 import static net.minecraft.network.chat.TextColor.RED;
 import static net.minecraft.network.chat.TextColor.WHITE;
 
-public class HearthWidget extends AbstractTRCTextWidget<HearthWidget.Configuration> {
+public class HeartWidget extends AbstractTRCTextWidget<HeartWidget.Configuration> {
 
     @Override
     public @Nullable String getRegistryName() {
-        return "hearth";
+        return "heart";
     }
 
     @Override
     public Component getLabel() {
-        return translatable("trc.widgets.hearth.label");
+        return translatable("trc.widgets.heart.label");
     }
 
     @Override
     public Component getTooltip() {
-        return translatable("trc.widgets.hearth.tooltip");
+        return translatable("trc.widgets.heart.tooltip");
     }
 
     @Override
