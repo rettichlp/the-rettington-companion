@@ -80,6 +80,8 @@
   "trc.widgets.options.color.tooltip": "Colour of the widget",
   "trc.widgets.options.background_enabled.label": "Draw background",
   "trc.widgets.options.background_enabled.tooltip": "Toggles the background of the widget",
+  "trc.widgets.options.text_shadow_enabled.label": "Draw text shadow",
+  "trc.widgets.options.text_shadow_enabled.tooltip": "Toggles the text shadow of the widget",
   "trc.widgets.countdown.label": "Countdowns",
   "trc.widgets.countdown.tooltip": "Shows countdowns",
   "trc.widgets.date_time.label": "Date & Time",

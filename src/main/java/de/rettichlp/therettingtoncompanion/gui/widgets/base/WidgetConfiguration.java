@@ -14,4 +14,5 @@ public class WidgetConfiguration {
     private double y = 0.0;
     private Color color = WHITE;
     private boolean backgroundEnabled = true;
+    private boolean textShadowEnabled = true;
 }
