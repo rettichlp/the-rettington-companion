@@ -45,5 +45,9 @@ public class VisualsOptionsTab extends AbstractTRCOptionsTab {
         optionsList.addHeader(translatable("soundCategory.ambient"), null);
         optionsList.addCycleButton(translatable("trc.option.visuals.day_time_value.label"), create(translatable("trc.option.visuals.day_time_value.tooltip")), configuration.visuals().getDayTimeValue(), asList(VisualsConfiguration.DayTimeValue.values()), (_, value) -> configuration.visuals().setDayTimeValue(value));
         optionsList.addWeatherButton(translatable("trc.option.visuals.weather_value.label"), create(translatable("trc.option.visuals.weather_value.tooltip")), weatherValue -> configuration.visuals().setWeatherValue(weatherValue));
+
+        optionsList.addHeader(translatable("trc.option.visuals.nametag.section_title"), null);
+        optionsList.addToggleButton(translatable("trc.option.visuals.show_own_nametag.label"), create(translatable("trc.option.visuals.show_own_nametag.tooltip")), configuration.visuals().isShowOwnNametag(), (_, value) -> configuration.visuals().setShowOwnNametag(value == ON));
+        optionsList.addToggleButton(translatable("trc.option.visuals.nametag_text_shadow.label"), create(translatable("trc.option.visuals.nametag_text_shadow.tooltip")), configuration.visuals().isNametagTextShadow(), (_, value) -> configuration.visuals().setNametagTextShadow(value == ON));
     }
 }

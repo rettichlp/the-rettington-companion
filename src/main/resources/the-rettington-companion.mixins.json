@@ -22,6 +22,8 @@
     "KeyboardHandlerMixin",
     "LevelMixin",
     "LivingEntityMixin",
+    "LivingEntityRendererMixin",
+    "NametagFeatureRendererMixin",
     "OptionInstanceMixin",
     "PauseScreenMixin"
   ]
