@@ -34,7 +34,7 @@ import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 public abstract class ChatScreenMixin extends Screen {
 
     @Unique
-    private final PatternEditBox patternEditBox = new PatternEditBox(this.minecraft.font, "", this::onSearchChanged);
+    private @Nullable PatternEditBox patternEditBox;
 
     @Unique
     private @Nullable Button copyButton;
@@ -66,7 +66,7 @@ public abstract class ChatScreenMixin extends Screen {
             graphics.fill(guiMessageBounds.right() - 1, guiMessageBounds.top(), guiMessageBounds.right(), guiMessageBounds.bottom(), CYAN.getRGB());
         }
 
-        if (configuration.chat().isChatSearch()) {
+        if (configuration.chat().isChatSearch() && this.patternEditBox != null) {
             graphics.fill(this.patternEditBox.getX() - 2, this.patternEditBox.getY() - 2, this.patternEditBox.getX() + this.patternEditBox.getWidth() - 2, this.patternEditBox.getY() + this.patternEditBox.getHeight() - 2, this.minecraft.options.getBackgroundColor(MIN_VALUE));
         }
     }
@@ -122,6 +122,7 @@ public abstract class ChatScreenMixin extends Screen {
 
         LocalPlayer player = this.minecraft.player;
         if (configuration.chat().isChatSearch() && player != null) {
+            this.patternEditBox = new PatternEditBox(this.minecraft.font, "", this::onSearchChanged);
             this.patternEditBox.setSize(this.minecraft.getWindow().getGuiScaledWidth() / 2 - 91 - 7 - 2, 12); // right end of left offhand slot
             this.patternEditBox.setPosition(4, getChatBottomHeight() + 4);
             this.patternEditBox.setHint(translatable("debug.options.search"));
