@@ -11,6 +11,9 @@
   "overwrites": {
     "requireAnnotations": true
   },
+  "mixinextras": {
+    "minVersion": "0.5.4"
+  },
   "client": [
     "AbstractContainerScreenMixin",
     "ChatComponentAccessor",
@@ -22,6 +25,8 @@
     "KeyboardHandlerMixin",
     "LevelMixin",
     "LivingEntityMixin",
+    "LivingEntityRendererMixin",
+    "NametagFeatureRendererMixin",
     "OptionInstanceMixin",
     "PauseScreenMixin"
   ]
