@@ -1,6 +1,8 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.Window;
 import de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry;
@@ -36,6 +38,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.CHAT_PEEK_KEY;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage.getBestMatchingFilteredMessage;
@@ -48,6 +51,7 @@ import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.regex.Pattern.compile;
+import static net.minecraft.client.gui.components.ChatComponent.getHeight;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.DARK_GRAY;
@@ -184,5 +188,10 @@ public abstract class ChatComponentMixin {
             int highlightColorWithAlpha = (alpha << 24) | (chatRegexColor.getRed() << 16) | (chatRegexColor.getGreen() << 8) | chatRegexColor.getBlue();
             args.set(4, highlightColorWithAlpha);
         }
+    }
+
+    @WrapOperation(method = "getHeight()I", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;getHeight(D)I"))
+    private int trc$getHeight(double pct, Operation<Integer> original) {
+        return getHeight(CHAT_PEEK_KEY.isDown() ? minecraft.options.chatHeightFocused().get() : pct);
     }
 }

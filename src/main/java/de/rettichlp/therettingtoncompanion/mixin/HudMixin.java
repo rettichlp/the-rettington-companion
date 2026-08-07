@@ -1,5 +1,7 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.platform.Window;
 import de.rettichlp.therettingtoncompanion.gui.screens.WidgetPositionScreen;
 import net.minecraft.client.DeltaTracker;
@@ -7,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.Hud;
+import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -32,6 +35,7 @@ import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.CHAT_PEEK_KEY;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
@@ -167,6 +171,25 @@ public abstract class HudMixin {
     private int trc$extractVehicleHealthStore(int yo) {
         // move mount health bar one row higher
         return yo - 10;
+    }
+
+    @WrapOperation(method = "extractChat",
+                   at = @At(value = "INVOKE",
+                            target = "Lnet/minecraft/client/gui/components/ChatComponent;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V"))
+    private void trc$onRenderChat(ChatComponent instance,
+                                  GuiGraphicsExtractor graphics,
+                                  Font font,
+                                  int ticks,
+                                  int mouseX,
+                                  int mouseY,
+                                  ChatComponent.DisplayMode displayMode,
+                                  boolean changeCursorOnInsertions,
+                                  Operation<Void> original) {
+        original.call(instance, graphics, font, ticks, mouseX, mouseY,
+                CHAT_PEEK_KEY.isDown()
+                        ? ChatComponent.DisplayMode.FOREGROUND
+                        : displayMode,
+                changeCursorOnInsertions);
     }
 
     @Unique
