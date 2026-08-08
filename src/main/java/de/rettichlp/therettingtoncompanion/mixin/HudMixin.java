@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.Window;
 import de.rettichlp.therettingtoncompanion.gui.screens.WidgetPositionScreen;
 import net.minecraft.client.DeltaTracker;
@@ -191,11 +192,24 @@ public abstract class HudMixin {
         return showIcon || configuration.visuals().isEffectShowAllIcons();
     }
 
-    @ModifyExpressionValue(method = "extractEffects",
-                           at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ARGB;white(F)I"))
-    private int trc$extractEffectsIconAlpha(int color, @Local(name = "instance") @NonNull MobEffectInstance instance) {
-        // render the icon half-transparent if the effect would normally not show one (e.g. particles disabled)
-        return instance.showIcon() ? color : ARGB.multiplyAlpha(color, EFFECT_HIDDEN_ICON_ALPHA);
+    @WrapOperation(method = "extractEffects",
+                   at = @At(value = "INVOKE",
+                            target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
+    private void trc$extractEffectsBackgroundAlpha(GuiGraphicsExtractor graphics,
+                                                    RenderPipeline pipeline,
+                                                    Identifier sprite,
+                                                    int x,
+                                                    int y,
+                                                    int width,
+                                                    int height,
+                                                    Operation<Void> original,
+                                                    @Local(name = "instance") @NonNull MobEffectInstance instance) {
+        // render the background half-transparent if the effect would normally not show an icon (e.g. particles disabled)
+        if (instance.showIcon()) {
+            original.call(graphics, pipeline, sprite, x, y, width, height);
+        } else {
+            graphics.blitSprite(pipeline, sprite, x, y, width, height, ARGB.multiplyAlpha(-1, EFFECT_HIDDEN_ICON_ALPHA));
+        }
     }
 
     @Inject(method = "extractEffects",
