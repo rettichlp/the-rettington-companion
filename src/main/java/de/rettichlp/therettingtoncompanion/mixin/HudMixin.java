@@ -1,7 +1,9 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.Window;
 import de.rettichlp.therettingtoncompanion.gui.screens.WidgetPositionScreen;
 import net.minecraft.client.DeltaTracker;
@@ -13,7 +15,9 @@ import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.profiling.Profiler;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -40,6 +44,8 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
+import static java.awt.Color.BLACK;
+import static java.awt.Color.WHITE;
 import static java.lang.String.valueOf;
 import static net.minecraft.client.gui.components.ChatComponent.DisplayMode.FOREGROUND;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
@@ -54,12 +60,16 @@ import static net.minecraft.world.entity.HumanoidArm.RIGHT;
 import static net.minecraft.world.item.Items.ARROW;
 import static net.minecraft.world.item.Items.SPECTRAL_ARROW;
 import static net.minecraft.world.item.Items.TIPPED_ARROW;
+import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 @Mixin(Hud.class)
 public abstract class HudMixin {
 
     @Unique
     private static final Predicate<ItemStack> ARROW_ITEM_PREDICATE = itemStack -> itemStack.is(ARROW) || itemStack.is(SPECTRAL_ARROW) || itemStack.is(TIPPED_ARROW);
+
+    @Unique
+    private static final float EFFECT_HIDDEN_ICON_ALPHA = 0.5F;
 
     @Shadow
     @Final
@@ -172,6 +182,38 @@ public abstract class HudMixin {
     private int trc$extractVehicleHealthStore(int yo) {
         // move mount health bar one row higher
         return yo - 10;
+    }
+
+    @ModifyExpressionValue(method = "extractEffects",
+                           at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectInstance;showIcon()Z"))
+    private boolean trc$extractEffectsShowIcon(boolean showIcon) {
+        // always render the effect icon, even if the effect has no visible particles
+        return true;
+    }
+
+    @ModifyExpressionValue(method = "extractEffects",
+                           at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ARGB;white(F)I"))
+    private int trc$extractEffectsIconAlpha(int color, @Local(name = "instance") @NonNull MobEffectInstance instance) {
+        // render the icon half-transparent if the effect would normally not show one (e.g. particles disabled)
+        return instance.showIcon() ? color : ARGB.multiplyAlpha(color, EFFECT_HIDDEN_ICON_ALPHA);
+    }
+
+    @Inject(method = "extractEffects",
+            at = @At(value = "INVOKE",
+                     target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIIII)V",
+                     shift = AFTER))
+    private void trc$extractEffectsInvoke(GuiGraphicsExtractor graphics,
+                                          DeltaTracker deltaTracker,
+                                          CallbackInfo ci,
+                                          @Local(name = "x") int x,
+                                          @Local(name = "y") int y,
+                                          @Local(name = "instance") @NonNull MobEffectInstance instance) {
+        String durationText = getEffectDurationText(instance);
+        if (!durationText.isEmpty()) {
+            Component text = literal(durationText);
+            Font font = Minecraft.getInstance().font;
+            renderShadowText(graphics, text, x + 12 - font.width(text) / 2, y + 24 - font.lineHeight - 1, WHITE.getRGB(), BLACK.getRGB());
+        }
     }
 
     @WrapOperation(method = "extractChat",
@@ -314,5 +356,23 @@ public abstract class HudMixin {
 
         // render text
         graphics.text(font, text, x, y, color, false);
+    }
+
+    @Unique
+    private static @NonNull String getEffectDurationText(@NonNull MobEffectInstance instance) {
+        if (instance.isInfiniteDuration()) {
+            return "";
+        }
+
+        int totalSeconds = (int) Math.ceil(instance.getDuration() / 20.0);
+        if (totalSeconds >= 86400) {
+            return (totalSeconds / 86400) + "d";
+        } else if (totalSeconds >= 3600) {
+            return (totalSeconds / 3600) + "h";
+        } else if (totalSeconds > 60) {
+            return (totalSeconds / 60) + "m";
+        } else {
+            return totalSeconds + "s";
+        }
     }
 }
