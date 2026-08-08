@@ -187,8 +187,8 @@ public abstract class HudMixin {
     @ModifyExpressionValue(method = "extractEffects",
                            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectInstance;showIcon()Z"))
     private boolean trc$extractEffectsShowIcon(boolean showIcon) {
-        // always render the effect icon, even if the effect has no visible particles
-        return true;
+        // optionally render the effect icon, even if the effect has no visible particles
+        return showIcon || configuration.visuals().isEffectShowAllIcons();
     }
 
     @ModifyExpressionValue(method = "extractEffects",
@@ -208,10 +208,14 @@ public abstract class HudMixin {
                                           @Local(name = "x") int x,
                                           @Local(name = "y") int y,
                                           @Local(name = "instance") @NonNull MobEffectInstance instance) {
+        if (!configuration.visuals().isEffectShowDurationTimer()) {
+            return;
+        }
+
         String durationText = getEffectDurationText(instance);
         if (!durationText.isEmpty()) {
             Component text = literal(durationText);
-            Font font = Minecraft.getInstance().font;
+            Font font = this.minecraft.font;
             renderShadowText(graphics, text, x + 12 - font.width(text) / 2, y + 24 - font.lineHeight - 1, WHITE.getRGB(), BLACK.getRGB());
         }
     }
