@@ -187,7 +187,7 @@ public abstract class HudMixin {
 
     @ModifyExpressionValue(method = "extractEffects",
                            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectInstance;showIcon()Z"))
-    private boolean trc$extractEffectsShowIcon(boolean showIcon) {
+    private boolean trc$modifyExpressionValue$extractEffectsInvoke(boolean showIcon) {
         // optionally render the effect icon, even if the effect has no visible particles
         return showIcon || configuration.visuals().isEffectShowAllIcons();
     }
@@ -195,15 +195,15 @@ public abstract class HudMixin {
     @WrapOperation(method = "extractEffects",
                    at = @At(value = "INVOKE",
                             target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
-    private void trc$extractEffectsBackgroundAlpha(GuiGraphicsExtractor graphics,
-                                                    RenderPipeline pipeline,
-                                                    Identifier sprite,
-                                                    int x,
-                                                    int y,
-                                                    int width,
-                                                    int height,
-                                                    Operation<Void> original,
-                                                    @Local(name = "instance") @NonNull MobEffectInstance instance) {
+    private void trc$wrapOperation$extractEffectsInvoke(GuiGraphicsExtractor graphics,
+                                                        RenderPipeline pipeline,
+                                                        Identifier sprite,
+                                                        int x,
+                                                        int y,
+                                                        int width,
+                                                        int height,
+                                                        Operation<Void> original,
+                                                        @Local(name = "instance") @NonNull MobEffectInstance instance) {
         // render the background half-transparent if the effect would normally not show an icon (e.g. particles disabled)
         if (instance.showIcon()) {
             original.call(graphics, pipeline, sprite, x, y, width, height);
