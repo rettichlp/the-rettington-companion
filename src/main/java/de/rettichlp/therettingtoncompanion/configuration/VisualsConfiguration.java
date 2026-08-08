@@ -37,6 +37,8 @@ public class VisualsConfiguration {
     private boolean showEmptyInventorySlotCount = false;
     private boolean nametagShowOwn = true;
     private boolean nametagTextShadow = true;
+    private boolean effectShowAllIcons = false;
+    private boolean effectShowDurationTimer = true;
 
     @Getter
     @Accessors(fluent = true)
