@@ -1,6 +1,9 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
+import de.rettichlp.therettingtoncompanion.gui.ChatTabButton;
 import de.rettichlp.therettingtoncompanion.gui.PatternEditBox;
+import de.rettichlp.therettingtoncompanion.gui.screens.ChatTabPopupScreen;
+import de.rettichlp.therettingtoncompanion.utils.ChatUtils;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ChatComponent;
@@ -21,9 +24,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.CHAT_TAB_BUTTONS;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getGuiMessageBounds;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getHoveredGuiMessage;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.isMessageVisible;
 import static java.awt.Color.CYAN;
 import static java.lang.Integer.MIN_VALUE;
 import static java.util.regex.Pattern.compile;
@@ -85,6 +90,26 @@ public abstract class ChatScreenMixin extends Screen {
             return;
         }
 
+        // dispatch clicks to the chat tab bar - it's built and rendered centrally in HudMixin, ChatScreenMixin only forwards mouse
+        // events to it since only a Screen receives those
+        for (ChatTabButton chatTabButton : CHAT_TAB_BUTTONS) {
+            if (!chatTabButton.isMouseOver(mouseX, mouseY)) {
+                continue;
+            }
+
+            if (event.button() == 1 && chatTabButton.getChatTab() != null) {
+                closeContextMenu();
+                this.minecraft.gui.setScreen(new ChatTabPopupScreen(this, chatTabButton.getChatTab()));
+                cir.setReturnValue(true);
+                return;
+            }
+
+            if (event.button() == 0) {
+                cir.setReturnValue(chatTabButton.mouseClicked(event, doubleClick));
+                return;
+            }
+        }
+
         // handle mouse over message
         GuiMessage hoveredGuiMessage = getHoveredGuiMessage(mouseX, mouseY);
         if (hoveredGuiMessage == null) {
@@ -102,7 +127,7 @@ public abstract class ChatScreenMixin extends Screen {
 
     @Inject(method = "removed", at = @At("HEAD"))
     public void trc$removedHead(CallbackInfo ci) {
-        this.minecraft.gui.hud.getChat().setVisibleMessageFilter(_ -> true);
+        this.minecraft.gui.hud.getChat().setVisibleMessageFilter(ChatUtils::isMessageVisible);
         closeContextMenu();
     }
 
@@ -131,12 +156,21 @@ public abstract class ChatScreenMixin extends Screen {
             this.patternEditBox.addFormatter((_, _) -> null);
             addRenderableWidget(this.patternEditBox);
         }
+
+        updateVisibleMessageFilter();
     }
 
     @Unique
     private void onSearchChanged(String patternString) {
         ChatComponent chat = this.minecraft.gui.hud.getChat();
-        chat.setVisibleMessageFilter(guiMessage -> patternString.isBlank() || compile(patternString).matcher(guiMessage.content().getString()).find());
+        chat.setVisibleMessageFilter(guiMessage -> isMessageVisible(guiMessage) && (patternString.isBlank() || compile(patternString).matcher(guiMessage.content().getString()).find()));
+    }
+
+    @Unique
+    private void updateVisibleMessageFilter() {
+        ChatComponent chat = this.minecraft.gui.hud.getChat();
+        String searchPattern = this.patternEditBox != null ? this.patternEditBox.getValue() : "";
+        chat.setVisibleMessageFilter(guiMessage -> isMessageVisible(guiMessage) && (searchPattern.isBlank() || compile(searchPattern).matcher(guiMessage.content().getString()).find()));
     }
 
     @Unique

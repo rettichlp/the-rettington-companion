@@ -5,7 +5,9 @@ import de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -14,6 +16,7 @@ public class ChatConfiguration {
     @Accessors(fluent = true)
     private FilteredMessageConfiguration filteredMessage = new FilteredMessageConfiguration();
     private Set<HiddenMessageEntry.HiddenMessage> hiddenMessages = new HashSet<>();
+    private List<ChatTab> chatTabs = new ArrayList<>();
     private boolean optimizedChat = true;
     private boolean moreMessages = true;
     private boolean keepMessagesOnDisconnect = true;

@@ -43,9 +43,11 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage.getBestMatchingFilteredMessage;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.FOCUSED_CHAT_TAB;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMaxChatHeight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMaxChatWidth;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.isMessageVisible;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
@@ -73,6 +75,10 @@ public abstract class ChatComponentMixin {
     @Final
     private List<GuiMessage> allMessages;
 
+    @Shadow
+    @Final
+    private List<GuiMessage.Line> trimmedMessages;
+
     @Inject(method = "clearMessages", at = @At("HEAD"), cancellable = true)
     public void trc$clearHead(boolean history, CallbackInfo ci) {
         if (configuration.chat().isKeepMessagesOnDisconnect() && history) {
@@ -95,12 +101,38 @@ public abstract class ChatComponentMixin {
             LOGGER.info("Hidden following message (commissioned by {}): {} ", hiddenMessage.getProviderModId(), contents.getString());
         });
 
+        // track unread messages for every chat tab that isn't currently focused
+        String messageString = contents.getString();
+        configuration.chat().getChatTabs().stream()
+                .filter(chatTab -> chatTab != FOCUSED_CHAT_TAB)
+                .filter(chatTab -> chatTab.matches(messageString))
+                .forEach(chatTab -> chatTab.setUnreadCount(chatTab.getUnreadCount() + 1));
+
         FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(contents.getString());
         if (bestMatchingFilteredMessage != null && this.minecraft.player != null) {
             Identifier chatRegexSoundIdentifier = bestMatchingFilteredMessage.getSoundIdentifier();
             if (chatRegexSoundIdentifier != null) {
                 this.minecraft.player.playSound(createVariableRangeEvent(chatRegexSoundIdentifier), 1.0f, 1.5f);
             }
+        }
+    }
+
+    @ModifyExpressionValue(method = "addMessage", at = @At(value = "INVOKE", target = "Ljava/util/function/Predicate;test(Ljava/lang/Object;)Z"))
+    private boolean trc$addMessageForceAdmission(boolean original) {
+        // always admit messages, even if they are filtered out
+        return true;
+    }
+
+    @Inject(method = "addMessage", at = @At("TAIL"))
+    private void trc$addMessageTail(Component contents,
+                                    MessageSignature signature,
+                                    GuiMessageSource source,
+                                    GuiMessageTag tag,
+                                    CallbackInfo ci,
+                                    @Local(name = "message") @NonNull GuiMessage message) {
+        // hide new messages if chat-tab has no matching pattern
+        if (!isMessageVisible(message)) {
+            this.trimmedMessages.removeIf(line -> line.parent() == message);
         }
     }
 
