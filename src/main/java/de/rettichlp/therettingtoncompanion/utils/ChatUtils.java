@@ -6,7 +6,6 @@ import de.rettichlp.therettingtoncompanion.gui.ChatTabButton;
 import de.rettichlp.therettingtoncompanion.mixin.ChatComponentAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
@@ -90,29 +89,6 @@ public class ChatUtils {
         }
 
         return configuration.chat().getChatTabs().stream().noneMatch(chatTab -> chatTab.matches(message));
-    }
-
-    public static void layoutChatTabButtons(@NonNull List<? extends AbstractWidget> chatTabButtonsInDisplayOrder) {
-        int spacing = 2;
-        int rowHeight = 14;
-        int leftEdge = getChatLeft();
-        int rightEdge = getChatRight();
-
-        int currentX = leftEdge;
-        int currentRowY = getChatTopHeight() - spacing - rowHeight;
-
-        // lay out left-to-right; once a row runs out of horizontal space, wrap to a new row directly above it
-        for (AbstractWidget chatTabButton : chatTabButtonsInDisplayOrder) {
-            int width = chatTabButton.getWidth();
-
-            if (currentX + width > rightEdge && currentX != leftEdge) {
-                currentRowY -= (rowHeight + spacing);
-                currentX = leftEdge;
-            }
-
-            chatTabButton.setPosition(currentX, currentRowY);
-            currentX += (width + spacing);
-        }
     }
 
     public static boolean isValidPattern(String pattern) {

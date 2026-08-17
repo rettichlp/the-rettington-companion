@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.Hud;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.player.LocalPlayer;
@@ -55,7 +56,9 @@ import static de.rettichlp.therettingtoncompanion.gui.ChatTabButton.*;
 import static de.rettichlp.therettingtoncompanion.gui.ChatTabButton.forTab;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.CHAT_TAB_BUTTONS;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.FOCUSED_CHAT_TAB;
-import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.layoutChatTabButtons;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatLeft;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatRight;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatTopHeight;
 import static java.awt.Color.BLACK;
 import static java.awt.Color.WHITE;
 import static java.lang.String.valueOf;
@@ -268,9 +271,16 @@ public abstract class HudMixin {
     private void updateChatTabButtons(@NonNull GuiGraphicsExtractor graphics) {
         CHAT_TAB_BUTTONS.clear();
 
-        List<ChatTab> chatTabs = configuration.chat().getChatTabs();
+        List<ChatTab> chatTabs = configuration.chat().getChatTabs().stream()
+                .filter(ChatTab::isAvailableOnCurrentServer)
+                .toList();
         Font font = this.minecraft.font;
         boolean chatFocused = this.minecraft.gui.screen() instanceof ChatScreen;
+
+        // a server-bound tab that fell out of scope (e.g. the player switched servers) can't stay focused
+        if (FOCUSED_CHAT_TAB != null && !chatTabs.contains(FOCUSED_CHAT_TAB)) {
+            setFocusedChatTab(null);
+        }
 
         if (chatFocused) {
             // focused: show every tab (with its full unread badge) plus the default/add buttons, and let clicks
@@ -466,6 +476,30 @@ public abstract class HudMixin {
             return (totalSeconds / 60) + "m";
         } else {
             return totalSeconds + "s";
+        }
+    }
+
+    @Unique
+    private void layoutChatTabButtons(@NonNull List<? extends AbstractWidget> chatTabButtonsInDisplayOrder) {
+        int spacing = 2;
+        int rowHeight = 14;
+        int leftEdge = getChatLeft();
+        int rightEdge = getChatRight();
+
+        int currentX = leftEdge;
+        int currentRowY = getChatTopHeight() - spacing - rowHeight;
+
+        // lay out left-to-right; once a row runs out of horizontal space, wrap to a new row directly above it
+        for (AbstractWidget chatTabButton : chatTabButtonsInDisplayOrder) {
+            int width = chatTabButton.getWidth();
+
+            if (currentX + width > rightEdge && currentX != leftEdge) {
+                currentRowY -= (rowHeight + spacing);
+                currentX = leftEdge;
+            }
+
+            chatTabButton.setPosition(currentX, currentRowY);
+            currentX += (width + spacing);
         }
     }
 }

@@ -1,10 +1,13 @@
 package de.rettichlp.therettingtoncompanion.gui.screens;
 
 import de.rettichlp.therettingtoncompanion.configuration.ChatTab;
+import de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry;
 import de.rettichlp.therettingtoncompanion.gui.PatternEditBox;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
@@ -15,9 +18,12 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.OFF;
+import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_HORIZONTAL;
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_VERTICAL;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.FOCUSED_CHAT_TAB;
+import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getCurrentServerBaseDomain;
 import static net.minecraft.client.gui.layouts.FrameLayout.centerInRectangle;
 import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
 import static net.minecraft.client.gui.layouts.LinearLayout.vertical;
@@ -68,6 +74,13 @@ public class ChatTabPopupScreen extends Screen {
         nameInput.setMaxLength(32);
         nameInput.setHint(translatable("trc.chat_screen.chat_tabs.name_hint"));
         nameInput.setResponder(this.chatTab::setName);
+
+        LinearLayout serverBoundRow = this.layout.addChild(horizontal().spacing(SPACING_HORIZONTAL));
+        serverBoundRow.addChild(new StringWidget(200 - 60 - 8, 9, translatable("trc.chat_screen.chat_tabs.server_bound"), this.font), LayoutSettings::alignVerticallyMiddle);
+        serverBoundRow.addChild(CycleButton.builder(OnOffCycleButtonEntry::value, this.chatTab.getServerBoundDomain() != null ? ON : OFF)
+                .withValues(OnOffCycleButtonEntry.values())
+                .displayOnlyValue()
+                .create(0, 0, 60, 20, empty(), (_, value) -> this.chatTab.setServerBoundDomain(value == ON ? getCurrentServerBaseDomain() : null)));
 
         List<String> patternStrings = this.chatTab.getPatternStrings();
         for (int i = 0; i < patternStrings.size(); i++) {

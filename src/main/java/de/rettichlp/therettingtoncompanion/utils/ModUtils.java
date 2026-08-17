@@ -8,6 +8,7 @@ import com.google.gson.JsonSerializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -18,8 +19,11 @@ import java.util.TimerTask;
 import java.util.regex.Pattern;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
+import static java.util.regex.Pattern.compile;
 
 public class ModUtils {
+
+    private static final Pattern IPV4_PATTERN = compile("^\\d{1,3}(\\.\\d{1,3}){3}$");
 
     public static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
@@ -48,5 +52,28 @@ public class ModUtils {
                 Minecraft.getInstance().execute(runnable);
             }
         }, milliseconds);
+    }
+
+    /**
+     * The base domain (subdomain stripped) of the server the player is currently connected to, or {@code null} if not on a multiplayer
+     * server.
+     */
+    public static @Nullable String getCurrentServerBaseDomain() {
+        var currentServer = Minecraft.getInstance().getCurrentServer();
+        return currentServer == null ? null : getBaseDomain(currentServer.ip);
+    }
+
+    public static @Nullable String getBaseDomain(@Nullable String host) {
+        if (host == null || host.isBlank()) {
+            return null;
+        }
+
+        String hostname = host.split(":")[0].toLowerCase();
+        if (IPV4_PATTERN.matcher(hostname).matches()) {
+            return hostname; // IP addresses have no meaningful "base domain" to strip a subdomain from
+        }
+
+        String[] labels = hostname.split("\\.");
+        return labels.length < 2 ? hostname : (labels[labels.length - 2] + "." + labels[labels.length - 1]);
     }
 }

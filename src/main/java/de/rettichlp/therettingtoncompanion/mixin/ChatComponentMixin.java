@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.Window;
+import de.rettichlp.therettingtoncompanion.configuration.ChatTab;
 import de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry;
 import de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry;
 import net.minecraft.client.Minecraft;
@@ -106,6 +107,7 @@ public abstract class ChatComponentMixin {
         FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(messageString);
         configuration.chat().getChatTabs().stream()
                 .filter(chatTab -> chatTab != FOCUSED_CHAT_TAB)
+                .filter(ChatTab::isAvailableOnCurrentServer)
                 .filter(chatTab -> chatTab.matches(messageString))
                 .forEach(chatTab -> {
                     chatTab.setUnreadCount(chatTab.getUnreadCount() + 1);

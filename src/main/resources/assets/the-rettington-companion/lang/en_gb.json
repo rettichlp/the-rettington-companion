@@ -6,6 +6,7 @@
   "trc.chat_screen.chat_tabs.name_hint": "Tab name",
   "trc.chat_screen.chat_tabs.delete_tab": "Delete tab",
   "trc.chat_screen.chat_tabs.default_tab_name": "Chat",
+  "trc.chat_screen.chat_tabs.server_bound": "Server-bound",
   "trc.chat_screen.context_menu.copy_message": "Copy message",
   "trc.chat_screen.context_menu.copy_message_without_timestamp": "Copy message (no timestamp)",
   "trc.equipment_model_visibility.all": "All",
