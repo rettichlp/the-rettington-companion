@@ -280,11 +280,7 @@ public abstract class HudMixin {
             }
 
             for (ChatTab chatTab : chatTabs) {
-                CHAT_TAB_BUTTONS.add(forTab(font, chatTab, _ -> {
-                    setFocusedChatTab(FOCUSED_CHAT_TAB == chatTab ? null : chatTab);
-                    chatTab.setUnreadCount(0);
-                    chatTab.setFilterTriggered(false);
-                }));
+                CHAT_TAB_BUTTONS.add(forTab(font, chatTab, _ -> setFocusedChatTab(FOCUSED_CHAT_TAB == chatTab ? null : chatTab)));
             }
 
             CHAT_TAB_BUTTONS.add(forAddButton(font, _ -> {
@@ -293,9 +289,6 @@ public abstract class HudMixin {
                 this.minecraft.gui.setScreen(new ChatTabPopupScreen(this.minecraft.gui.screen(), newChatTab));
             }));
         } else {
-            // unfocused: only flash the one tab that just received a message, not every tab with an old unread count
-            int ticks = this.minecraft.gui.hud.getGuiTicks();
-
             for (ChatTab chatTab : chatTabs) {
                 if (chatTab.getUnreadCount() > 0) {
                     CHAT_TAB_BUTTONS.add(forTab(font, chatTab, _ -> {}));
@@ -320,6 +313,13 @@ public abstract class HudMixin {
 
     @Unique
     private void setFocusedChatTab(@Nullable ChatTab chatTab) {
+        // clear the previously focused tab's unread state only once it's actually left, so its unread divider line stays
+        // in place for as long as it remains focused
+        if (FOCUSED_CHAT_TAB != null && FOCUSED_CHAT_TAB != chatTab) {
+            FOCUSED_CHAT_TAB.setUnreadCount(0);
+            FOCUSED_CHAT_TAB.setFilterTriggered(false);
+        }
+
         FOCUSED_CHAT_TAB = chatTab;
         this.minecraft.gui.hud.getChat().setVisibleMessageFilter(ChatUtils::isMessageVisible);
     }

@@ -25,11 +25,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.CHAT_TAB_BUTTONS;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.FOCUSED_CHAT_TAB;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatLeft;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatRight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getGuiMessageBounds;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getHoveredGuiMessage;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getUnreadDividerY;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.isMessageVisible;
 import static java.awt.Color.CYAN;
+import static java.awt.Color.RED;
 import static java.lang.Integer.MIN_VALUE;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.network.chat.Component.translatable;
@@ -73,6 +78,12 @@ public abstract class ChatScreenMixin extends Screen {
 
         if (configuration.chat().isChatSearch() && this.patternEditBox != null) {
             graphics.fill(this.patternEditBox.getX() - 2, this.patternEditBox.getY() - 2, this.patternEditBox.getX() + this.patternEditBox.getWidth() - 2, this.patternEditBox.getY() + this.patternEditBox.getHeight() - 2, this.minecraft.options.getBackgroundColor(MIN_VALUE));
+        }
+
+        // marks where the messages that were unread when this tab got focused end, so newly arrived ones stay easy to spot
+        Integer unreadDividerY = getUnreadDividerY();
+        if (unreadDividerY != null) {
+            graphics.fill(getChatLeft(), unreadDividerY, getChatRight(), unreadDividerY + 1, RED.getRGB());
         }
     }
 
@@ -129,6 +140,12 @@ public abstract class ChatScreenMixin extends Screen {
     public void trc$removedHead(CallbackInfo ci) {
         this.minecraft.gui.hud.getChat().setVisibleMessageFilter(ChatUtils::isMessageVisible);
         closeContextMenu();
+
+        // leaving the chat screen counts as leaving the focused tab, so clear its unread state and divider line
+        if (FOCUSED_CHAT_TAB != null) {
+            FOCUSED_CHAT_TAB.setUnreadCount(0);
+            FOCUSED_CHAT_TAB.setFilterTriggered(false);
+        }
     }
 
     @Inject(method = "init", at = @At("TAIL"))

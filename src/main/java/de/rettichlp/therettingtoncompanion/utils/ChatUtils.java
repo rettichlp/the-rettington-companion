@@ -78,7 +78,7 @@ public class ChatUtils {
 
     public static int getChatRight() {
         Options options = Minecraft.getInstance().options;
-        return getChatLeft() + getWidth(options.chatWidth().get());
+        return getWidth(options.chatWidth().get()) + 12; // I don't know from where the offset of 12 comes
     }
 
     public static boolean isMessageVisible(@NonNull GuiMessage guiMessage) {
@@ -96,7 +96,7 @@ public class ChatUtils {
         int spacing = 2;
         int rowHeight = 14;
         int leftEdge = getChatLeft();
-        int rightEdge = getChatRight() + 12 - 2;
+        int rightEdge = getChatRight();
 
         int currentX = leftEdge;
         int currentRowY = getChatTopHeight() - spacing - rowHeight;
@@ -180,6 +180,38 @@ public class ChatUtils {
         return null;
     }
 
+    /**
+     * The y coordinate of the divider line separating the messages that were unread when the currently focused chat tab got focused
+     * from the older, already-read backlog above them, or {@code null} if there's nothing to divide. (No tab focused, no unread
+     * messages, or the unread messages cover the entire visible backlog.)
+     */
+    public static @Nullable Integer getUnreadDividerY() {
+        ChatTab focusedChatTab = FOCUSED_CHAT_TAB;
+        if (focusedChatTab == null || focusedChatTab.getUnreadCount() <= 0) {
+            return null;
+        }
+
+        GuiMessage lastSeenParent = null;
+        int distinctMessageCount = 0;
+
+        for (GuiMessage.Line line : getTrimmedMessages()) {
+            GuiMessage parent = line.parent();
+            if (parent == lastSeenParent) {
+                continue;
+            }
+
+            lastSeenParent = parent;
+            distinctMessageCount++;
+
+            // the first already-read message (right after the unread ones) marks where the divider belongs
+            if (distinctMessageCount == focusedChatTab.getUnreadCount() + 1) {
+                return getGuiMessageBounds(parent, 9).bottom();
+            }
+        }
+
+        return null;
+    }
+
     public static @NonNull ScreenRectangle getGuiMessageBounds(GuiMessage guiMessage, int entryHeight) {
         // get all lines for this GuiMessage
         List<GuiMessage.Line> lines = getTrimmedMessages().stream()
@@ -197,9 +229,7 @@ public class ChatUtils {
         // get boundary values
         int bottom = getChatBottomHeight() - bottomLineIndex * entryHeight + scrollOffset * entryHeight;
         int top = getChatBottomHeight() - (topLineIndex + 1) * entryHeight + scrollOffset * entryHeight;
-        int left = 0;
-        int width = getWidth(Minecraft.getInstance().options.chatWidth().get()) + 12; // I don't know from where the offset of 12 comes
 
-        return new ScreenRectangle(left + getChatLeft(), top, width - getChatLeft(), bottom - top);
+        return new ScreenRectangle(getChatLeft(), top, getChatRight() - getChatLeft(), bottom - top);
     }
 }
