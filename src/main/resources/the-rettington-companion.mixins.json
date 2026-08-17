@@ -26,6 +26,8 @@
     "LevelMixin",
     "LivingEntityMixin",
     "LivingEntityRendererMixin",
+    "LocalPlayerMixin",
+    "MultiPlayerGameModeMixin",
     "NametagFeatureRendererMixin",
     "OptionInstanceMixin",
     "OverlayTextureAccessor",
