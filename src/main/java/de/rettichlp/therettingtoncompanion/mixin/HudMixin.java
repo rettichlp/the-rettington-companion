@@ -283,6 +283,7 @@ public abstract class HudMixin {
                 CHAT_TAB_BUTTONS.add(forTab(font, chatTab, _ -> {
                     setFocusedChatTab(FOCUSED_CHAT_TAB == chatTab ? null : chatTab);
                     chatTab.setUnreadCount(0);
+                    chatTab.setFilterTriggered(false);
                 }));
             }
 

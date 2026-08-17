@@ -103,12 +103,18 @@ public abstract class ChatComponentMixin {
 
         // track unread messages for every chat tab that isn't currently focused
         String messageString = contents.getString();
+        FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(messageString);
         configuration.chat().getChatTabs().stream()
                 .filter(chatTab -> chatTab != FOCUSED_CHAT_TAB)
                 .filter(chatTab -> chatTab.matches(messageString))
-                .forEach(chatTab -> chatTab.setUnreadCount(chatTab.getUnreadCount() + 1));
+                .forEach(chatTab -> {
+                    chatTab.setUnreadCount(chatTab.getUnreadCount() + 1);
 
-        FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(contents.getString());
+                    if (bestMatchingFilteredMessage != null) {
+                        chatTab.setFilterTriggered(true);
+                    }
+                });
+
         if (bestMatchingFilteredMessage != null && this.minecraft.player != null) {
             Identifier chatRegexSoundIdentifier = bestMatchingFilteredMessage.getSoundIdentifier();
             if (chatRegexSoundIdentifier != null) {

@@ -19,6 +19,7 @@ public class ChatTab {
     private List<String> patternStrings = new ArrayList<>();
 
     private transient int unreadCount;
+    private transient boolean filterTriggered;
 
     public ChatTab(String name) {
         this.name = name;

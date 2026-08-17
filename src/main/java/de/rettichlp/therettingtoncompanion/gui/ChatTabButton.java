@@ -3,6 +3,7 @@ package de.rettichlp.therettingtoncompanion.gui;
 import de.rettichlp.therettingtoncompanion.configuration.ChatTab;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
 import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -13,8 +14,8 @@ import net.minecraft.network.chat.MutableComponent;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.FOCUSED_CHAT_TAB;
-import static java.awt.Color.WHITE;
 import static java.lang.Integer.MIN_VALUE;
 import static java.lang.Math.clamp;
 import static java.lang.Math.min;
@@ -24,6 +25,8 @@ import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
 import static net.minecraft.network.chat.TextColor.RED;
+import static net.minecraft.util.ARGB.as8BitChannel;
+import static net.minecraft.util.ARGB.color;
 
 public class ChatTabButton extends Button.Plain {
 
@@ -74,17 +77,21 @@ public class ChatTabButton extends Button.Plain {
 
     @Override
     protected void extractContents(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-        Minecraft minecraft = Minecraft.getInstance();
+        Options options = Minecraft.getInstance().options;
 
         // semi-transparent panel styled like the chat box itself, deliberately not the vanilla button sprite
-        graphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), minecraft.options.getBackgroundColor(MIN_VALUE));
+        graphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), options.getBackgroundColor(MIN_VALUE));
 
         boolean isSelected = this.defaultTab ? FOCUSED_CHAT_TAB == null : this.chatTab != null && this.chatTab == FOCUSED_CHAT_TAB;
         if (isSelected) {
-            graphics.fill(getX(), getY(), getX() + getWidth(), getY() + 1, WHITE.getRGB());
-            graphics.fill(getX(), getY() + getHeight() - 1, getX() + getWidth(), getY() + getHeight(), WHITE.getRGB());
-            graphics.fill(getX(), getY(), getX() + 1, getY() + getHeight(), WHITE.getRGB());
-            graphics.fill(getX() + getWidth() - 1, getY(), getX() + getWidth(), getY() + getHeight(), WHITE.getRGB());
+            int color = as8BitChannel(options.textBackgroundOpacity().get().floatValue()) << 24 | configuration.visuals().getExperienceLevelColor() & 16777215;
+            graphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), color);
+        }
+
+        boolean isFilterTriggered = !isSelected && this.chatTab != null && this.chatTab.isFilterTriggered();
+        if (isFilterTriggered) {
+            int color = color(as8BitChannel(options.textBackgroundOpacity().get().floatValue()), 255, 100, 100);
+            graphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), color);
         }
 
         extractDefaultLabel(graphics.textRendererForWidget(this, NONE));
