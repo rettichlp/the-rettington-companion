@@ -24,7 +24,9 @@ import static net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI;
 import static net.minecraft.network.chat.Component.translatable;
 import static net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_GENERIC;
 import static net.minecraft.sounds.SoundEvents.EXPERIENCE_ORB_PICKUP;
+import static net.minecraft.world.entity.player.Inventory.INVENTORY_SIZE;
 import static net.minecraft.world.entity.player.Inventory.SLOT_OFFHAND;
+import static net.minecraft.world.entity.player.Inventory.isHotbarSlot;
 import static net.minecraft.world.inventory.ContainerInput.PICKUP_ALL;
 import static net.minecraft.world.inventory.ContainerInput.SWAP;
 import static net.minecraft.world.item.ItemStack.isSameItemSameComponents;
@@ -45,12 +47,10 @@ public class InventoryService {
             return;
         }
 
-        if (!this.itemStack.isEmpty() && currentItemStack.isEmpty()) {
-            if (restock(this.itemStack)) {
-                Minecraft.getInstance().getSoundManager().play(forUI(ARMOR_EQUIP_GENERIC.value(), 1f, 2f));
-                Component message = translatable("trc.message.auto_restock.restock_succeeded", this.itemStack.getHoverName());
-                player.sendOverlayMessage(message);
-            }
+        if (!this.itemStack.isEmpty() && currentItemStack.isEmpty() && restock(this.itemStack)) {
+            Minecraft.getInstance().getSoundManager().play(forUI(ARMOR_EQUIP_GENERIC.value(), 1f, 2f));
+            Component message = translatable("trc.message.auto_restock.restock_succeeded", this.itemStack.getHoverName());
+            player.sendOverlayMessage(message);
         }
 
         this.itemStack = currentItemStack;
@@ -75,8 +75,8 @@ public class InventoryService {
         int mostMatchingSlotIndex = matchingSlotIds.getFirst();
 
         // adjust slot ids for hotbar
-        if (mostMatchingSlotIndex < 9) {
-            mostMatchingSlotIndex += 36;
+        if (isHotbarSlot(mostMatchingSlotIndex)) {
+            mostMatchingSlotIndex += INVENTORY_SIZE;
         }
 
         gameMode.handleContainerInput(player.containerMenu.containerId, mostMatchingSlotIndex, this.hotbarSlotIndex, SWAP, player);
@@ -172,7 +172,7 @@ public class InventoryService {
 
     private boolean isLockedSwapTarget(int button, ContainerInput input) {
         return input == SWAP
-                && (Inventory.isHotbarSlot(button) || button == SLOT_OFFHAND)
+                && (isHotbarSlot(button) || button == SLOT_OFFHAND)
                 && isLockedSlot(button);
     }
 
