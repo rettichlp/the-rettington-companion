@@ -54,7 +54,8 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
                                        int x,
                                        int y,
                                        Color color,
-                                       boolean backgroundEnabled);
+                                       boolean backgroundEnabled,
+                                       boolean textShadowEnabled);
 
     public abstract void addOptions(@NonNull TRCOptionsList optionsList);
 
@@ -77,8 +78,17 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
         int y = (int) clamp(this.widgetConfiguration.getY(), 0, graphics.guiHeight() - getHeight());
 
         if (this.focused) {
+            // left
             graphics.horizontalLine(0, graphics.guiWidth(), y, YELLOW.getRGB());
+            // right
+            graphics.verticalLine(x + getWidth(), 0, graphics.guiHeight(), YELLOW.getRGB());
+            // top
             graphics.verticalLine(x, 0, graphics.guiHeight(), YELLOW.getRGB());
+            // bottom
+            graphics.horizontalLine(0, graphics.guiWidth(), y + getHeight(), YELLOW.getRGB());
+            // center
+            graphics.horizontalLine(0, graphics.guiWidth(), y + getHeight() / 2, YELLOW.getRGB());
+            graphics.verticalLine(x + getWidth() / 2, 0, graphics.guiHeight(), YELLOW.getRGB());
         }
 
         if (isWidgetPositionScreen()) {
@@ -86,7 +96,7 @@ public abstract class AbstractTRCWidget<C extends WidgetConfiguration> {
             graphics.outline(x, y, getWidth(), getHeight(), CYAN.getRGB());
         }
 
-        extractWidget(graphics, x, y, this.widgetConfiguration.getColor(), this.widgetConfiguration.isBackgroundEnabled());
+        extractWidget(graphics, x, y, this.widgetConfiguration.getColor(), this.widgetConfiguration.isBackgroundEnabled(), this.widgetConfiguration.isTextShadowEnabled());
     }
 
     public double getRight(double x) {

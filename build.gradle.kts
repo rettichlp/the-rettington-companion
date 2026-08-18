@@ -45,6 +45,9 @@ dependencies {
 
     // https://modrinth.com/mod/xaeros-minimap
     compileOnly("xaero.minimap:xaerominimap-fabric-${providers.gradleProperty("minecraft_version").get()}:${providers.gradleProperty("xaerominimap_version").get()}")
+
+    // https://modrinth.com/mod/dev-auth-neo
+    localRuntime("net.litetex.mcm:dev-auth-neo:1.1.1")
 }
 
 tasks.processResources {
@@ -93,5 +96,13 @@ publishing {
         // Notice: This block does NOT have the same function as the block in the top level.
         // The repositories here will be used for publishing your artifact, not for
         // retrieving dependencies.
+    }
+}
+
+loom {
+    runs {
+        named("client") {
+            property("devauth.enabled", "1")
+        }
     }
 }

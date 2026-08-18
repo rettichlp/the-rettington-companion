@@ -2,7 +2,7 @@ package de.rettichlp.therettingtoncompanion.services;
 
 import de.rettichlp.therettingtoncompanion.TheRettingtonCompanionApi;
 import de.rettichlp.therettingtoncompanion.gui.widgets.DateTimeWidget;
-import de.rettichlp.therettingtoncompanion.gui.widgets.HearthWidget;
+import de.rettichlp.therettingtoncompanion.gui.widgets.HeartWidget;
 import de.rettichlp.therettingtoncompanion.gui.widgets.NotificationGroupWidget;
 import de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class WidgetService {
 
     private final Set<AbstractTRCWidget<?>> widgets = Set.of(
             new DateTimeWidget(),
-            new HearthWidget(),
+            new HeartWidget(),
             new NotificationGroupWidget()
     );
 

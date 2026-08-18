@@ -35,6 +35,10 @@ public class VisualsConfiguration {
     private WeatherValue weatherValue = W_OFF;
     private int experienceLevelColor = -8323296;
     private boolean showEmptyInventorySlotCount = false;
+    private boolean nametagShowOwn = true;
+    private boolean nametagTextShadow = true;
+    private boolean effectShowAllIcons = false;
+    private boolean effectShowDurationTimer = true;
 
     @Getter
     @Accessors(fluent = true)

@@ -19,8 +19,8 @@ public abstract class AbstractTRCProgressTextWidget<C extends WidgetConfiguratio
     }
 
     @Override
-    public void extractWidget(@NotNull GuiGraphicsExtractor graphics, int x, int y, Color color, boolean backgroundEnabled) {
-        super.extractWidget(graphics, x, y, color, backgroundEnabled);
+    public void extractWidget(@NotNull GuiGraphicsExtractor graphics, int x, int y, Color color, boolean backgroundEnabled, boolean textShadowEnabled) {
+        super.extractWidget(graphics, x, y, color, backgroundEnabled, textShadowEnabled);
 
         int padding = configuration.widgets().getPadding();
         int maxProgressWidth = getWidth() - padding * 2;

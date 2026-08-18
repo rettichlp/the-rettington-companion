@@ -47,7 +47,7 @@ public class WidgetsOptionsTab extends AbstractTRCOptionsTab {
             if (alwaysEnabled) {
                 optionsList.addText(translatable("trc.widgets.options.always_enabled").withStyle(style -> style.withColor(GRAY).withItalic(true)));
             } else {
-                optionsList.addToggleButton(translatable("trc.widgets.options.enabled.label"), create(translatable("trc.widgets.options.enabled.tooltip")), alwaysEnabled, (_, value) -> widgetConfiguration.setEnabled(value == ON));
+                optionsList.addToggleButton(translatable("trc.widgets.options.enabled.label"), create(translatable("trc.widgets.options.enabled.tooltip")), widgetConfiguration.isEnabled(), (_, value) -> widgetConfiguration.setEnabled(value == ON));
             }
 
             optionsList.addColorButton(translatable("trc.widgets.options.color.label"), create(translatable("trc.widgets.options.color.tooltip")), widgetConfiguration.getColor(), (button, color) -> this.minecraft.gui.setScreen(new ColorSelectionPopupScreen(this.minecraft.gui.screen(), color, value -> {
@@ -55,6 +55,7 @@ public class WidgetsOptionsTab extends AbstractTRCOptionsTab {
                 button.setColor(value);
             })));
             optionsList.addToggleButton(translatable("trc.widgets.options.background_enabled.label"), create(translatable("trc.widgets.options.background_enabled.tooltip")), widgetConfiguration.isBackgroundEnabled(), (_, value) -> widgetConfiguration.setBackgroundEnabled(value == ON));
+            optionsList.addToggleButton(translatable("trc.widgets.options.text_shadow_enabled.label"), create(translatable("trc.widgets.options.text_shadow_enabled.tooltip")), widgetConfiguration.isTextShadowEnabled(), (_, value) -> widgetConfiguration.setTextShadowEnabled(value == ON));
             abstractTRCWidget.addOptions(optionsList);
         });
     }
