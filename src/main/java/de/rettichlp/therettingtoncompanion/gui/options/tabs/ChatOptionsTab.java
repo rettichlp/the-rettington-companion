@@ -38,6 +38,7 @@ public class ChatOptionsTab extends AbstractTRCOptionsTab {
         optionsList.addToggleButton(translatable("trc.option.chat.general.chat_time.label"), create(translatable("trc.option.chat.general.chat_time.tooltip")), configuration.chat().isChatTime(), (_, value) -> configuration.chat().setChatTime(value == ON));
         optionsList.addToggleButton(translatable("trc.option.chat.general.chat_search.label"), create(translatable("trc.option.chat.general.chat_search.tooltip")), configuration.chat().isChatSearch(), (_, value) -> configuration.chat().setChatSearch(value == ON));
         optionsList.addToggleButton(translatable("trc.option.chat.general.merge_duplicate_messages.label"), create(translatable("trc.option.chat.general.merge_duplicate_messages.tooltip")), configuration.chat().isMergeDuplicateMessages(), (_, value) -> configuration.chat().setMergeDuplicateMessages(value == ON));
+        optionsList.addToggleButton(translatable("trc.option.chat.general.save_chat_log.label"), create(translatable("trc.option.chat.general.save_chat_log.tooltip")), configuration.chat().isSaveChatLog(), (_, value) -> configuration.chat().setSaveChatLog(value == ON));
 
         optionsList.addHeader(translatable("trc.option.chat.filtered_messages.section_title"), null);
         optionsList.addFilteredMessageEntry(configuration.chat().filteredMessage().getDefaultFilteredMessage(), false);
