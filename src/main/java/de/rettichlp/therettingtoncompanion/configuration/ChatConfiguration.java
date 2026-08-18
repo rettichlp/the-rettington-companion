@@ -20,6 +20,7 @@ public class ChatConfiguration {
     private boolean chatTime = false;
     private boolean chatSearch = true;
     private boolean mergeDuplicateMessages = true;
+    private boolean saveChatLog = true;
 
     @Data
     public static class FilteredMessageConfiguration {

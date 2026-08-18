@@ -7,6 +7,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
 import java.awt.Color;
@@ -17,7 +18,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Pattern;
 
+import static com.mojang.serialization.JsonOps.INSTANCE;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
+import static net.minecraft.network.chat.ComponentSerialization.CODEC;
 
 public class ModUtils {
 
@@ -33,6 +36,8 @@ public class ModUtils {
             .registerTypeAdapter(Pattern.class, (JsonSerializer<Pattern>) (src, typeOfSrc, context) -> new JsonPrimitive(src.pattern()))
             .registerTypeAdapter(Color.class, (JsonDeserializer<Color>) (json, typeOfT, context) -> new Color(json.getAsInt()))
             .registerTypeAdapter(Color.class, (JsonSerializer<Color>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getRGB()))
+            .registerTypeAdapter(Component.class, (JsonDeserializer<Component>) (json, typeOfT, context) -> CODEC.parse(INSTANCE, json).getOrThrow())
+            .registerTypeAdapter(Component.class, (JsonSerializer<Component>) (src, typeOfSrc, context) -> CODEC.encodeStart(INSTANCE, src).getOrThrow())
             .create();
 
     public static @NonNull String getVersionString() {
