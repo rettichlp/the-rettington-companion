@@ -84,6 +84,11 @@ public class ChatUtils {
         return ((ChatComponentAccessor) chat).getChatScrollbarPos();
     }
 
+    public static void refreshTrimmedMessages() {
+        ChatComponent chat = Minecraft.getInstance().gui.hud.getChat();
+        ((ChatComponentAccessor) chat).invokeRefreshTrimmedMessages();
+    }
+
     public static @Nullable GuiMessage getHoveredGuiMessage(double mouseX, double mouseY) {
         return ofNullable(getHoveredGuiMessageLine(mouseX, mouseY))
                 .map(GuiMessage.Line::parent)
