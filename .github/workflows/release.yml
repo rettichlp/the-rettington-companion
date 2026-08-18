@@ -55,6 +55,6 @@ jobs:
         gh release create "$tag" \
             --target main \
             --repo="$GITHUB_REPOSITORY" \
-            --title="The Rettington Companion $tag" \
+            --title="$tag" \
             --generate-notes \
             build/libs/*.jar
