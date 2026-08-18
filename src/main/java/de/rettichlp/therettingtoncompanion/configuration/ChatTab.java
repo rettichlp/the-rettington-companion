@@ -32,7 +32,7 @@ public class ChatTab {
     public boolean matches(@NonNull CharSequence message) {
         return this.patternStrings.stream()
                 .filter(ChatUtils::isValidPattern)
-                .map(patternString -> compile("^" + patternString + "$", CASE_INSENSITIVE))
+                .map(patternString -> compile(patternString, CASE_INSENSITIVE))
                 .anyMatch(pattern -> pattern.matcher(message).find());
     }
 

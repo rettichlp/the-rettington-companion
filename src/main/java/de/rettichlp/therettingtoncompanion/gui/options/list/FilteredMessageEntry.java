@@ -169,7 +169,7 @@ public class FilteredMessageEntry extends AbstractEntry {
 
         public Optional<Pattern> getPattern() {
             return isValidPattern(this.patternString)
-                    ? Optional.of(compile("^" + this.patternString + "$", CASE_INSENSITIVE))
+                    ? Optional.of(compile(this.patternString, CASE_INSENSITIVE))
                     : Optional.empty();
         }
 
