@@ -24,21 +24,25 @@ import static net.minecraft.network.chat.ComponentSerialization.CODEC;
 
 public class ModUtils {
 
-    public static final Gson GSON = new GsonBuilder()
-            .setPrettyPrinting()
-            .registerTypeAdapter(Instant.class, (JsonDeserializer<Instant>) (json, typeOfT, context) -> Instant.parse(json.getAsString()))
-            .registerTypeAdapter(Instant.class, (JsonSerializer<Instant>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
-            .registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString()))
-            .registerTypeAdapter(LocalDateTime.class, (JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
-            .registerTypeAdapter(LocalTime.class, (JsonDeserializer<LocalTime>) (json, typeOfT, context) -> LocalTime.parse(json.getAsString()))
-            .registerTypeAdapter(LocalTime.class, (JsonSerializer<LocalTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
-            .registerTypeAdapter(Pattern.class, (JsonDeserializer<Pattern>) (json, typeOfT, context) -> Pattern.compile(json.getAsString()))
-            .registerTypeAdapter(Pattern.class, (JsonSerializer<Pattern>) (src, typeOfSrc, context) -> new JsonPrimitive(src.pattern()))
-            .registerTypeAdapter(Color.class, (JsonDeserializer<Color>) (json, typeOfT, context) -> new Color(json.getAsInt()))
-            .registerTypeAdapter(Color.class, (JsonSerializer<Color>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getRGB()))
-            .registerTypeAdapter(Component.class, (JsonDeserializer<Component>) (json, typeOfT, context) -> CODEC.parse(INSTANCE, json).getOrThrow())
-            .registerTypeAdapter(Component.class, (JsonSerializer<Component>) (src, typeOfSrc, context) -> CODEC.encodeStart(INSTANCE, src).getOrThrow())
-            .create();
+    public static final Gson GSON = gsonBuilder().setPrettyPrinting().create();
+
+    public static final Gson GSON_COMPACT = gsonBuilder().create(); // no pretty printing, keeps large data sets in a single line
+
+    private static @NonNull GsonBuilder gsonBuilder() {
+        return new GsonBuilder()
+                .registerTypeAdapter(Instant.class, (JsonDeserializer<Instant>) (json, typeOfT, context) -> Instant.parse(json.getAsString()))
+                .registerTypeAdapter(Instant.class, (JsonSerializer<Instant>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
+                .registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString()))
+                .registerTypeAdapter(LocalDateTime.class, (JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
+                .registerTypeAdapter(LocalTime.class, (JsonDeserializer<LocalTime>) (json, typeOfT, context) -> LocalTime.parse(json.getAsString()))
+                .registerTypeAdapter(LocalTime.class, (JsonSerializer<LocalTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
+                .registerTypeAdapter(Pattern.class, (JsonDeserializer<Pattern>) (json, typeOfT, context) -> Pattern.compile(json.getAsString()))
+                .registerTypeAdapter(Pattern.class, (JsonSerializer<Pattern>) (src, typeOfSrc, context) -> new JsonPrimitive(src.pattern()))
+                .registerTypeAdapter(Color.class, (JsonDeserializer<Color>) (json, typeOfT, context) -> new Color(json.getAsInt()))
+                .registerTypeAdapter(Color.class, (JsonSerializer<Color>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getRGB()))
+                .registerTypeAdapter(Component.class, (JsonDeserializer<Component>) (json, typeOfT, context) -> CODEC.parse(INSTANCE, json).getOrThrow())
+                .registerTypeAdapter(Component.class, (JsonSerializer<Component>) (src, typeOfSrc, context) -> CODEC.encodeStart(INSTANCE, src).getOrThrow());
+    }
 
     public static @NonNull String getVersionString() {
         return FabricLoader.getInstance().getModContainer(MOD_ID)
