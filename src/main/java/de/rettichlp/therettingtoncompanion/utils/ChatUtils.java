@@ -1,6 +1,8 @@
 package de.rettichlp.therettingtoncompanion.utils;
 
 import com.mojang.blaze3d.platform.Window;
+import de.rettichlp.therettingtoncompanion.configuration.ChatTab;
+import de.rettichlp.therettingtoncompanion.gui.ChatTabButton;
 import de.rettichlp.therettingtoncompanion.mixin.ChatComponentAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -10,6 +12,7 @@ import net.minecraft.client.multiplayer.chat.GuiMessage;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
@@ -26,6 +29,10 @@ import static net.minecraft.util.Mth.floor;
 import static net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
 
 public class ChatUtils {
+
+    public static final List<ChatTabButton> CHAT_TAB_BUTTONS = new ArrayList<>();
+
+    public static ChatTab FOCUSED_CHAT_TAB;
 
     public static double getMaxChatWidth(Window window, double defaultChatWidth) {
         return !configuration.chat().isOptimizedChat()
@@ -54,6 +61,34 @@ public class ChatUtils {
         int yLineArmor = yLineBase - (numHealthRows - 1) * healthRowHeight - 10;
         int yLineChatBottom = player.getArmorValue() > 0 ? yLineArmor : yLineArmor + 10;
         return min(minecraft.getWindow().getGuiScaledHeight() - 47, yLineChatBottom); // same height as empty inventory slot count
+    }
+
+    public static int getChatTopHeight() {
+        Options options = Minecraft.getInstance().options;
+        int lineHeight = 9;
+        int maxVisibleLines = getHeight(options.chatHeightFocused().get()) / lineHeight;
+        int visibleLines = min(getTrimmedMessages().size(), maxVisibleLines);
+        return getChatBottomHeight() - visibleLines * lineHeight;
+    }
+
+    public static int getChatLeft() {
+        return 2; // 2 because indicator offset
+    }
+
+    public static int getChatRight() {
+        Options options = Minecraft.getInstance().options;
+        return getWidth(options.chatWidth().get()) + 12; // I don't know from where the offset of 12 comes
+    }
+
+    public static boolean isMessageVisible(@NonNull GuiMessage guiMessage) {
+        String message = guiMessage.content().getString();
+        ChatTab focusedChatTab = FOCUSED_CHAT_TAB;
+
+        if (focusedChatTab != null) {
+            return focusedChatTab.matches(message);
+        }
+
+        return configuration.chat().getChatTabs().stream().noneMatch(chatTab -> chatTab.matches(message));
     }
 
     public static boolean isValidPattern(String pattern) {
@@ -102,7 +137,7 @@ public class ChatUtils {
         int chatHeight = getHeight(options.chatHeightFocused().get());
 
         // verify mouseX
-        if (mouseX < 2 || mouseX > chatWidth) { // 2 because indicator offset
+        if (mouseX < getChatLeft() || mouseX > chatWidth) {
             return null;
         }
 
@@ -126,6 +161,38 @@ public class ChatUtils {
         return null;
     }
 
+    /**
+     * The y coordinate of the divider line separating the messages that were unread when the currently focused chat tab got focused
+     * from the older, already-read backlog above them, or {@code null} if there's nothing to divide. (No tab focused, no unread
+     * messages, or the unread messages cover the entire visible backlog.)
+     */
+    public static @Nullable Integer getUnreadDividerY() {
+        ChatTab focusedChatTab = FOCUSED_CHAT_TAB;
+        if (focusedChatTab == null || focusedChatTab.getUnreadCount() <= 0) {
+            return null;
+        }
+
+        GuiMessage lastSeenParent = null;
+        int distinctMessageCount = 0;
+
+        for (GuiMessage.Line line : getTrimmedMessages()) {
+            GuiMessage parent = line.parent();
+            if (parent == lastSeenParent) {
+                continue;
+            }
+
+            lastSeenParent = parent;
+            distinctMessageCount++;
+
+            // the first already-read message (right after the unread ones) marks where the divider belongs
+            if (distinctMessageCount == focusedChatTab.getUnreadCount() + 1) {
+                return getGuiMessageBounds(parent, 9).bottom();
+            }
+        }
+
+        return null;
+    }
+
     public static @NonNull ScreenRectangle getGuiMessageBounds(GuiMessage guiMessage, int entryHeight) {
         // get all lines for this GuiMessage
         List<GuiMessage.Line> lines = getTrimmedMessages().stream()
@@ -143,9 +210,7 @@ public class ChatUtils {
         // get boundary values
         int bottom = getChatBottomHeight() - bottomLineIndex * entryHeight + scrollOffset * entryHeight;
         int top = getChatBottomHeight() - (topLineIndex + 1) * entryHeight + scrollOffset * entryHeight;
-        int left = 0;
-        int width = getWidth(Minecraft.getInstance().options.chatWidth().get()) + 12; // I don't know from where the offset of 12 comes
 
-        return new ScreenRectangle(left + 2, top, width - 2, bottom - top); // 2 because indicator offset
+        return new ScreenRectangle(getChatLeft(), top, getChatRight() - getChatLeft(), bottom - top);
     }
 }
