@@ -3,6 +3,7 @@ package de.rettichlp.therettingtoncompanion.gui.options.tabs;
 import de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration;
 import de.rettichlp.therettingtoncompanion.gui.options.list.TRCOptionsList;
 import de.rettichlp.therettingtoncompanion.gui.screens.ColorSelectionPopupScreen;
+import de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen;
 import de.rettichlp.therettingtoncompanion.models.GammaPreset;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
@@ -11,6 +12,8 @@ import java.awt.Color;
 import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.DEFAULT_DAMAGE_OVERLAY_COLOR;
+import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.DEFAULT_DAMAGE_OVERLAY_OPACITY;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
 import static java.util.Arrays.asList;
 import static net.minecraft.client.gui.components.Tooltip.create;
@@ -53,5 +56,19 @@ public class VisualsOptionsTab extends AbstractTRCOptionsTab {
         optionsList.addHeader(translatable("trc.option.visuals.effects.section_title"), null);
         optionsList.addToggleButton(translatable("trc.option.visuals.effects.show_all_icons.label"), create(translatable("trc.option.visuals.effects.show_all_icons.tooltip")), configuration.visuals().isEffectShowAllIcons(), (_, value) -> configuration.visuals().setEffectShowAllIcons(value == ON));
         optionsList.addToggleButton(translatable("trc.option.visuals.effects.show_duration_timer.label"), create(translatable("trc.option.visuals.effects.show_duration_timer.tooltip")), configuration.visuals().isEffectShowDurationTimer(), (_, value) -> configuration.visuals().setEffectShowDurationTimer(value == ON));
+
+        optionsList.addHeader(translatable("trc.option.visuals.damage_overlay.section_title"), null);
+        optionsList.addColorButton(translatable("trc.option.visuals.damage_overlay.color.label"), create(translatable("trc.option.visuals.damage_overlay.color.tooltip")), new Color(configuration.visuals().getDamageOverlayColor()), (colorButton, value) -> this.minecraft.gui.setScreen(new ColorSelectionPopupScreen(optionsList.getScreen(), value, color -> {
+            configuration.visuals().setDamageOverlayColor(color.getRGB() & 0xFFFFFF);
+            colorButton.setColor(color);
+        })));
+        optionsList.addFullWidthSlider(translatable("trc.option.visuals.damage_overlay.opacity.label"), 0, 100, configuration.visuals().getDamageOverlayOpacity(), value -> {
+            configuration.visuals().setDamageOverlayOpacity(value);
+        });
+        optionsList.addFullWidthButton(translatable("trc.option.visuals.damage_overlay.reset.label"), create(translatable("trc.option.visuals.damage_overlay.reset.tooltip")), _ -> {
+            configuration.visuals().setDamageOverlayColor(DEFAULT_DAMAGE_OVERLAY_COLOR);
+            configuration.visuals().setDamageOverlayOpacity(DEFAULT_DAMAGE_OVERLAY_OPACITY);
+            this.minecraft.gui.setScreen(new TRCOptionsScreen(getId(), optionsList.getScreen().getLastScreen(), optionsList.getScreen().isRenderBackground()));
+        });
     }
 }

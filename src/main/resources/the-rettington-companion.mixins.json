@@ -28,6 +28,7 @@
     "LivingEntityRendererMixin",
     "NametagFeatureRendererMixin",
     "OptionInstanceMixin",
+    "OverlayTextureMixin",
     "PauseScreenMixin"
   ]
 }
