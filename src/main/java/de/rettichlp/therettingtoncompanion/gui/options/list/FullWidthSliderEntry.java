@@ -2,6 +2,7 @@ package de.rettichlp.therettingtoncompanion.gui.options.list;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
@@ -9,6 +10,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static java.lang.Math.clamp;
 import static java.lang.Math.round;
 import static net.minecraft.network.chat.Component.literal;
 
@@ -16,8 +18,9 @@ public class FullWidthSliderEntry extends AbstractEntry {
 
     private final Slider slider;
 
-    protected FullWidthSliderEntry(Component caption, int minValue, int maxValue, int initialValue, Consumer<Integer> onChange) {
-        this.slider = new Slider(caption, minValue, maxValue, initialValue, onChange);
+    protected FullWidthSliderEntry(Component caption, Tooltip tooltip, int minValue, int maxValue, int step, int initialValue, Consumer<Integer> onChange) {
+        this.slider = new Slider(caption, minValue, maxValue, step, initialValue, onChange);
+        this.slider.setTooltip(tooltip);
     }
 
     @Override
@@ -37,14 +40,16 @@ public class FullWidthSliderEntry extends AbstractEntry {
         private final Component caption;
         private final int minValue;
         private final int maxValue;
+        private final int step;
         private final Consumer<Integer> onChange;
 
-        public Slider(Component caption, int minValue, int maxValue, int initialValue, Consumer<Integer> onChange) {
+        public Slider(Component caption, int minValue, int maxValue, int step, int initialValue, Consumer<Integer> onChange) {
             double sliderValue = (double) (initialValue - minValue) / (maxValue - minValue);
             super(0, 0, FullWidthSliderEntry.this.getContentWidth(), DEFAULT_HEIGHT, caption, sliderValue);
             this.caption = caption;
             this.minValue = minValue;
             this.maxValue = maxValue;
+            this.step = step;
             this.onChange = onChange;
             updateMessage();
         }
@@ -62,7 +67,9 @@ public class FullWidthSliderEntry extends AbstractEntry {
         }
 
         private int toMappedValue(double value) {
-            return (int) round(this.minValue + (this.maxValue - this.minValue) * value);
+            int raw = (int) round(this.minValue + (this.maxValue - this.minValue) * value);
+            int snapped = this.minValue + round((raw - this.minValue) / (float) this.step) * this.step;
+            return clamp(snapped, this.minValue, this.maxValue);
         }
     }
 }
