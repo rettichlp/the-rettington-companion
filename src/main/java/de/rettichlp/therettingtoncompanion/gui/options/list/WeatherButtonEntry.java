@@ -1,6 +1,6 @@
 package de.rettichlp.therettingtoncompanion.gui.options.list;
 
-import de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration;
+import de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.WeatherValue;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.WeatherValue.W_CLEAR;
+import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.WeatherValue.W_OFF;
 import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.WeatherValue.W_RAIN;
 import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.WeatherValue.W_THUNDER;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
@@ -23,7 +25,13 @@ import static net.minecraft.resources.Identifier.fromNamespaceAndPath;
 
 public class WeatherButtonEntry extends AbstractEntry {
 
+    private static final int BUTTON_SIZE_X = 32;
+    private static final int BUTTON_SIZE_Y = 20;
+    private static final int ICON_SIZE = 12;
+    private static final int PADDING = 2;
+
     private final StringWidget stringWidget;
+    private final Button autoButton;
     private final Button sunButton;
     private final Button rainButton;
     private final Button thunderButton;
@@ -31,18 +39,13 @@ public class WeatherButtonEntry extends AbstractEntry {
     protected WeatherButtonEntry(Font font,
                                  Component label,
                                  Tooltip tooltip,
-                                 Consumer<VisualsConfiguration.WeatherValue> valueChangeListener) {
+                                 Consumer<WeatherValue> valueChangeListener) {
         this.stringWidget = new StringWidget(label, font);
         this.stringWidget.setTooltip(tooltip);
-        this.sunButton = Button.builder(empty(), _ -> valueChangeListener.accept(W_CLEAR))
-                .size(32, 20)
-                .build();
-        this.rainButton = Button.builder(empty(), _ -> valueChangeListener.accept(W_RAIN))
-                .size(32, 20)
-                .build();
-        this.thunderButton = Button.builder(empty(), _ -> valueChangeListener.accept(W_THUNDER))
-                .size(32, 20)
-                .build();
+        this.autoButton = button(W_OFF, valueChangeListener);
+        this.sunButton = button(W_CLEAR, valueChangeListener);
+        this.rainButton = button(W_RAIN, valueChangeListener);
+        this.thunderButton = button(W_THUNDER, valueChangeListener);
     }
 
     @Override
@@ -50,27 +53,37 @@ public class WeatherButtonEntry extends AbstractEntry {
         this.stringWidget.setPosition(getContentX(), getContentYMiddle() - this.stringWidget.getHeight() / 2);
         this.stringWidget.extractRenderState(graphics, mouseX, mouseY, a);
 
-        int sunButtonX = getContentRight() - this.sunButton.getWidth() + 2 - 68;
-        int sunButtonY = getContentYMiddle() - this.sunButton.getHeight() / 2;
-        this.sunButton.setPosition(sunButtonX, sunButtonY);
-        this.sunButton.extractRenderState(graphics, mouseX, mouseY, a);
-        graphics.blit(GUI_TEXTURED, fromNamespaceAndPath(MOD_ID, "textures/gui/sprites/weather/sun.png"), sunButtonX + 10, sunButtonY + 4, 0, 0, 12, 12, 12, 12);
-
-        int rainButtonX = getContentRight() - this.rainButton.getWidth() + 2 - 34;
-        int rainButtonY = getContentYMiddle() - this.rainButton.getHeight() / 2;
-        this.rainButton.setPosition(rainButtonX, rainButtonY);
-        this.rainButton.extractRenderState(graphics, mouseX, mouseY, a);
-        graphics.blit(GUI_TEXTURED, fromNamespaceAndPath(MOD_ID, "textures/gui/sprites/weather/rain.png"), rainButtonX + 10, rainButtonY + 4, 0, 0, 12, 12, 12, 12);
-
-        int thunderButtonX = getContentRight() - this.thunderButton.getWidth() + 2;
-        int thunderButtonY = getContentYMiddle() - this.thunderButton.getHeight() / 2;
-        this.thunderButton.setPosition(thunderButtonX, thunderButtonY);
-        this.thunderButton.extractRenderState(graphics, mouseX, mouseY, a);
-        graphics.blit(GUI_TEXTURED, fromNamespaceAndPath(MOD_ID, "textures/gui/sprites/weather/thunder.png"), thunderButtonX + 10, thunderButtonY + 4, 0, 0, 12, 12, 12, 12);
+        int y = getContentYMiddle() - BUTTON_SIZE_Y / 2;
+        extractWeatherButton(graphics, this.autoButton, W_OFF, "auto", getContentRight() - 4 * BUTTON_SIZE_X - 3 * PADDING + 2, y, mouseX, mouseY, a);
+        extractWeatherButton(graphics, this.sunButton, W_CLEAR, "sun", getContentRight() - 3 * BUTTON_SIZE_X - 2 * PADDING + 2, y, mouseX, mouseY, a);
+        extractWeatherButton(graphics, this.rainButton, W_RAIN, "rain", getContentRight() - 2 * BUTTON_SIZE_X - PADDING + 2, y, mouseX, mouseY, a);
+        extractWeatherButton(graphics, this.thunderButton, W_THUNDER, "thunder", getContentRight() - BUTTON_SIZE_X + 2, y, mouseX, mouseY, a);
     }
 
     @Override
     public @NonNull List<? extends GuiEventListener> children() {
-        return List.of(this.stringWidget, this.sunButton, this.rainButton, this.thunderButton);
+        return List.of(this.stringWidget, this.autoButton, this.sunButton, this.rainButton, this.thunderButton);
+    }
+
+    private @NonNull Button button(@NonNull WeatherValue value, Consumer<WeatherValue> valueChangeListener) {
+        return Button.builder(empty(), _ -> valueChangeListener.accept(value))
+                .size(BUTTON_SIZE_X, 20)
+                .tooltip(value.tooltip())
+                .build();
+    }
+
+    private void extractWeatherButton(GuiGraphicsExtractor graphics,
+                                      @NonNull Button button,
+                                      WeatherValue value,
+                                      String iconName,
+                                      int x,
+                                      int y,
+                                      int mouseX,
+                                      int mouseY,
+                                      float a) {
+        button.setPosition(x, y);
+        button.setFocused(configuration.visuals().getWeatherValue() == value);
+        button.extractRenderState(graphics, mouseX, mouseY, a);
+        graphics.blit(GUI_TEXTURED, fromNamespaceAndPath(MOD_ID, "textures/gui/sprites/weather/" + iconName + ".png"), x + button.getWidth() / 2 - ICON_SIZE / 2, y + button.getHeight() / 2 - ICON_SIZE / 2, 0, 0, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
     }
 }
