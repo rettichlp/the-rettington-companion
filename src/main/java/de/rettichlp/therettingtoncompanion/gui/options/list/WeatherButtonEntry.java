@@ -31,7 +31,7 @@ public class WeatherButtonEntry extends AbstractEntry {
     private static final int PADDING = 2;
 
     private final StringWidget stringWidget;
-    private final Button autoButton;
+    private final Button offButton;
     private final Button sunButton;
     private final Button rainButton;
     private final Button thunderButton;
@@ -42,7 +42,7 @@ public class WeatherButtonEntry extends AbstractEntry {
                                  Consumer<WeatherValue> valueChangeListener) {
         this.stringWidget = new StringWidget(label, font);
         this.stringWidget.setTooltip(tooltip);
-        this.autoButton = button(W_OFF, valueChangeListener);
+        this.offButton = button(W_OFF, valueChangeListener);
         this.sunButton = button(W_CLEAR, valueChangeListener);
         this.rainButton = button(W_RAIN, valueChangeListener);
         this.thunderButton = button(W_THUNDER, valueChangeListener);
@@ -54,7 +54,7 @@ public class WeatherButtonEntry extends AbstractEntry {
         this.stringWidget.extractRenderState(graphics, mouseX, mouseY, a);
 
         int y = getContentYMiddle() - BUTTON_SIZE_Y / 2;
-        extractWeatherButton(graphics, this.autoButton, W_OFF, "off", getContentRight() - 4 * BUTTON_SIZE_X - 3 * PADDING + 2, y, mouseX, mouseY, a);
+        extractWeatherButton(graphics, this.offButton, W_OFF, "off", getContentRight() - 4 * BUTTON_SIZE_X - 3 * PADDING + 2, y, mouseX, mouseY, a);
         extractWeatherButton(graphics, this.sunButton, W_CLEAR, "sun", getContentRight() - 3 * BUTTON_SIZE_X - 2 * PADDING + 2, y, mouseX, mouseY, a);
         extractWeatherButton(graphics, this.rainButton, W_RAIN, "rain", getContentRight() - 2 * BUTTON_SIZE_X - PADDING + 2, y, mouseX, mouseY, a);
         extractWeatherButton(graphics, this.thunderButton, W_THUNDER, "thunder", getContentRight() - BUTTON_SIZE_X + 2, y, mouseX, mouseY, a);
@@ -62,7 +62,7 @@ public class WeatherButtonEntry extends AbstractEntry {
 
     @Override
     public @NonNull List<? extends GuiEventListener> children() {
-        return List.of(this.stringWidget, this.autoButton, this.sunButton, this.rainButton, this.thunderButton);
+        return List.of(this.stringWidget, this.offButton, this.sunButton, this.rainButton, this.thunderButton);
     }
 
     private @NonNull Button button(@NonNull WeatherValue value, Consumer<WeatherValue> valueChangeListener) {
