@@ -13,17 +13,26 @@ import java.util.Set;
 @Data
 public class ChatConfiguration {
 
+    private static final int DEFAULT_MAX_CHAT_MESSAGES = 100;
+
     @Accessors(fluent = true)
     private FilteredMessageConfiguration filteredMessage = new FilteredMessageConfiguration();
     private Set<HiddenMessageEntry.HiddenMessage> hiddenMessages = new HashSet<>();
     private List<ChatTab> chatTabs = new ArrayList<>();
     private boolean optimizedChat = true;
-    private boolean moreMessages = true;
+    private int maxChatMessages = 5000;
     private boolean keepMessagesOnDisconnect = true;
     private boolean chatTime = false;
     private boolean chatSearch = true;
     private boolean mergeDuplicateMessages = true;
     private boolean saveChatLog = true;
+
+    /**
+     * The effective cap on how many chat messages are kept, resolving {@link #maxChatMessages} {@code == 0} to vanilla's default.
+     */
+    public int getEffectiveMaxChatMessages() {
+        return this.maxChatMessages == 0 ? DEFAULT_MAX_CHAT_MESSAGES : this.maxChatMessages;
+    }
 
     @Data
     public static class FilteredMessageConfiguration {

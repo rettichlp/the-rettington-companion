@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getAllMessages;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.refreshTrimmedMessages;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.GSON_COMPACT;
@@ -23,9 +24,6 @@ import static net.minecraft.network.chat.Component.translatable;
 
 public class ChatLogService {
 
-    // limits the file size of the chat log, keeping only the most recent messages
-    private static final int MAX_SAVED_MESSAGES = 10_000;
-
     private static final Path CHAT_LOG_PATH = FabricLoader.getInstance().getGameDir().resolve("chatlog.json");
     private static final GuiMessageTag LOADED_FROM_PREVIOUS_SESSION_TAG = new GuiMessageTag(-13474666, null, translatable("trc.chat_log.indicator"), "Previous session");
 
@@ -34,7 +32,7 @@ public class ChatLogService {
     public void saveChatLog() {
         // allMessages is ordered newest first, so limiting it keeps the most recent messages
         ChatLogEntry[] chatLogEntries = getAllMessages().stream()
-                .limit(MAX_SAVED_MESSAGES)
+                .limit(configuration.chat().getEffectiveMaxChatMessages())
                 .map(guiMessage -> new ChatLogEntry(guiMessage.content(), guiMessage.source()))
                 .toArray(ChatLogEntry[]::new);
 
