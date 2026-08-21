@@ -54,7 +54,7 @@ public class WeatherButtonEntry extends AbstractEntry {
         this.stringWidget.extractRenderState(graphics, mouseX, mouseY, a);
 
         int y = getContentYMiddle() - BUTTON_SIZE_Y / 2;
-        extractWeatherButton(graphics, this.autoButton, W_OFF, "auto", getContentRight() - 4 * BUTTON_SIZE_X - 3 * PADDING + 2, y, mouseX, mouseY, a);
+        extractWeatherButton(graphics, this.autoButton, W_OFF, "off", getContentRight() - 4 * BUTTON_SIZE_X - 3 * PADDING + 2, y, mouseX, mouseY, a);
         extractWeatherButton(graphics, this.sunButton, W_CLEAR, "sun", getContentRight() - 3 * BUTTON_SIZE_X - 2 * PADDING + 2, y, mouseX, mouseY, a);
         extractWeatherButton(graphics, this.rainButton, W_RAIN, "rain", getContentRight() - 2 * BUTTON_SIZE_X - PADDING + 2, y, mouseX, mouseY, a);
         extractWeatherButton(graphics, this.thunderButton, W_THUNDER, "thunder", getContentRight() - BUTTON_SIZE_X + 2, y, mouseX, mouseY, a);
