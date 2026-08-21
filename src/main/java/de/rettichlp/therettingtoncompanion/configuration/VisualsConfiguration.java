@@ -27,6 +27,9 @@ import static net.minecraft.network.chat.TextColor.GRAY;
 @Data
 public class VisualsConfiguration {
 
+    public static final int DEFAULT_DAMAGE_OVERLAY_COLOR = 0xFF0000;
+    public static final int DEFAULT_DAMAGE_OVERLAY_OPACITY = 70;
+
     private boolean showArmorHud = true;
     private boolean showArrowHud = true;
     private EquipmentModelVisibility equipmentModelVisibility = ALL;
@@ -39,6 +42,8 @@ public class VisualsConfiguration {
     private boolean nametagTextShadow = true;
     private boolean effectShowAllIcons = false;
     private boolean effectShowDurationTimer = true;
+    private int damageOverlayColor = DEFAULT_DAMAGE_OVERLAY_COLOR;
+    private int damageOverlayOpacity = DEFAULT_DAMAGE_OVERLAY_OPACITY;
 
     @Getter
     @Accessors(fluent = true)

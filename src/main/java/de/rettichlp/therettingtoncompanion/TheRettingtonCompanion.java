@@ -4,6 +4,7 @@ import de.rettichlp.therettingtoncompanion.configuration.Configuration;
 import de.rettichlp.therettingtoncompanion.services.ChatLogService;
 import de.rettichlp.therettingtoncompanion.services.InventoryService;
 import de.rettichlp.therettingtoncompanion.services.NotificationService;
+import de.rettichlp.therettingtoncompanion.services.VisualsService;
 import de.rettichlp.therettingtoncompanion.services.WidgetService;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.client.KeyMapping;
@@ -43,6 +44,7 @@ public class TheRettingtonCompanion implements ModInitializer {
     public static final ChatLogService chatLogService = new ChatLogService();
     public static final InventoryService inventoryService = new InventoryService();
     public static final NotificationService notificationService = new NotificationService();
+    public static final VisualsService visualsService = new VisualsService();
     public static final WidgetService widgetService = new WidgetService();
 
     public static final KeyMapping.Category KEY_CATEGORY = register(fromNamespaceAndPath(MOD_ID, "name"));
