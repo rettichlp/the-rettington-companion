@@ -96,6 +96,7 @@
   "trc.option.widgets.size.label": "Size",
   "trc.option.widgets.padding.label": "Padding",
   "trc.weather_value.clear": "Clear",
+  "trc.weather_value.off": "Current weather (no override)",
   "trc.weather_value.rain": "Rain",
   "trc.weather_value.thunder": "Rain & thunder",
   "trc.widgets.options.enabled.label": "Enabled",

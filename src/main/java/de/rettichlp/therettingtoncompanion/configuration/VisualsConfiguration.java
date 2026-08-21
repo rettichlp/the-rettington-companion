@@ -108,10 +108,10 @@ public class VisualsConfiguration {
     @AllArgsConstructor
     public enum WeatherValue implements ICycleButtonValue {
 
-        W_OFF(OPTION_OFF, create(empty())),
-        W_CLEAR(translatable("trc.weather_value.clear"), create(empty())),
-        W_RAIN(translatable("trc.weather_value.rain"), create(empty())),
-        W_THUNDER(translatable("trc.weather_value.thunder"), create(empty()));
+        W_OFF(OPTION_OFF, create(translatable("trc.weather_value.off"))),
+        W_CLEAR(translatable("trc.weather_value.clear"), create(translatable("trc.weather_value.clear"))),
+        W_RAIN(translatable("trc.weather_value.rain"), create(translatable("trc.weather_value.rain"))),
+        W_THUNDER(translatable("trc.weather_value.thunder"), create(translatable("trc.weather_value.thunder")));
 
         private final Component value;
         private final Tooltip tooltip;
