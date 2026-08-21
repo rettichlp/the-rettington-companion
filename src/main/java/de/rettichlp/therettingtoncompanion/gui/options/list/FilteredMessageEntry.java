@@ -18,7 +18,6 @@ import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
-import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -36,7 +35,6 @@ import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.compiledPatter
 import static java.awt.Color.GREEN;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.util.Comparator.comparingInt;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.resources.Identifier.parse;
@@ -188,21 +186,28 @@ public class FilteredMessageEntry extends AbstractEntry {
                 return defaultFilteredMessage;
             }
 
-            // matches custom regexes
-            List<FilteredMessage> matchingCustomRegexes = getMatchingCustomRegexes(message);
-            return matchingCustomRegexes.isEmpty() ? null : matchingCustomRegexes.getFirst();
+            // matches custom regexes, highest priority wins
+            FilteredMessage best = null;
+            for (FilteredMessage filteredMessage : configuration.chat().filteredMessage().getFilteredMessages()) {
+                if (!filteredMessage.isActive()) {
+                    continue;
+                }
+
+                Pattern pattern = filteredMessage.getPattern().orElse(null);
+                if (pattern == null || !pattern.matcher(message).find()) {
+                    continue;
+                }
+
+                if (best == null || filteredMessage.getPriority() > best.getPriority()) {
+                    best = filteredMessage;
+                }
+            }
+
+            return best;
         }
 
         private static boolean matchesDefaultFilteredMessage(@NonNull FilteredMessage defaultFilteredMessage, String message) {
             return defaultFilteredMessage.isActive() && message.toLowerCase().contains(player.getGameProfile().name().toLowerCase());
-        }
-
-        private static @NonNull @Unmodifiable List<FilteredMessage> getMatchingCustomRegexes(CharSequence message) {
-            return configuration.chat().filteredMessage().getFilteredMessages().stream()
-                    .filter(FilteredMessage::isActive)
-                    .filter(filteredMessage -> filteredMessage.getPattern().map(pattern -> pattern.matcher(message).find()).orElse(false))
-                    .sorted(comparingInt(FilteredMessage::getPriority).reversed())
-                    .toList();
         }
     }
 }

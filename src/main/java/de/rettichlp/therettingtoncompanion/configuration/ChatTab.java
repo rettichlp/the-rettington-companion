@@ -1,6 +1,5 @@
 package de.rettichlp.therettingtoncompanion.configuration;
 
-import de.rettichlp.therettingtoncompanion.utils.ChatUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.jspecify.annotations.NonNull;
@@ -8,8 +7,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.regex.Pattern;
 
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.compiledPattern;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getCurrentServerBaseDomain;
 
 @Getter
@@ -28,11 +28,17 @@ public class ChatTab {
         this.name = name;
     }
 
+    // plain loop instead of a Stream pipeline: this runs once per chat message every time the chat filter is refreshed (e.g. on every
+    // chat open), so with a sizeable message history the per-call Stream/lambda setup overhead itself became measurable
     public boolean matches(@NonNull CharSequence message) {
-        return this.patternStrings.stream()
-                .map(ChatUtils::compiledPattern)
-                .flatMap(Optional::stream)
-                .anyMatch(pattern -> pattern.matcher(message).find());
+        for (String patternString : this.patternStrings) {
+            Pattern pattern = compiledPattern(patternString).orElse(null);
+            if (pattern != null && pattern.matcher(message).find()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

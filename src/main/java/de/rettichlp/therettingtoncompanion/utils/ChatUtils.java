@@ -97,7 +97,13 @@ public class ChatUtils {
             return focusedChatTab.matches(message);
         }
 
-        return configuration.chat().getChatTabs().stream().noneMatch(chatTab -> chatTab.matches(message));
+        for (ChatTab chatTab : configuration.chat().getChatTabs()) {
+            if (chatTab.matches(message)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static boolean isValidPattern(String pattern) {
