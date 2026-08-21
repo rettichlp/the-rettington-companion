@@ -32,13 +32,11 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.OFF;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
 import static de.rettichlp.therettingtoncompanion.gui.screens.SoundSelectionPopupScreen.isValidSoundIdentifier;
-import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.isValidPattern;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.compiledPattern;
 import static java.awt.Color.GREEN;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Comparator.comparingInt;
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
-import static java.util.regex.Pattern.compile;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.resources.Identifier.parse;
@@ -168,9 +166,7 @@ public class FilteredMessageEntry extends AbstractEntry {
         }
 
         public Optional<Pattern> getPattern() {
-            return isValidPattern(this.patternString)
-                    ? Optional.of(compile(this.patternString, CASE_INSENSITIVE))
-                    : Optional.empty();
+            return compiledPattern(this.patternString);
         }
 
         public @Nullable Identifier getSoundIdentifier() {

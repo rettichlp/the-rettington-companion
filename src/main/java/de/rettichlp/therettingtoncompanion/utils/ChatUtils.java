@@ -13,7 +13,11 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
@@ -21,6 +25,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Optional.ofNullable;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.client.gui.components.ChatComponent.getHeight;
 import static net.minecraft.client.gui.components.ChatComponent.getWidth;
@@ -33,6 +38,10 @@ public class ChatUtils {
     public static final List<ChatTabButton> CHAT_TAB_BUTTONS = new ArrayList<>();
 
     public static ChatTab FOCUSED_CHAT_TAB;
+
+    // regex compilation is comparatively expensive and these patterns (chat tabs, filtered/hidden messages) are matched against every
+    // chat message on every render/refresh, so recompiling the same pattern string on every single match call causes noticeable lag
+    private static final Map<String, Optional<Pattern>> COMPILED_PATTERN_CACHE = new HashMap<>();
 
     public static double getMaxChatWidth(Window window, double defaultChatWidth) {
         return !configuration.chat().isOptimizedChat()
@@ -92,16 +101,26 @@ public class ChatUtils {
     }
 
     public static boolean isValidPattern(String pattern) {
-        if (pattern == null) {
-            return false;
+        return compiledPattern(pattern).isPresent();
+    }
+
+    /**
+     * Compiles (case-insensitively) and caches the given pattern string, so repeated lookups of the same string (e.g. matching every
+     * chat message against every chat tab's patterns) don't pay for regex compilation more than once. Returns an empty Optional for a
+     * {@code null} or syntactically invalid pattern.
+     */
+    public static Optional<Pattern> compiledPattern(String patternString) {
+        if (patternString == null) {
+            return Optional.empty();
         }
 
-        try {
-            compile(pattern);
-            return true;
-        } catch (PatternSyntaxException e) {
-            return false;
-        }
+        return COMPILED_PATTERN_CACHE.computeIfAbsent(patternString, s -> {
+            try {
+                return Optional.of(compile(s, CASE_INSENSITIVE));
+            } catch (PatternSyntaxException e) {
+                return Optional.empty();
+            }
+        });
     }
 
     public static List<GuiMessage> getAllMessages() {

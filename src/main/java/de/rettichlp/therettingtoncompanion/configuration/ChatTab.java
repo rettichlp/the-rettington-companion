@@ -8,10 +8,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getCurrentServerBaseDomain;
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
-import static java.util.regex.Pattern.compile;
 
 @Getter
 @Setter
@@ -31,8 +30,8 @@ public class ChatTab {
 
     public boolean matches(@NonNull CharSequence message) {
         return this.patternStrings.stream()
-                .filter(ChatUtils::isValidPattern)
-                .map(patternString -> compile(patternString, CASE_INSENSITIVE))
+                .map(ChatUtils::compiledPattern)
+                .flatMap(Optional::stream)
                 .anyMatch(pattern -> pattern.matcher(message).find());
     }
 
