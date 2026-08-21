@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.visualsService;
 
 @Mixin(OverlayTexture.class)
 public abstract class OverlayTextureMixin {
@@ -16,9 +16,6 @@ public abstract class OverlayTextureMixin {
                         ordinal = 0),
                index = 2)
     private int trc$initInvoke(int color) {
-        int rgb = configuration.visuals().getDamageOverlayColor() & 0x00FFFFFF; // isolate RGB
-        int opacityPercent = configuration.visuals().getDamageOverlayOpacity(); // 0 - 100
-        int alpha = (int) (opacityPercent / 100.0F * 255.0F); // convert to 0-255
-        return (alpha << 24) | rgb;
+        return visualsService.getDamageOverlayColor();
     }
 }

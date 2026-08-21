@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.visualsService;
 import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.DEFAULT_DAMAGE_OVERLAY_COLOR;
 import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.DEFAULT_DAMAGE_OVERLAY_OPACITY;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
@@ -61,13 +62,16 @@ public class VisualsOptionsTab extends AbstractTRCOptionsTab {
         optionsList.addColorButton(translatable("trc.option.visuals.damage_overlay.color.label"), create(translatable("trc.option.visuals.damage_overlay.color.tooltip")), new Color(configuration.visuals().getDamageOverlayColor()), (colorButton, value) -> this.minecraft.gui.setScreen(new ColorSelectionPopupScreen(optionsList.getScreen(), value, color -> {
             configuration.visuals().setDamageOverlayColor(color.getRGB() & 0xFFFFFF);
             colorButton.setColor(color);
+            visualsService.refreshDamageOverlayColor();
         })));
         optionsList.addFullWidthSlider(translatable("trc.option.visuals.damage_overlay.opacity.label"), 0, 100, configuration.visuals().getDamageOverlayOpacity(), value -> {
             configuration.visuals().setDamageOverlayOpacity(value);
+            visualsService.refreshDamageOverlayColor();
         });
         optionsList.addFullWidthButton(translatable("trc.option.visuals.damage_overlay.reset.label"), create(translatable("trc.option.visuals.damage_overlay.reset.tooltip")), _ -> {
             configuration.visuals().setDamageOverlayColor(DEFAULT_DAMAGE_OVERLAY_COLOR);
             configuration.visuals().setDamageOverlayOpacity(DEFAULT_DAMAGE_OVERLAY_OPACITY);
+            visualsService.refreshDamageOverlayColor();
             this.minecraft.gui.setScreen(new TRCOptionsScreen(getId(), optionsList.getScreen().getLastScreen(), optionsList.getScreen().isRenderBackground()));
         });
     }
