@@ -12,7 +12,9 @@ public class VisualsService {
     public int getDamageOverlayColor() {
         int rgb = configuration.visuals().getDamageOverlayColor() & 0x00FFFFFF; // isolate RGB
         int opacityPercent = configuration.visuals().getDamageOverlayOpacity(); // 0 - 100
-        int alpha = (int) (opacityPercent / 100.0F * 255.0F); // convert to 0-255
+        // Minecraft's entity shader blends this texture as mix(overlayColor, originalColor, alpha), so alpha is inverted compared to
+        // normal transparency: 0 = full overlay color, 255 = original color (no tint)
+        int alpha = (int) ((100 - opacityPercent) / 100.0F * 255.0F);
         return (alpha << 24) | rgb;
     }
 
