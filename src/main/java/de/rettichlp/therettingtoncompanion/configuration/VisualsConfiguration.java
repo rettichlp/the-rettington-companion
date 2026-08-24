@@ -27,6 +27,9 @@ import static net.minecraft.network.chat.TextColor.GRAY;
 @Data
 public class VisualsConfiguration {
 
+    public static final int DEFAULT_DAMAGE_OVERLAY_COLOR = 0xFF0000;
+    public static final int DEFAULT_DAMAGE_OVERLAY_OPACITY = 70;
+
     private boolean showArmorHud = true;
     private boolean showArrowHud = true;
     private EquipmentModelVisibility equipmentModelVisibility = ALL;
@@ -39,6 +42,8 @@ public class VisualsConfiguration {
     private boolean nametagTextShadow = true;
     private boolean effectShowAllIcons = false;
     private boolean effectShowDurationTimer = true;
+    private int damageOverlayColor = DEFAULT_DAMAGE_OVERLAY_COLOR;
+    private int damageOverlayOpacity = DEFAULT_DAMAGE_OVERLAY_OPACITY;
 
     @Getter
     @Accessors(fluent = true)
@@ -103,10 +108,10 @@ public class VisualsConfiguration {
     @AllArgsConstructor
     public enum WeatherValue implements ICycleButtonValue {
 
-        W_OFF(OPTION_OFF, create(empty())),
-        W_CLEAR(translatable("trc.weather_value.clear"), create(empty())),
-        W_RAIN(translatable("trc.weather_value.rain"), create(empty())),
-        W_THUNDER(translatable("trc.weather_value.thunder"), create(empty()));
+        W_OFF(OPTION_OFF, create(translatable("trc.weather_value.off"))),
+        W_CLEAR(translatable("trc.weather_value.clear"), create(translatable("trc.weather_value.clear"))),
+        W_RAIN(translatable("trc.weather_value.rain"), create(translatable("trc.weather_value.rain"))),
+        W_THUNDER(translatable("trc.weather_value.thunder"), create(translatable("trc.weather_value.thunder")));
 
         private final Component value;
         private final Tooltip tooltip;
