@@ -39,7 +39,7 @@ public class ChatUtils {
 
     public static ChatTab FOCUSED_CHAT_TAB;
 
-    // regex compilation is comparatively expensive and these patterns (chat tabs, filtered/hidden messages) are matched against every
+    // regex compilation is comparatively expensive, and these patterns (chat tabs, filtered/hidden messages) are matched against every
     // chat message on every render/refresh, so recompiling the same pattern string on every single match call causes noticeable lag
     private static final Map<String, Optional<Pattern>> COMPILED_PATTERN_CACHE = new HashMap<>();
 
@@ -110,11 +110,6 @@ public class ChatUtils {
         return compiledPattern(pattern).isPresent();
     }
 
-    /**
-     * Compiles (case-insensitively) and caches the given pattern string, so repeated lookups of the same string (e.g. matching every
-     * chat message against every chat tab's patterns) don't pay for regex compilation more than once. Returns an empty Optional for a
-     * {@code null} or syntactically invalid pattern.
-     */
     public static Optional<Pattern> compiledPattern(String patternString) {
         if (patternString == null) {
             return Optional.empty();

@@ -27,9 +27,6 @@ public class ChatConfiguration {
     private boolean mergeDuplicateMessages = true;
     private boolean saveChatLog = true;
 
-    /**
-     * The effective cap on how many chat messages are kept, resolving {@link #maxChatMessages} {@code == 0} to vanilla's default.
-     */
     public int getEffectiveMaxChatMessages() {
         return this.maxChatMessages == 0 ? DEFAULT_MAX_CHAT_MESSAGES : this.maxChatMessages;
     }

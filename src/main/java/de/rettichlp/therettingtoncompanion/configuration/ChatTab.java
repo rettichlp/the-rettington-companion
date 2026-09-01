@@ -28,8 +28,6 @@ public class ChatTab {
         this.name = name;
     }
 
-    // plain loop instead of a Stream pipeline: this runs once per chat message every time the chat filter is refreshed (e.g. on every
-    // chat open), so with a sizeable message history the per-call Stream/lambda setup overhead itself became measurable
     public boolean matches(@NonNull CharSequence message) {
         for (String patternString : this.patternStrings) {
             Pattern pattern = compiledPattern(patternString).orElse(null);
