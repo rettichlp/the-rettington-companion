@@ -95,7 +95,13 @@ public class TRCOptionsList extends ContainerObjectSelectionList<AbstractEntry> 
         addEntry(new HiddenMessageEntry(hiddenMessage));
     }
 
-    public void addFullWidthSlider(Component caption, Tooltip tooltip, int minValue, int maxValue, int step, int initialValue, Consumer<Integer> onChange) {
+    public void addFullWidthSlider(Component caption,
+                                   Tooltip tooltip,
+                                   int minValue,
+                                   int maxValue,
+                                   int step,
+                                   int initialValue,
+                                   Consumer<Integer> onChange) {
         addEntry(new FullWidthSliderEntry(caption, tooltip, minValue, maxValue, step, initialValue, onChange));
     }
 }

@@ -124,7 +124,8 @@ public abstract class ChatComponentMixin {
         }
     }
 
-    @ModifyExpressionValue(method = "addMessage", at = @At(value = "INVOKE", target = "Ljava/util/function/Predicate;test(Ljava/lang/Object;)Z"))
+    @ModifyExpressionValue(method = "addMessage",
+                           at = @At(value = "INVOKE", target = "Ljava/util/function/Predicate;test(Ljava/lang/Object;)Z"))
     private boolean trc$addMessageForceAdmission(boolean original) {
         // always admit messages, even if they are filtered out
         return true;

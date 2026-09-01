@@ -18,7 +18,13 @@ public class FullWidthSliderEntry extends AbstractEntry {
 
     private final Slider slider;
 
-    protected FullWidthSliderEntry(Component caption, Tooltip tooltip, int minValue, int maxValue, int step, int initialValue, Consumer<Integer> onChange) {
+    protected FullWidthSliderEntry(Component caption,
+                                   Tooltip tooltip,
+                                   int minValue,
+                                   int maxValue,
+                                   int step,
+                                   int initialValue,
+                                   Consumer<Integer> onChange) {
         this.slider = new Slider(caption, minValue, maxValue, step, initialValue, onChange);
         this.slider.setTooltip(tooltip);
     }
