@@ -64,7 +64,7 @@ public class VisualsOptionsTab extends AbstractTRCOptionsTab {
             colorButton.setColor(color);
             visualsService.refreshDamageOverlayColor();
         })));
-        optionsList.addFullWidthSlider(translatable("trc.option.visuals.damage_overlay.opacity.label"), 0, 100, configuration.visuals().getDamageOverlayOpacity(), value -> {
+        optionsList.addFullWidthSlider(translatable("trc.option.visuals.damage_overlay.opacity.label"), create(translatable("trc.option.visuals.damage_overlay.opacity.tooltip")), 0, 100, 1, configuration.visuals().getDamageOverlayOpacity(), value -> {
             configuration.visuals().setDamageOverlayOpacity(value);
             visualsService.refreshDamageOverlayColor();
         });

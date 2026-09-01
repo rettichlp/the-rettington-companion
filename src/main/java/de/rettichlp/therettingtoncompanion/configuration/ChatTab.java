@@ -1,6 +1,5 @@
 package de.rettichlp.therettingtoncompanion.configuration;
 
-import de.rettichlp.therettingtoncompanion.utils.ChatUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.jspecify.annotations.NonNull;
@@ -8,10 +7,10 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.compiledPattern;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getCurrentServerBaseDomain;
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
-import static java.util.regex.Pattern.compile;
 
 @Getter
 @Setter
@@ -30,10 +29,14 @@ public class ChatTab {
     }
 
     public boolean matches(@NonNull CharSequence message) {
-        return this.patternStrings.stream()
-                .filter(ChatUtils::isValidPattern)
-                .map(patternString -> compile(patternString, CASE_INSENSITIVE))
-                .anyMatch(pattern -> pattern.matcher(message).find());
+        for (String patternString : this.patternStrings) {
+            Pattern pattern = compiledPattern(patternString).orElse(null);
+            if (pattern != null && pattern.matcher(message).find()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

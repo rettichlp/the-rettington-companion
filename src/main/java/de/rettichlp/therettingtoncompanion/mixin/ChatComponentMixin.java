@@ -49,7 +49,6 @@ import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomH
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMaxChatHeight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMaxChatWidth;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.isMessageVisible;
-import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -125,7 +124,8 @@ public abstract class ChatComponentMixin {
         }
     }
 
-    @ModifyExpressionValue(method = "addMessage", at = @At(value = "INVOKE", target = "Ljava/util/function/Predicate;test(Ljava/lang/Object;)Z"))
+    @ModifyExpressionValue(method = "addMessage",
+                           at = @At(value = "INVOKE", target = "Ljava/util/function/Predicate;test(Ljava/lang/Object;)Z"))
     private boolean trc$addMessageForceAdmission(boolean original) {
         // always admit messages, even if they are filtered out
         return true;
@@ -189,7 +189,7 @@ public abstract class ChatComponentMixin {
     @ModifyExpressionValue(method = { "addMessageToDisplayQueue", "addMessageToQueue", "addRecentChat" },
                            at = @At(value = "CONSTANT", args = "intValue=100"))
     private int trc$addMessageExpressionValue(int hundred) {
-        return configuration.chat().isMoreMessages() ? MAX_VALUE : 100;
+        return configuration.chat().getEffectiveMaxChatMessages();
     }
 
     @ModifyExpressionValue(method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V",

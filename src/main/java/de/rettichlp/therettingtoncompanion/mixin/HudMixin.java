@@ -52,7 +52,8 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
-import static de.rettichlp.therettingtoncompanion.gui.ChatTabButton.*;
+import static de.rettichlp.therettingtoncompanion.gui.ChatTabButton.forAddButton;
+import static de.rettichlp.therettingtoncompanion.gui.ChatTabButton.forDefaultTab;
 import static de.rettichlp.therettingtoncompanion.gui.ChatTabButton.forTab;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.CHAT_TAB_BUTTONS;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.FOCUSED_CHAT_TAB;
@@ -462,24 +463,6 @@ public abstract class HudMixin {
     }
 
     @Unique
-    private static @NonNull String getEffectDurationText(@NonNull MobEffectInstance instance) {
-        if (instance.isInfiniteDuration()) {
-            return "";
-        }
-
-        int totalSeconds = (int) Math.ceil(instance.getDuration() / 20.0);
-        if (totalSeconds >= 86400) {
-            return (totalSeconds / 86400) + "d";
-        } else if (totalSeconds >= 3600) {
-            return (totalSeconds / 3600) + "h";
-        } else if (totalSeconds > 60) {
-            return (totalSeconds / 60) + "m";
-        } else {
-            return totalSeconds + "s";
-        }
-    }
-
-    @Unique
     private void layoutChatTabButtons(@NonNull List<? extends AbstractWidget> chatTabButtonsInDisplayOrder) {
         int spacing = 2;
         int rowHeight = 14;
@@ -500,6 +483,24 @@ public abstract class HudMixin {
 
             chatTabButton.setPosition(currentX, currentRowY);
             currentX += (width + spacing);
+        }
+    }
+
+    @Unique
+    private static @NonNull String getEffectDurationText(@NonNull MobEffectInstance instance) {
+        if (instance.isInfiniteDuration()) {
+            return "";
+        }
+
+        int totalSeconds = (int) Math.ceil(instance.getDuration() / 20.0);
+        if (totalSeconds >= 86400) {
+            return (totalSeconds / 86400) + "d";
+        } else if (totalSeconds >= 3600) {
+            return (totalSeconds / 3600) + "h";
+        } else if (totalSeconds > 60) {
+            return (totalSeconds / 60) + "m";
+        } else {
+            return totalSeconds + "s";
         }
     }
 }
