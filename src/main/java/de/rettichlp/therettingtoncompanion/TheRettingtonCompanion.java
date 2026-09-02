@@ -12,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM;
 import static net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents.CLIENT_STOPPING;
@@ -28,6 +27,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_G;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_H;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UNKNOWN;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class TheRettingtonCompanion implements ModInitializer {
 
@@ -37,7 +37,7 @@ public class TheRettingtonCompanion implements ModInitializer {
     // This logger is used to write text to the console and the log file.
     // It is considered best practice to use your mod id as the logger's name.
     // That way, it's clear which mod wrote info, warnings, and errors.
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final Logger LOGGER = getLogger(MOD_ID);
 
     public static final Configuration configuration = new Configuration().loadFromFile();
 
