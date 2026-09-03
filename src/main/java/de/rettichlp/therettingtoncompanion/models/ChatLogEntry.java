@@ -11,4 +11,5 @@ public class ChatLogEntry {
 
     private Component content;
     private GuiMessageSource source;
+    private long timestamp;
 }

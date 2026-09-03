@@ -23,6 +23,7 @@ import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_HORIZONTAL;
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_VERTICAL;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.FOCUSED_CHAT_TAB;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.rebuildMessageClassification;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getCurrentServerBaseDomain;
 import static net.minecraft.client.gui.layouts.FrameLayout.centerInRectangle;
 import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
@@ -53,6 +54,9 @@ public class ChatTabPopupScreen extends Screen {
     @Override
     public void onClose() {
         configuration.saveToFile();
+
+        // this tab's patterns may have just changed, so every message that arrived earlier needs to be reclassified again
+        rebuildMessageClassification();
 
         if (this.backgroundScreen != null) {
             // force the chat screen to re-init so its tab button row picks up the (possibly changed) tab layout

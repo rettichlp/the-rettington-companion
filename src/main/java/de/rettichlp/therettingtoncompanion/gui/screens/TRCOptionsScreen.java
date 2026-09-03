@@ -26,6 +26,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_NAME;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.rebuildMessageClassification;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getVersionString;
 import static java.net.URI.create;
 import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
@@ -105,6 +106,7 @@ public class TRCOptionsScreen extends Screen {
     public void onClose() {
         widgetService.getInitializedWidgets().keySet().forEach(AbstractTRCWidget::saveConfiguration);
         configuration.saveToFile();
+        rebuildMessageClassification();
         this.minecraft.gui.setScreen(null);
     }
 
@@ -148,6 +150,7 @@ public class TRCOptionsScreen extends Screen {
         this.minecraft.gui.setScreen(this.lastScreen);
         widgetService.getInitializedWidgets().keySet().forEach(AbstractTRCWidget::saveConfiguration);
         configuration.saveToFile();
+        rebuildMessageClassification();
     }
 
     /**

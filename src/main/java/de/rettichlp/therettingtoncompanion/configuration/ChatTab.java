@@ -1,15 +1,16 @@
 package de.rettichlp.therettingtoncompanion.configuration;
 
+import de.rettichlp.therettingtoncompanion.utils.ChatUtils;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Optional;
 
-import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.compiledPattern;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getCurrentServerBaseDomain;
 
 @Getter
@@ -21,6 +22,7 @@ public class ChatTab {
 
     private @Nullable String serverBoundDomain;
 
+    private transient List<GuiMessage> messages;
     private transient int unreadCount;
     private transient boolean filterTriggered;
 
@@ -28,15 +30,19 @@ public class ChatTab {
         this.name = name;
     }
 
-    public boolean matches(@NonNull CharSequence message) {
-        for (String patternString : this.patternStrings) {
-            Pattern pattern = compiledPattern(patternString).orElse(null);
-            if (pattern != null && pattern.matcher(message).find()) {
-                return true;
-            }
+    public List<GuiMessage> getMessages() {
+        if (this.messages == null) {
+            this.messages = new ArrayList<>();
         }
 
-        return false;
+        return this.messages;
+    }
+
+    public boolean matches(@NonNull CharSequence message) {
+        return this.patternStrings.stream()
+                .map(ChatUtils::compiledPattern)
+                .flatMap(Optional::stream)
+                .anyMatch(pattern -> pattern.matcher(message).find());
     }
 
     /**

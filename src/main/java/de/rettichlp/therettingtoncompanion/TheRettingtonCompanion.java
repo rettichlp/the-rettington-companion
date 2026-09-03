@@ -66,7 +66,7 @@ public class TheRettingtonCompanion implements ModInitializer {
             player = minecraft.player;
 
             if (configuration.chat().isSaveChatLog()) {
-                chatLogService.loadChatLogIfNeeded();
+                chatLogService.loadChatLog();
             }
 
             if (configuration.chat().isKeepMessagesOnDisconnect()) {
