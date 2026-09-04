@@ -5,9 +5,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.Window;
-import de.rettichlp.therettingtoncompanion.configuration.ChatTab;
 import de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry;
 import de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry;
+import de.rettichlp.therettingtoncompanion.utils.ChatUtils.MessageMeta;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
@@ -42,15 +42,18 @@ import java.util.regex.Pattern;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.CHAT_PEEK_KEY;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage.getBestMatchingFilteredMessage;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
-import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.FOCUSED_CHAT_TAB;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMaxChatHeight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMaxChatWidth;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMessageMeta;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMostRecentMessage;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.isMessageVisible;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.registerMessage;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.unregisterMessage;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
+import static java.lang.System.currentTimeMillis;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.client.gui.components.ChatComponent.getHeight;
@@ -100,28 +103,6 @@ public abstract class ChatComponentMixin {
             ci.cancel();
             LOGGER.info("Hidden following message (commissioned by {}): {} ", hiddenMessage.getProviderModId(), contents.getString());
         });
-
-        // track unread messages for every chat tab that isn't currently focused
-        String messageString = contents.getString();
-        FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(messageString);
-        configuration.chat().getChatTabs().stream()
-                .filter(chatTab -> chatTab != FOCUSED_CHAT_TAB)
-                .filter(ChatTab::isAvailableOnCurrentServer)
-                .filter(chatTab -> chatTab.matches(messageString))
-                .forEach(chatTab -> {
-                    chatTab.setUnreadCount(chatTab.getUnreadCount() + 1);
-
-                    if (bestMatchingFilteredMessage != null) {
-                        chatTab.setFilterTriggered(true);
-                    }
-                });
-
-        if (bestMatchingFilteredMessage != null && this.minecraft.player != null) {
-            Identifier chatRegexSoundIdentifier = bestMatchingFilteredMessage.getSoundIdentifier();
-            if (chatRegexSoundIdentifier != null) {
-                this.minecraft.player.playSound(createVariableRangeEvent(chatRegexSoundIdentifier), 1.0f, 1.5f);
-            }
-        }
     }
 
     @ModifyExpressionValue(method = "addMessage",
@@ -138,9 +119,21 @@ public abstract class ChatComponentMixin {
                                     GuiMessageTag tag,
                                     CallbackInfo ci,
                                     @Local(name = "message") @NonNull GuiMessage message) {
-        // hide new messages if chat-tab has no matching pattern
+        registerMessage(message, currentTimeMillis(), true);
+
+        // vanilla always inserts the new message into allMessages regardless of whether it belongs in the currently displayed view
         if (!isMessageVisible(message)) {
+            this.allMessages.removeIf(m -> m == message);
             this.trimmedMessages.removeIf(line -> line.parent() == message);
+        }
+
+        MessageMeta messageMeta = getMessageMeta(message);
+        FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = messageMeta != null ? messageMeta.bestMatchingFilteredMessage() : null;
+        if (bestMatchingFilteredMessage != null && this.minecraft.player != null) {
+            Identifier chatRegexSoundIdentifier = bestMatchingFilteredMessage.getSoundIdentifier();
+            if (chatRegexSoundIdentifier != null) {
+                this.minecraft.player.playSound(createVariableRangeEvent(chatRegexSoundIdentifier), 1.0f, 1.5f);
+            }
         }
     }
 
@@ -161,8 +154,9 @@ public abstract class ChatComponentMixin {
 
         newComponent.append(contents);
 
-        if (configuration.chat().isMergeDuplicateMessages() && !this.allMessages.isEmpty()) {
-            String lastMessageInChat = this.allMessages.getFirst().content().getString();
+        GuiMessage mostRecentMessage = getMostRecentMessage();
+        if (configuration.chat().isMergeDuplicateMessages() && mostRecentMessage != null) {
+            String lastMessageInChat = mostRecentMessage.content().getString();
 
             Matcher messageMatcher = MESSAGE_PATTERN.matcher(lastMessageInChat);
             if (messageMatcher.find()) {
@@ -170,7 +164,7 @@ public abstract class ChatComponentMixin {
                 int currentMergeCount = messageMatcher.group("mergeCount") == null ? 1 : parseInt(messageMatcher.group("mergeCount"));
 
                 if (lastMessageStringRaw.equals(contents.getString())) {
-                    this.allMessages.removeFirst();
+                    unregisterMessage(mostRecentMessage);
                     refreshTrimmedMessages();
 
                     // only append suffix if message is no empty message
@@ -222,8 +216,8 @@ public abstract class ChatComponentMixin {
                          target = "Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;fill(IIIII)V"))
     private static void trc$method_75802Invoke(@NonNull Args args,
                                                @Local(argsOnly = true, name = "arg5") GuiMessage.@NonNull Line arg5) {
-        // check for filtered message
-        FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(arg5.parent().content().getString());
+        MessageMeta messageMeta = getMessageMeta(arg5.parent());
+        FilteredMessageEntry.FilteredMessage bestMatchingFilteredMessage = messageMeta != null ? messageMeta.bestMatchingFilteredMessage() : null;
         if (bestMatchingFilteredMessage != null) {
             int originalColor = args.get(4);
 

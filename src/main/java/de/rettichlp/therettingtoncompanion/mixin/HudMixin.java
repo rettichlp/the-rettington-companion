@@ -10,7 +10,6 @@ import de.rettichlp.therettingtoncompanion.configuration.ChatTab;
 import de.rettichlp.therettingtoncompanion.gui.ChatTabButton;
 import de.rettichlp.therettingtoncompanion.gui.screens.ChatTabPopupScreen;
 import de.rettichlp.therettingtoncompanion.gui.screens.WidgetPositionScreen;
-import de.rettichlp.therettingtoncompanion.utils.ChatUtils;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -57,6 +56,7 @@ import static de.rettichlp.therettingtoncompanion.gui.ChatTabButton.forDefaultTa
 import static de.rettichlp.therettingtoncompanion.gui.ChatTabButton.forTab;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.CHAT_TAB_BUTTONS;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.FOCUSED_CHAT_TAB;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.applyFocusedChatTabMessages;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatLeft;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatRight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatTopHeight;
@@ -332,7 +332,9 @@ public abstract class HudMixin {
         }
 
         FOCUSED_CHAT_TAB = chatTab;
-        this.minecraft.gui.hud.getChat().setVisibleMessageFilter(ChatUtils::isMessageVisible);
+
+        // load pre-filtered messages
+        applyFocusedChatTabMessages();
     }
 
     @Unique
