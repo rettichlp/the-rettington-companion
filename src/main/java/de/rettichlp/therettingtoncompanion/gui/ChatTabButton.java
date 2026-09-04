@@ -1,6 +1,7 @@
 package de.rettichlp.therettingtoncompanion.gui;
 
-import de.rettichlp.therettingtoncompanion.configuration.ChatTab;
+import de.rettichlp.therettingtoncompanion.chat.AbstractChatTab;
+import de.rettichlp.therettingtoncompanion.chat.AddChatTab;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -23,7 +24,6 @@ import static java.lang.String.valueOf;
 import static net.minecraft.client.gui.GuiGraphicsExtractor.HoveredTextEffects.NONE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
-import static net.minecraft.network.chat.Component.translatable;
 import static net.minecraft.network.chat.TextColor.RED;
 import static net.minecraft.util.ARGB.as8BitChannel;
 import static net.minecraft.util.ARGB.color;
@@ -31,13 +31,11 @@ import static net.minecraft.util.ARGB.color;
 public class ChatTabButton extends Button.Plain {
 
     @Getter
-    private final @Nullable ChatTab chatTab; // null for the "add tab" and "default tab" buttons
-    private final boolean defaultTab; // represents the unfiltered main chat, distinct from the "add tab" button
+    private final @NonNull AbstractChatTab chatTab;
 
-    private ChatTabButton(@NonNull Font font, @Nullable ChatTab chatTab, boolean defaultTab, Button.OnPress onPress) {
-        super(0, 0, computeWidth(font, chatTab, defaultTab), 14, buildLabel(chatTab, defaultTab), onPress, DEFAULT_NARRATION);
+    private ChatTabButton(@NonNull Font font, @NonNull AbstractChatTab chatTab, Button.OnPress onPress) {
+        super(0, 0, computeWidth(font, chatTab), 14, buildLabel(chatTab), onPress, DEFAULT_NARRATION);
         this.chatTab = chatTab;
-        this.defaultTab = defaultTab;
     }
 
     @Override
@@ -54,8 +52,8 @@ public class ChatTabButton extends Button.Plain {
      * button already exists. Call this before laying out the tab button row.
      */
     public void refresh(@NonNull Font font) {
-        setMessage(buildLabel(this.chatTab, this.defaultTab));
-        setWidth(computeWidth(font, this.chatTab, this.defaultTab));
+        setMessage(buildLabel(this.chatTab));
+        setWidth(computeWidth(font, this.chatTab));
     }
 
     /**
@@ -82,13 +80,13 @@ public class ChatTabButton extends Button.Plain {
         // semi-transparent panel styled like the chat box itself, deliberately not the vanilla button sprite
         graphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), options.getBackgroundColor(MIN_VALUE));
 
-        boolean isSelected = this.defaultTab ? FOCUSED_CHAT_TAB == null : this.chatTab != null && this.chatTab == FOCUSED_CHAT_TAB;
+        boolean isSelected = this.chatTab == FOCUSED_CHAT_TAB;
         if (isSelected) {
             int color = as8BitChannel(options.textBackgroundOpacity().get().floatValue()) << 24 | configuration.visuals().getExperienceLevelColor() & 16777215;
             graphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), color);
         }
 
-        boolean isFilterTriggered = !isSelected && this.chatTab != null && this.chatTab.isFilterTriggered();
+        boolean isFilterTriggered = !isSelected && this.chatTab.isFilterTriggered();
         if (isFilterTriggered) {
             int color = color(as8BitChannel(options.textBackgroundOpacity().get().floatValue()), 255, 100, 100);
             graphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), color);
@@ -97,25 +95,12 @@ public class ChatTabButton extends Button.Plain {
         extractDefaultLabel(graphics.textRendererForWidget(this, NONE));
     }
 
-    public static @NonNull ChatTabButton forTab(@NonNull Font font, @NonNull ChatTab chatTab, Button.OnPress onPress) {
-        return new ChatTabButton(font, chatTab, false, onPress);
+    public static @NonNull ChatTabButton forTab(@NonNull Font font, @NonNull AbstractChatTab chatTab, Button.OnPress onPress) {
+        return new ChatTabButton(font, chatTab, onPress);
     }
 
-    public static @NonNull ChatTabButton forDefaultTab(@NonNull Font font, Button.OnPress onPress) {
-        return new ChatTabButton(font, null, true, onPress);
-    }
-
-    public static @NonNull ChatTabButton forAddButton(@NonNull Font font, Button.OnPress onPress) {
-        return new ChatTabButton(font, null, false, onPress);
-    }
-
-    private static @NonNull Component buildLabel(@Nullable ChatTab chatTab, boolean defaultTab) {
-        if (chatTab == null) {
-            return defaultTab ? translatable("trc.chat_screen.chat_tabs.default_tab_name") : literal("+");
-        }
-
-        String name = chatTab.getName();
-        MutableComponent label = empty().append(literal(name == null || name.isBlank() ? "?" : name));
+    private static @NonNull Component buildLabel(@NonNull AbstractChatTab chatTab) {
+        MutableComponent label = empty().append(chatTab.getDisplayName());
 
         if (chatTab.getUnreadCount() > 0) {
             String badgeText = valueOf(min(99, chatTab.getUnreadCount()));
@@ -125,11 +110,11 @@ public class ChatTabButton extends Button.Plain {
         return label;
     }
 
-    private static int computeWidth(@NonNull Font font, @Nullable ChatTab chatTab, boolean defaultTab) {
-        if (chatTab == null && !defaultTab) {
+    private static int computeWidth(@NonNull Font font, @NonNull AbstractChatTab chatTab) {
+        if (chatTab instanceof AddChatTab) {
             return 16;
         }
 
-        return clamp(font.width(buildLabel(chatTab, defaultTab)) + 10, 20, 80);
+        return clamp(font.width(buildLabel(chatTab)) + 10, 20, 80);
     }
 }

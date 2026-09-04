@@ -1,5 +1,6 @@
 package de.rettichlp.therettingtoncompanion.configuration;
 
+import de.rettichlp.therettingtoncompanion.chat.CustomChatTab;
 import de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry;
 import de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry;
 import lombok.Data;
@@ -18,7 +19,7 @@ public class ChatConfiguration {
     @Accessors(fluent = true)
     private FilteredMessageConfiguration filteredMessage = new FilteredMessageConfiguration();
     private Set<HiddenMessageEntry.HiddenMessage> hiddenMessages = new HashSet<>();
-    private List<ChatTab> chatTabs = new ArrayList<>();
+    private List<CustomChatTab> chatTabs = new ArrayList<>();
     private boolean optimizedChat = true;
     private int maxChatMessages = 5000;
     private boolean keepMessagesOnDisconnect = true;

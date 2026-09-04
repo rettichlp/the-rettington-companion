@@ -1,5 +1,6 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
+import de.rettichlp.therettingtoncompanion.chat.CustomChatTab;
 import de.rettichlp.therettingtoncompanion.gui.ChatTabButton;
 import de.rettichlp.therettingtoncompanion.gui.PatternEditBox;
 import de.rettichlp.therettingtoncompanion.gui.screens.ChatTabPopupScreen;
@@ -108,9 +109,9 @@ public abstract class ChatScreenMixin extends Screen {
                 continue;
             }
 
-            if (event.button() == 1 && chatTabButton.getChatTab() != null) {
+            if (event.button() == 1 && chatTabButton.getChatTab() instanceof CustomChatTab customChatTab) {
                 closeContextMenu();
-                this.minecraft.gui.setScreen(new ChatTabPopupScreen(this, chatTabButton.getChatTab()));
+                this.minecraft.gui.setScreen(new ChatTabPopupScreen(this, customChatTab));
                 cir.setReturnValue(true);
                 return;
             }
@@ -142,10 +143,8 @@ public abstract class ChatScreenMixin extends Screen {
         closeContextMenu();
 
         // leaving the chat screen counts as leaving the focused tab, so clear its unread state and divider line
-        if (FOCUSED_CHAT_TAB != null) {
-            FOCUSED_CHAT_TAB.setUnreadCount(0);
-            FOCUSED_CHAT_TAB.setFilterTriggered(false);
-        }
+        FOCUSED_CHAT_TAB.setUnreadCount(0);
+        FOCUSED_CHAT_TAB.setFilterTriggered(false);
     }
 
     @Inject(method = "init", at = @At("TAIL"))
