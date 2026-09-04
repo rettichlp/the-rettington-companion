@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.applyFocusedChatTabMessages;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMessages;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.registerMessage;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.GSON_COMPACT;
@@ -64,6 +65,8 @@ public class ChatLogService {
                         return guiMessage;
                     })
                     .toList();
+
+            applyFocusedChatTabMessages();
 
             LOGGER.info("Loaded {} chat messages from {}", loadedMessages.size(), CHAT_LOG_PATH);
         } catch (Exception e) {
