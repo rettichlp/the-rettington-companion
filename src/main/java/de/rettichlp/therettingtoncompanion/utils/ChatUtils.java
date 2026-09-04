@@ -68,7 +68,6 @@ public class ChatUtils {
 
     // identity map is required here (two messages with equal content and source would otherwise collide as the same map key)
     private static final Map<GuiMessage, MessageMeta> MESSAGE_CACHE = new IdentityHashMap<>();
-    private static final List<GuiMessage> DEFAULT_TAB_MESSAGES = new ArrayList<>();
     // regex compilation is comparatively expensive, and these patterns (chat tabs, filtered/hidden messages) are matched against every
     // chat message as it's classified, so recompiling the same pattern string on every single match call causes noticeable lag
     private static final Map<String, Optional<Pattern>> COMPILED_PATTERN_CACHE = new HashMap<>();
@@ -156,7 +155,7 @@ public class ChatUtils {
         }
 
         if (messageMeta.matchingChatTabs().isEmpty()) {
-            DEFAULT_TAB_MESSAGES.removeIf(m -> m == message);
+            DEFAULT_CHAT_TAB.getMessages().removeIf(m -> m == message);
         } else {
             messageMeta.matchingChatTabs().forEach(chatTab -> chatTab.getMessages().removeIf(m -> m == message));
         }
@@ -169,7 +168,7 @@ public class ChatUtils {
         Map<GuiMessage, MessageMeta> messages = getMessages();
 
         MESSAGE_CACHE.clear();
-        DEFAULT_TAB_MESSAGES.clear();
+        DEFAULT_CHAT_TAB.getMessages().clear();
         configuration.chat().getChatTabs().forEach(chatTab -> chatTab.getMessages().clear());
 
         messages.forEach((message, messageMeta) -> registerMessage(message, messageMeta.receivedAt(), false));
@@ -192,7 +191,7 @@ public class ChatUtils {
 
         // add message to chat tabs
         if (matchingChatTabs.isEmpty()) {
-            DEFAULT_TAB_MESSAGES.addFirst(message);
+            DEFAULT_CHAT_TAB.getMessages().addFirst(message);
         } else {
             matchingChatTabs.forEach(chatTab -> chatTab.getMessages().addFirst(message));
         }
@@ -235,7 +234,7 @@ public class ChatUtils {
     }
 
     public static void applyFocusedChatTabMessages() {
-        List<GuiMessage> targetMessages = FOCUSED_CHAT_TAB instanceof CustomChatTab customChatTab ? customChatTab.getMessages() : DEFAULT_TAB_MESSAGES;
+        List<GuiMessage> targetMessages = FOCUSED_CHAT_TAB.getMessages();
         List<GuiMessage> allMessages = getAllMessages();
         allMessages.clear();
         allMessages.addAll(targetMessages);

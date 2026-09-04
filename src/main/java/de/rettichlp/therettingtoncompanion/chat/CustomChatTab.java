@@ -4,7 +4,6 @@ import de.rettichlp.therettingtoncompanion.utils.ChatUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.network.chat.Component;
-import net.minecraft.client.multiplayer.chat.GuiMessage;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -24,18 +23,8 @@ public class CustomChatTab extends AbstractChatTab {
 
     private @Nullable String serverBoundDomain;
 
-    private transient List<GuiMessage> messages;
-
     public CustomChatTab(String name) {
         this.name = name;
-    }
-
-    public List<GuiMessage> getMessages() {
-        if (this.messages == null) {
-            this.messages = new ArrayList<>();
-        }
-
-        return this.messages;
     }
 
     @Override

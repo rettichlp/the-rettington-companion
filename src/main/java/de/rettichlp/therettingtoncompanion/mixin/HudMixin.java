@@ -51,7 +51,6 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
-import static de.rettichlp.therettingtoncompanion.gui.ChatTabButton.forTab;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.ADD_CHAT_TAB;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.CHAT_TAB_BUTTONS;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.DEFAULT_CHAT_TAB;
@@ -287,11 +286,11 @@ public abstract class HudMixin {
             // focused: show every tab (with its full unread badge) plus the add button, and let clicks through the buttons themselves
             if (hasCustomTabs) {
                 for (AbstractChatTab chatTab : chatTabs) {
-                    CHAT_TAB_BUTTONS.add(forTab(font, chatTab, _ -> setFocusedChatTab(FOCUSED_CHAT_TAB == chatTab ? DEFAULT_CHAT_TAB : chatTab)));
+                    CHAT_TAB_BUTTONS.add(chatTab.getChatTabButton(font, _ -> setFocusedChatTab(FOCUSED_CHAT_TAB == chatTab ? DEFAULT_CHAT_TAB : chatTab)));
                 }
             }
 
-            CHAT_TAB_BUTTONS.add(forTab(font, ADD_CHAT_TAB, _ -> {
+            CHAT_TAB_BUTTONS.add(ADD_CHAT_TAB.getChatTabButton(font, _ -> {
                 CustomChatTab newChatTab = new CustomChatTab("Tab " + (configuration.chat().getChatTabs().size() + 1));
                 configuration.chat().getChatTabs().add(newChatTab);
                 this.minecraft.gui.setScreen(new ChatTabPopupScreen(this.minecraft.gui.screen(), newChatTab));
@@ -299,7 +298,7 @@ public abstract class HudMixin {
         } else {
             for (AbstractChatTab chatTab : chatTabs) {
                 if (chatTab.getUnreadCount() > 0) {
-                    CHAT_TAB_BUTTONS.add(forTab(font, chatTab, _ -> {}));
+                    CHAT_TAB_BUTTONS.add(chatTab.getChatTabButton(font, _ -> {}));
                 }
             }
         }
@@ -315,7 +314,7 @@ public abstract class HudMixin {
         layoutChatTabButtons(CHAT_TAB_BUTTONS);
 
         for (ChatTabButton chatTabButton : CHAT_TAB_BUTTONS) {
-            chatTabButton.draw(graphics, -1, -1, 1.0F);
+            chatTabButton.extractContents(graphics, -1, -1, 1.0F);
         }
     }
 
