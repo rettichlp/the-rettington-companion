@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.CHAT_TAB_BUTTONS;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.FOCUSED_CHAT_TAB;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.compiledPattern;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatLeft;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatRight;
@@ -36,7 +37,6 @@ import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.isMessageVisib
 import static java.awt.Color.CYAN;
 import static java.awt.Color.RED;
 import static java.lang.Integer.MIN_VALUE;
-import static java.util.regex.Pattern.compile;
 import static net.minecraft.network.chat.Component.translatable;
 import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
@@ -180,14 +180,18 @@ public abstract class ChatScreenMixin extends Screen {
     @Unique
     private void onSearchChanged(String patternString) {
         ChatComponent chat = this.minecraft.gui.hud.getChat();
-        chat.setVisibleMessageFilter(guiMessage -> isMessageVisible(guiMessage) && (patternString.isBlank() || compile(patternString).matcher(guiMessage.content().getString()).find()));
+        chat.setVisibleMessageFilter(guiMessage -> isMessageVisible(guiMessage) && (patternString.isBlank() || compiledPattern(patternString)
+                .map(pattern -> pattern.matcher(guiMessage.content().getString()).find())
+                .orElse(false)));
     }
 
     @Unique
     private void updateVisibleMessageFilter() {
         ChatComponent chat = this.minecraft.gui.hud.getChat();
         String searchPattern = this.patternEditBox != null ? this.patternEditBox.getValue() : "";
-        chat.setVisibleMessageFilter(guiMessage -> isMessageVisible(guiMessage) && (searchPattern.isBlank() || compile(searchPattern).matcher(guiMessage.content().getString()).find()));
+        chat.setVisibleMessageFilter(guiMessage -> isMessageVisible(guiMessage) && (searchPattern.isBlank() || compiledPattern(searchPattern)
+                .map(pattern -> pattern.matcher(guiMessage.content().getString()).find())
+                .orElse(false)));
     }
 
     @Unique
