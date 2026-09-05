@@ -317,9 +317,7 @@ public class ChatUtils {
     }
 
     /**
-     * The y coordinate of the divider line separating the messages that were unread when the currently focused chat tab got focused
-     * from the older, already-read backlog above them, or {@code null} if there's nothing to divide. (No unread messages, or the
-     * unread messages cover the entire visible backlog.)
+     * The y coordinate of the divider line separating the messages that were unread.
      */
     public static @Nullable Integer getUnreadDividerY() {
         AbstractChatTab focusedChatTab = FOCUSED_CHAT_TAB;
@@ -341,7 +339,9 @@ public class ChatUtils {
 
             // the first already-read message (right after the unread ones) marks where the divider belongs
             if (distinctMessageCount == focusedChatTab.getUnreadCount() + 1) {
-                return getGuiMessageBounds(parent, 9).bottom();
+                int dividerY = getGuiMessageBounds(parent, 9).bottom();
+                // hide the divider if it would be drawn above the chat area (e.g. more messages unread than visible in the chat)
+                return dividerY < getChatTopHeight() ? null : dividerY;
             }
         }
 
