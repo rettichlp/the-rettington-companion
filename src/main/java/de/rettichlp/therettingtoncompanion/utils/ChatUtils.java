@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -56,6 +57,14 @@ public class ChatUtils {
     public static final AddChatTab ADD_CHAT_TAB = new AddChatTab();
 
     public static AbstractChatTab FOCUSED_CHAT_TAB = DEFAULT_CHAT_TAB;
+    // identity map is required here (two messages with equal content and source would otherwise collide as the same map key)
+    private static final Map<GuiMessage, MessageMeta> MESSAGE_CACHE = new IdentityHashMap<>();
+    // regex compilation is comparatively expensive, and these patterns (chat tabs, filtered/hidden messages) are matched against every
+    // chat message as it's classified, so recompiling the same pattern string on every single match call causes noticeable lag
+    private static final Map<String, Optional<Pattern>> COMPILED_PATTERN_CACHE = new HashMap<>();
+    private static final AtomicLong SEQUENCE_GENERATOR = new AtomicLong();
+    private static final Comparator<Map.Entry<GuiMessage, MessageMeta>> BY_TIMESTAMP = comparingLong((Map.Entry<GuiMessage, MessageMeta> entry) -> entry.getValue().receivedAt())
+            .thenComparingLong(entry -> entry.getValue().sequence());
 
     public static @NonNull List<AbstractChatTab> getAllChatTabs() {
         List<AbstractChatTab> allChatTabs = new ArrayList<>();
@@ -65,13 +74,6 @@ public class ChatUtils {
                 .forEach(allChatTabs::add);
         return allChatTabs;
     }
-
-    // identity map is required here (two messages with equal content and source would otherwise collide as the same map key)
-    private static final Map<GuiMessage, MessageMeta> MESSAGE_CACHE = new IdentityHashMap<>();
-    // regex compilation is comparatively expensive, and these patterns (chat tabs, filtered/hidden messages) are matched against every
-    // chat message as it's classified, so recompiling the same pattern string on every single match call causes noticeable lag
-    private static final Map<String, Optional<Pattern>> COMPILED_PATTERN_CACHE = new HashMap<>();
-    private static final Comparator<Map.Entry<GuiMessage, MessageMeta>> BY_TIMESTAMP = comparingLong(entry -> entry.getValue().receivedAt());
 
     public static double getMaxChatWidth(Window window, double defaultChatWidth) {
         return !configuration.chat().isOptimizedChat()
@@ -166,13 +168,8 @@ public class ChatUtils {
 
     public static void rebuildMessageClassification() {
         Map<GuiMessage, MessageMeta> messages = getMessages();
-
-        MESSAGE_CACHE.clear();
-        DEFAULT_CHAT_TAB.getMessages().clear();
-        configuration.chat().getChatTabs().forEach(chatTab -> chatTab.getMessages().clear());
-
+        clearAllMessages();
         messages.forEach((message, messageMeta) -> registerMessage(message, messageMeta.receivedAt(), false));
-
         applyFocusedChatTabMessages();
     }
 
@@ -186,7 +183,7 @@ public class ChatUtils {
                 .collect(toUnmodifiableSet());
         FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(messageString);
 
-        MessageMeta messageMeta = new MessageMeta(receivedAt, matchingChatTabs, bestMatchingFilteredMessage);
+        MessageMeta messageMeta = new MessageMeta(receivedAt, SEQUENCE_GENERATOR.incrementAndGet(), matchingChatTabs, bestMatchingFilteredMessage);
         MESSAGE_CACHE.put(message, messageMeta);
 
         // add message to chat tabs
@@ -223,13 +220,14 @@ public class ChatUtils {
         }
 
         // remove messages above limit for lag prevention
-        int max = configuration.chat().getEffectiveMaxChatMessages();
-        while (MESSAGE_CACHE.size() > max) {
-            GuiMessage oldest = MESSAGE_CACHE.entrySet().stream()
-                    .min(BY_TIMESTAMP)
+        int excess = MESSAGE_CACHE.size() - configuration.chat().getEffectiveMaxChatMessages();
+        if (excess > 0) {
+            MESSAGE_CACHE.entrySet().stream()
+                    .sorted(BY_TIMESTAMP)
+                    .limit(excess)
                     .map(Map.Entry::getKey)
-                    .orElseThrow();
-            unregisterMessage(oldest);
+                    .toList()
+                    .forEach(ChatUtils::unregisterMessage);
         }
     }
 
@@ -369,7 +367,13 @@ public class ChatUtils {
         return new ScreenRectangle(getChatLeft(), top, getChatRight() - getChatLeft(), bottom - top);
     }
 
-    public record MessageMeta(long receivedAt, @NonNull Set<CustomChatTab> matchingChatTabs, @Nullable FilteredMessage bestMatchingFilteredMessage) {
+    public static void clearAllMessages() {
+        MESSAGE_CACHE.clear();
+        DEFAULT_CHAT_TAB.getMessages().clear();
+        configuration.chat().getChatTabs().forEach(chatTab -> chatTab.getMessages().clear());
+    }
+
+    public record MessageMeta(long receivedAt, long sequence, @NonNull Set<CustomChatTab> matchingChatTabs, @Nullable FilteredMessage bestMatchingFilteredMessage) {
 
         public @NonNull ChatLogEntry toChatLogEntry(@NonNull GuiMessage message) {
             return new ChatLogEntry(message.content(), message.source(), this.receivedAt);

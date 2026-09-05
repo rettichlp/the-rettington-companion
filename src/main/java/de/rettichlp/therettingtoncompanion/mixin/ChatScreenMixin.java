@@ -143,8 +143,7 @@ public abstract class ChatScreenMixin extends Screen {
         closeContextMenu();
 
         // leaving the chat screen counts as leaving the focused tab, so clear its unread state and divider line
-        FOCUSED_CHAT_TAB.setUnreadCount(0);
-        FOCUSED_CHAT_TAB.setFilterTriggered(false);
+        FOCUSED_CHAT_TAB.clearUnreadState();
     }
 
     @Inject(method = "init", at = @At("TAIL"))

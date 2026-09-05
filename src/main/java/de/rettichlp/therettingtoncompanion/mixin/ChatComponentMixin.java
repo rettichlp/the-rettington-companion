@@ -43,6 +43,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.CHAT_PE
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.clearAllMessages;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMaxChatHeight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMaxChatWidth;
@@ -86,6 +87,11 @@ public abstract class ChatComponentMixin {
     public void trc$clearHead(boolean history, CallbackInfo ci) {
         if (configuration.chat().isKeepMessagesOnDisconnect() && history) {
             ci.cancel();
+            return;
+        }
+
+        if (history) {
+            clearAllMessages();
         }
     }
 
