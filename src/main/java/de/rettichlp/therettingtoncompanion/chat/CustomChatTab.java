@@ -1,9 +1,9 @@
-package de.rettichlp.therettingtoncompanion.configuration;
+package de.rettichlp.therettingtoncompanion.chat;
 
 import de.rettichlp.therettingtoncompanion.utils.ChatUtils;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -12,30 +12,24 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getCurrentServerBaseDomain;
+import static net.minecraft.network.chat.Component.literal;
 
 @Getter
 @Setter
-public class ChatTab {
+public class CustomChatTab extends AbstractChatTab {
 
     private String name;
     private List<String> patternStrings = new ArrayList<>();
 
     private @Nullable String serverBoundDomain;
 
-    private transient List<GuiMessage> messages;
-    private transient int unreadCount;
-    private transient boolean filterTriggered;
-
-    public ChatTab(String name) {
+    public CustomChatTab(String name) {
         this.name = name;
     }
 
-    public List<GuiMessage> getMessages() {
-        if (this.messages == null) {
-            this.messages = new ArrayList<>();
-        }
-
-        return this.messages;
+    @Override
+    public @NonNull Component getDisplayName() {
+        return literal(this.name == null || this.name.isBlank() ? "?" : this.name);
     }
 
     public boolean matches(@NonNull CharSequence message) {

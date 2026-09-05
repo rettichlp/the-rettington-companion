@@ -1,7 +1,10 @@
 package de.rettichlp.therettingtoncompanion.utils;
 
 import com.mojang.blaze3d.platform.Window;
-import de.rettichlp.therettingtoncompanion.configuration.ChatTab;
+import de.rettichlp.therettingtoncompanion.chat.AbstractChatTab;
+import de.rettichlp.therettingtoncompanion.chat.AddChatTab;
+import de.rettichlp.therettingtoncompanion.chat.CustomChatTab;
+import de.rettichlp.therettingtoncompanion.chat.DefaultChatTab;
 import de.rettichlp.therettingtoncompanion.gui.ChatTabButton;
 import de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage;
 import de.rettichlp.therettingtoncompanion.mixin.ChatComponentAccessor;
@@ -49,12 +52,22 @@ import static net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
 public class ChatUtils {
 
     public static final List<ChatTabButton> CHAT_TAB_BUTTONS = new ArrayList<>();
+    public static final DefaultChatTab DEFAULT_CHAT_TAB = new DefaultChatTab();
+    public static final AddChatTab ADD_CHAT_TAB = new AddChatTab();
 
-    public static ChatTab FOCUSED_CHAT_TAB;
+    public static AbstractChatTab FOCUSED_CHAT_TAB = DEFAULT_CHAT_TAB;
+
+    public static @NonNull List<AbstractChatTab> getAllChatTabs() {
+        List<AbstractChatTab> allChatTabs = new ArrayList<>();
+        allChatTabs.add(DEFAULT_CHAT_TAB);
+        configuration.chat().getChatTabs().stream()
+                .filter(CustomChatTab::isAvailableOnCurrentServer)
+                .forEach(allChatTabs::add);
+        return allChatTabs;
+    }
 
     // identity map is required here (two messages with equal content and source would otherwise collide as the same map key)
     private static final Map<GuiMessage, MessageMeta> MESSAGE_CACHE = new IdentityHashMap<>();
-    private static final List<GuiMessage> DEFAULT_TAB_MESSAGES = new ArrayList<>();
     // regex compilation is comparatively expensive, and these patterns (chat tabs, filtered/hidden messages) are matched against every
     // chat message as it's classified, so recompiling the same pattern string on every single match call causes noticeable lag
     private static final Map<String, Optional<Pattern>> COMPILED_PATTERN_CACHE = new HashMap<>();
@@ -112,10 +125,9 @@ public class ChatUtils {
             return true;
         }
 
-        ChatTab focusedChatTab = FOCUSED_CHAT_TAB;
-        return focusedChatTab == null
-                ? messageMeta.matchingChatTabs().isEmpty()
-                : messageMeta.matchingChatTabs().contains(focusedChatTab);
+        return FOCUSED_CHAT_TAB instanceof CustomChatTab customChatTab
+                ? messageMeta.matchingChatTabs().contains(customChatTab)
+                : messageMeta.matchingChatTabs().isEmpty();
     }
 
     public static @Nullable MessageMeta getMessageMeta(@NonNull GuiMessage message) {
@@ -143,7 +155,7 @@ public class ChatUtils {
         }
 
         if (messageMeta.matchingChatTabs().isEmpty()) {
-            DEFAULT_TAB_MESSAGES.removeIf(m -> m == message);
+            DEFAULT_CHAT_TAB.getMessages().removeIf(m -> m == message);
         } else {
             messageMeta.matchingChatTabs().forEach(chatTab -> chatTab.getMessages().removeIf(m -> m == message));
         }
@@ -156,7 +168,7 @@ public class ChatUtils {
         Map<GuiMessage, MessageMeta> messages = getMessages();
 
         MESSAGE_CACHE.clear();
-        DEFAULT_TAB_MESSAGES.clear();
+        DEFAULT_CHAT_TAB.getMessages().clear();
         configuration.chat().getChatTabs().forEach(chatTab -> chatTab.getMessages().clear());
 
         messages.forEach((message, messageMeta) -> registerMessage(message, messageMeta.receivedAt(), false));
@@ -168,8 +180,8 @@ public class ChatUtils {
         // classify the message
         String messageString = message.content().getString();
         long receivedAt = timestamp != null ? timestamp : currentTimeMillis();
-        Set<ChatTab> matchingChatTabs = configuration.chat().getChatTabs().stream()
-                .filter(ChatTab::isAvailableOnCurrentServer)
+        Set<CustomChatTab> matchingChatTabs = configuration.chat().getChatTabs().stream()
+                .filter(CustomChatTab::isAvailableOnCurrentServer)
                 .filter(chatTab -> chatTab.matches(messageString))
                 .collect(toUnmodifiableSet());
         FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(messageString);
@@ -179,23 +191,33 @@ public class ChatUtils {
 
         // add message to chat tabs
         if (matchingChatTabs.isEmpty()) {
-            DEFAULT_TAB_MESSAGES.addFirst(message);
+            DEFAULT_CHAT_TAB.getMessages().addFirst(message);
         } else {
             matchingChatTabs.forEach(chatTab -> chatTab.getMessages().addFirst(message));
         }
 
         // message isn't loaded from chat history
         if (live) {
-            // increment unread count for all matching chat tabs except the currently focused one
-            for (ChatTab chatTab : matchingChatTabs) {
-                if (chatTab == FOCUSED_CHAT_TAB) {
-                    continue;
+            // increment unread count for all matching chat tabs except the currently focused one, default tab included
+            if (matchingChatTabs.isEmpty()) {
+                if (DEFAULT_CHAT_TAB != FOCUSED_CHAT_TAB) {
+                    DEFAULT_CHAT_TAB.setUnreadCount(DEFAULT_CHAT_TAB.getUnreadCount() + 1);
+
+                    if (messageMeta.bestMatchingFilteredMessage() != null) {
+                        DEFAULT_CHAT_TAB.setFilterTriggered(true);
+                    }
                 }
+            } else {
+                for (CustomChatTab chatTab : matchingChatTabs) {
+                    if (chatTab == FOCUSED_CHAT_TAB) {
+                        continue;
+                    }
 
-                chatTab.setUnreadCount(chatTab.getUnreadCount() + 1);
+                    chatTab.setUnreadCount(chatTab.getUnreadCount() + 1);
 
-                if (messageMeta.bestMatchingFilteredMessage() != null) {
-                    chatTab.setFilterTriggered(true);
+                    if (messageMeta.bestMatchingFilteredMessage() != null) {
+                        chatTab.setFilterTriggered(true);
+                    }
                 }
             }
         }
@@ -212,7 +234,7 @@ public class ChatUtils {
     }
 
     public static void applyFocusedChatTabMessages() {
-        List<GuiMessage> targetMessages = FOCUSED_CHAT_TAB == null ? DEFAULT_TAB_MESSAGES : FOCUSED_CHAT_TAB.getMessages();
+        List<GuiMessage> targetMessages = FOCUSED_CHAT_TAB.getMessages();
         List<GuiMessage> allMessages = getAllMessages();
         allMessages.clear();
         allMessages.addAll(targetMessages);
@@ -295,13 +317,11 @@ public class ChatUtils {
     }
 
     /**
-     * The y coordinate of the divider line separating the messages that were unread when the currently focused chat tab got focused
-     * from the older, already-read backlog above them, or {@code null} if there's nothing to divide. (No tab focused, no unread
-     * messages, or the unread messages cover the entire visible backlog.)
+     * The y coordinate of the divider line separating the messages that were unread.
      */
     public static @Nullable Integer getUnreadDividerY() {
-        ChatTab focusedChatTab = FOCUSED_CHAT_TAB;
-        if (focusedChatTab == null || focusedChatTab.getUnreadCount() <= 0) {
+        AbstractChatTab focusedChatTab = FOCUSED_CHAT_TAB;
+        if (focusedChatTab.getUnreadCount() <= 0) {
             return null;
         }
 
@@ -319,7 +339,9 @@ public class ChatUtils {
 
             // the first already-read message (right after the unread ones) marks where the divider belongs
             if (distinctMessageCount == focusedChatTab.getUnreadCount() + 1) {
-                return getGuiMessageBounds(parent, 9).bottom();
+                int dividerY = getGuiMessageBounds(parent, 9).bottom();
+                // hide the divider if it would be drawn above the chat area (e.g. more messages unread than visible in the chat)
+                return dividerY < getChatTopHeight() ? null : dividerY;
             }
         }
 
@@ -347,7 +369,7 @@ public class ChatUtils {
         return new ScreenRectangle(getChatLeft(), top, getChatRight() - getChatLeft(), bottom - top);
     }
 
-    public record MessageMeta(long receivedAt, @NonNull Set<ChatTab> matchingChatTabs, @Nullable FilteredMessage bestMatchingFilteredMessage) {
+    public record MessageMeta(long receivedAt, @NonNull Set<CustomChatTab> matchingChatTabs, @Nullable FilteredMessage bestMatchingFilteredMessage) {
 
         public @NonNull ChatLogEntry toChatLogEntry(@NonNull GuiMessage message) {
             return new ChatLogEntry(message.content(), message.source(), this.receivedAt);
