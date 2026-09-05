@@ -42,7 +42,12 @@ public abstract class AbstractTRCWidgetGroup<C extends WidgetConfiguration> exte
     }
 
     @Override
-    public void extractWidget(@NotNull GuiGraphicsExtractor graphics, int x, int y, Color color, boolean backgroundEnabled, boolean textShadowEnabled) {
+    public void extractWidget(@NotNull GuiGraphicsExtractor graphics,
+                              int x,
+                              int y,
+                              Color color,
+                              boolean backgroundEnabled,
+                              boolean textShadowEnabled) {
         List<? extends AbstractTRCWidget<?>> widgets = widgets();
         for (int i = 0; i < widgets.size(); i++) {
             AbstractTRCWidget<?> widget = widgets.get(i);

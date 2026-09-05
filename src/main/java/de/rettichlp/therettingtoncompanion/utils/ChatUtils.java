@@ -1,27 +1,49 @@
 package de.rettichlp.therettingtoncompanion.utils;
 
 import com.mojang.blaze3d.platform.Window;
-import de.rettichlp.therettingtoncompanion.configuration.ChatTab;
+import de.rettichlp.therettingtoncompanion.chat.AbstractChatTab;
+import de.rettichlp.therettingtoncompanion.chat.AddChatTab;
+import de.rettichlp.therettingtoncompanion.chat.CustomChatTab;
+import de.rettichlp.therettingtoncompanion.chat.DefaultChatTab;
 import de.rettichlp.therettingtoncompanion.gui.ChatTabButton;
+import de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage;
 import de.rettichlp.therettingtoncompanion.mixin.ChatComponentAccessor;
+import de.rettichlp.therettingtoncompanion.models.ChatLogEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
+import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage.getBestMatchingFilteredMessage;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.lang.System.currentTimeMillis;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Comparator.comparingLong;
 import static java.util.Optional.ofNullable;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.compile;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toUnmodifiableSet;
 import static net.minecraft.client.gui.components.ChatComponent.getHeight;
 import static net.minecraft.client.gui.components.ChatComponent.getWidth;
 import static net.minecraft.util.Mth.ceil;
@@ -31,8 +53,27 @@ import static net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
 public class ChatUtils {
 
     public static final List<ChatTabButton> CHAT_TAB_BUTTONS = new ArrayList<>();
+    public static final DefaultChatTab DEFAULT_CHAT_TAB = new DefaultChatTab();
+    public static final AddChatTab ADD_CHAT_TAB = new AddChatTab();
 
-    public static ChatTab FOCUSED_CHAT_TAB;
+    public static AbstractChatTab FOCUSED_CHAT_TAB = DEFAULT_CHAT_TAB;
+    // identity map is required here (two messages with equal content and source would otherwise collide as the same map key)
+    private static final Map<GuiMessage, MessageMeta> MESSAGE_CACHE = new IdentityHashMap<>();
+    // regex compilation is comparatively expensive, and these patterns (chat tabs, filtered/hidden messages) are matched against every
+    // chat message as it's classified, so recompiling the same pattern string on every single match call causes noticeable lag
+    private static final Map<String, Optional<Pattern>> COMPILED_PATTERN_CACHE = new HashMap<>();
+    private static final AtomicLong SEQUENCE_GENERATOR = new AtomicLong();
+    private static final Comparator<Map.Entry<GuiMessage, MessageMeta>> BY_TIMESTAMP = comparingLong((Map.Entry<GuiMessage, MessageMeta> entry) -> entry.getValue().receivedAt())
+            .thenComparingLong(entry -> entry.getValue().sequence());
+
+    public static @NonNull List<AbstractChatTab> getAllChatTabs() {
+        List<AbstractChatTab> allChatTabs = new ArrayList<>();
+        allChatTabs.add(DEFAULT_CHAT_TAB);
+        configuration.chat().getChatTabs().stream()
+                .filter(CustomChatTab::isAvailableOnCurrentServer)
+                .forEach(allChatTabs::add);
+        return allChatTabs;
+    }
 
     public static double getMaxChatWidth(Window window, double defaultChatWidth) {
         return !configuration.chat().isOptimizedChat()
@@ -81,27 +122,139 @@ public class ChatUtils {
     }
 
     public static boolean isMessageVisible(@NonNull GuiMessage guiMessage) {
-        String message = guiMessage.content().getString();
-        ChatTab focusedChatTab = FOCUSED_CHAT_TAB;
-
-        if (focusedChatTab != null) {
-            return focusedChatTab.matches(message);
+        MessageMeta messageMeta = getMessageMeta(guiMessage);
+        if (messageMeta == null) {
+            return true;
         }
 
-        return configuration.chat().getChatTabs().stream().noneMatch(chatTab -> chatTab.matches(message));
+        return FOCUSED_CHAT_TAB instanceof CustomChatTab customChatTab
+                ? messageMeta.matchingChatTabs().contains(customChatTab)
+                : messageMeta.matchingChatTabs().isEmpty();
+    }
+
+    public static @Nullable MessageMeta getMessageMeta(@NonNull GuiMessage message) {
+        return MESSAGE_CACHE.get(message);
+    }
+
+    public static @Nullable GuiMessage getMostRecentMessage() {
+        return MESSAGE_CACHE.entrySet().stream()
+                .max(BY_TIMESTAMP)
+                .map(Map.Entry::getKey)
+                .orElse(null);
+    }
+
+    public static @NonNull @Unmodifiable Map<GuiMessage, MessageMeta> getMessages() {
+        Map<GuiMessage, MessageMeta> sorted = MESSAGE_CACHE.entrySet().stream()
+                .sorted(BY_TIMESTAMP)
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
+        return unmodifiableMap(sorted);
+    }
+
+    public static void unregisterMessage(@NonNull GuiMessage message) {
+        MessageMeta messageMeta = MESSAGE_CACHE.remove(message);
+        if (messageMeta == null) {
+            return;
+        }
+
+        if (messageMeta.matchingChatTabs().isEmpty()) {
+            DEFAULT_CHAT_TAB.getMessages().removeIf(m -> m == message);
+        } else {
+            messageMeta.matchingChatTabs().forEach(chatTab -> chatTab.getMessages().removeIf(m -> m == message));
+        }
+
+        getAllMessages().removeIf(m -> m == message);
+        getTrimmedMessages().removeIf(line -> line.parent() == message);
+    }
+
+    public static void rebuildMessageClassification() {
+        Map<GuiMessage, MessageMeta> messages = getMessages();
+        clearAllMessages();
+        messages.forEach((message, messageMeta) -> registerMessage(message, messageMeta.receivedAt(), false));
+        applyFocusedChatTabMessages();
+    }
+
+    public static void registerMessage(@NonNull GuiMessage message, @Nullable Long timestamp, boolean live) {
+        // classify the message
+        String messageString = message.content().getString();
+        long receivedAt = timestamp != null ? timestamp : currentTimeMillis();
+        Set<CustomChatTab> matchingChatTabs = configuration.chat().getChatTabs().stream()
+                .filter(CustomChatTab::isAvailableOnCurrentServer)
+                .filter(chatTab -> chatTab.matches(messageString))
+                .collect(toUnmodifiableSet());
+        FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(messageString);
+
+        MessageMeta messageMeta = new MessageMeta(receivedAt, SEQUENCE_GENERATOR.incrementAndGet(), matchingChatTabs, bestMatchingFilteredMessage);
+        MESSAGE_CACHE.put(message, messageMeta);
+
+        // add message to chat tabs
+        if (matchingChatTabs.isEmpty()) {
+            DEFAULT_CHAT_TAB.getMessages().addFirst(message);
+        } else {
+            matchingChatTabs.forEach(chatTab -> chatTab.getMessages().addFirst(message));
+        }
+
+        // message isn't loaded from chat history
+        if (live) {
+            // increment unread count for all matching chat tabs except the currently focused one, default tab included
+            if (matchingChatTabs.isEmpty()) {
+                if (DEFAULT_CHAT_TAB != FOCUSED_CHAT_TAB) {
+                    DEFAULT_CHAT_TAB.setUnreadCount(DEFAULT_CHAT_TAB.getUnreadCount() + 1);
+
+                    if (messageMeta.bestMatchingFilteredMessage() != null) {
+                        DEFAULT_CHAT_TAB.setFilterTriggered(true);
+                    }
+                }
+            } else {
+                for (CustomChatTab chatTab : matchingChatTabs) {
+                    if (chatTab == FOCUSED_CHAT_TAB) {
+                        continue;
+                    }
+
+                    chatTab.setUnreadCount(chatTab.getUnreadCount() + 1);
+
+                    if (messageMeta.bestMatchingFilteredMessage() != null) {
+                        chatTab.setFilterTriggered(true);
+                    }
+                }
+            }
+        }
+
+        // remove messages above limit for lag prevention
+        int excess = MESSAGE_CACHE.size() - configuration.chat().getEffectiveMaxChatMessages();
+        if (excess > 0) {
+            MESSAGE_CACHE.entrySet().stream()
+                    .sorted(BY_TIMESTAMP)
+                    .limit(excess)
+                    .map(Map.Entry::getKey)
+                    .toList()
+                    .forEach(ChatUtils::unregisterMessage);
+        }
+    }
+
+    public static void applyFocusedChatTabMessages() {
+        List<GuiMessage> targetMessages = FOCUSED_CHAT_TAB.getMessages();
+        List<GuiMessage> allMessages = getAllMessages();
+        allMessages.clear();
+        allMessages.addAll(targetMessages);
+        refreshTrimmedMessages();
     }
 
     public static boolean isValidPattern(String pattern) {
-        if (pattern == null) {
-            return false;
+        return compiledPattern(pattern).isPresent();
+    }
+
+    public static Optional<Pattern> compiledPattern(String patternString) {
+        if (patternString == null) {
+            return Optional.empty();
         }
 
-        try {
-            compile(pattern);
-            return true;
-        } catch (PatternSyntaxException e) {
-            return false;
-        }
+        return COMPILED_PATTERN_CACHE.computeIfAbsent(patternString, s -> {
+            try {
+                return Optional.of(compile(s, CASE_INSENSITIVE));
+            } catch (PatternSyntaxException e) {
+                return Optional.empty();
+            }
+        });
     }
 
     public static List<GuiMessage> getAllMessages() {
@@ -162,13 +315,11 @@ public class ChatUtils {
     }
 
     /**
-     * The y coordinate of the divider line separating the messages that were unread when the currently focused chat tab got focused
-     * from the older, already-read backlog above them, or {@code null} if there's nothing to divide. (No tab focused, no unread
-     * messages, or the unread messages cover the entire visible backlog.)
+     * The y coordinate of the divider line separating the messages that were unread.
      */
     public static @Nullable Integer getUnreadDividerY() {
-        ChatTab focusedChatTab = FOCUSED_CHAT_TAB;
-        if (focusedChatTab == null || focusedChatTab.getUnreadCount() <= 0) {
+        AbstractChatTab focusedChatTab = FOCUSED_CHAT_TAB;
+        if (focusedChatTab.getUnreadCount() <= 0) {
             return null;
         }
 
@@ -186,7 +337,9 @@ public class ChatUtils {
 
             // the first already-read message (right after the unread ones) marks where the divider belongs
             if (distinctMessageCount == focusedChatTab.getUnreadCount() + 1) {
-                return getGuiMessageBounds(parent, 9).bottom();
+                int dividerY = getGuiMessageBounds(parent, 9).bottom();
+                // hide the divider if it would be drawn above the chat area (e.g. more messages unread than visible in the chat)
+                return dividerY < getChatTopHeight() ? null : dividerY;
             }
         }
 
@@ -212,5 +365,18 @@ public class ChatUtils {
         int top = getChatBottomHeight() - (topLineIndex + 1) * entryHeight + scrollOffset * entryHeight;
 
         return new ScreenRectangle(getChatLeft(), top, getChatRight() - getChatLeft(), bottom - top);
+    }
+
+    public static void clearAllMessages() {
+        MESSAGE_CACHE.clear();
+        DEFAULT_CHAT_TAB.getMessages().clear();
+        configuration.chat().getChatTabs().forEach(chatTab -> chatTab.getMessages().clear());
+    }
+
+    public record MessageMeta(long receivedAt, long sequence, @NonNull Set<CustomChatTab> matchingChatTabs, @Nullable FilteredMessage bestMatchingFilteredMessage) {
+
+        public @NonNull ChatLogEntry toChatLogEntry(@NonNull GuiMessage message) {
+            return new ChatLogEntry(message.content(), message.source(), this.receivedAt);
+        }
     }
 }

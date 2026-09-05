@@ -13,6 +13,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
 import static net.minecraft.client.gui.components.Tooltip.create;
+import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
 import static net.minecraft.network.chat.TextColor.GRAY;
@@ -32,8 +33,8 @@ public class WidgetsOptionsTab extends AbstractTRCOptionsTab {
     public void populateOptionsList(@NonNull TRCOptionsList optionsList) {
         FullWidthButtonEntry fullWidthButtonEntry = optionsList.addFullWidthButton(translatable("trc.option.widgets.position.label"), create(translatable("trc.option.widgets.position.tooltip")), _ -> this.minecraft.gui.setScreen(new WidgetPositionScreen(this.minecraft.gui.screen())));
         fullWidthButtonEntry.getButton().active = this.minecraft.level != null;
-        optionsList.addFullWidthSlider(translatable("trc.option.widgets.size.label"), 4, 16, configuration.widgets().getSize(), value -> configuration.widgets().setSize(value));
-        optionsList.addFullWidthSlider(translatable("trc.option.widgets.padding.label"), 0, 5, configuration.widgets().getPadding(), value -> configuration.widgets().setPadding(value));
+        optionsList.addFullWidthSlider(translatable("trc.option.widgets.size.label"), create(empty()), 4, 16, 1, configuration.widgets().getSize(), value -> configuration.widgets().setSize(value));
+        optionsList.addFullWidthSlider(translatable("trc.option.widgets.padding.label"), create(empty()), 0, 5, 1, configuration.widgets().getPadding(), value -> configuration.widgets().setPadding(value));
 
         widgetService.getInitializedWidgets().forEach((abstractTRCWidget, providingModId) -> {
             Component label = abstractTRCWidget.getLabel().copy()

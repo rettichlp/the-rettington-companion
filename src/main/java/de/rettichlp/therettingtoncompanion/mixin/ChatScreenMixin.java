@@ -1,5 +1,6 @@
 package de.rettichlp.therettingtoncompanion.mixin;
 
+import de.rettichlp.therettingtoncompanion.chat.CustomChatTab;
 import de.rettichlp.therettingtoncompanion.gui.ChatTabButton;
 import de.rettichlp.therettingtoncompanion.gui.PatternEditBox;
 import de.rettichlp.therettingtoncompanion.gui.screens.ChatTabPopupScreen;
@@ -26,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.CHAT_TAB_BUTTONS;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.FOCUSED_CHAT_TAB;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.compiledPattern;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatLeft;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatRight;
@@ -36,7 +38,6 @@ import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.isMessageVisib
 import static java.awt.Color.CYAN;
 import static java.awt.Color.RED;
 import static java.lang.Integer.MIN_VALUE;
-import static java.util.regex.Pattern.compile;
 import static net.minecraft.network.chat.Component.translatable;
 import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
@@ -108,9 +109,9 @@ public abstract class ChatScreenMixin extends Screen {
                 continue;
             }
 
-            if (event.button() == 1 && chatTabButton.getChatTab() != null) {
+            if (event.button() == 1 && chatTabButton.getChatTab() instanceof CustomChatTab customChatTab) {
                 closeContextMenu();
-                this.minecraft.gui.setScreen(new ChatTabPopupScreen(this, chatTabButton.getChatTab()));
+                this.minecraft.gui.setScreen(new ChatTabPopupScreen(this, customChatTab));
                 cir.setReturnValue(true);
                 return;
             }
@@ -142,10 +143,7 @@ public abstract class ChatScreenMixin extends Screen {
         closeContextMenu();
 
         // leaving the chat screen counts as leaving the focused tab, so clear its unread state and divider line
-        if (FOCUSED_CHAT_TAB != null) {
-            FOCUSED_CHAT_TAB.setUnreadCount(0);
-            FOCUSED_CHAT_TAB.setFilterTriggered(false);
-        }
+        FOCUSED_CHAT_TAB.clearUnreadState();
     }
 
     @Inject(method = "init", at = @At("TAIL"))
@@ -180,14 +178,18 @@ public abstract class ChatScreenMixin extends Screen {
     @Unique
     private void onSearchChanged(String patternString) {
         ChatComponent chat = this.minecraft.gui.hud.getChat();
-        chat.setVisibleMessageFilter(guiMessage -> isMessageVisible(guiMessage) && (patternString.isBlank() || compile(patternString).matcher(guiMessage.content().getString()).find()));
+        chat.setVisibleMessageFilter(guiMessage -> isMessageVisible(guiMessage) && (patternString.isBlank() || compiledPattern(patternString)
+                .map(pattern -> pattern.matcher(guiMessage.content().getString()).find())
+                .orElse(false)));
     }
 
     @Unique
     private void updateVisibleMessageFilter() {
         ChatComponent chat = this.minecraft.gui.hud.getChat();
         String searchPattern = this.patternEditBox != null ? this.patternEditBox.getValue() : "";
-        chat.setVisibleMessageFilter(guiMessage -> isMessageVisible(guiMessage) && (searchPattern.isBlank() || compile(searchPattern).matcher(guiMessage.content().getString()).find()));
+        chat.setVisibleMessageFilter(guiMessage -> isMessageVisible(guiMessage) && (searchPattern.isBlank() || compiledPattern(searchPattern)
+                .map(pattern -> pattern.matcher(guiMessage.content().getString()).find())
+                .orElse(false)));
     }
 
     @Unique

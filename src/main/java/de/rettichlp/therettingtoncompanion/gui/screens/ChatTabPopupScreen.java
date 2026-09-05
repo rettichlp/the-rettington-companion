@@ -1,6 +1,6 @@
 package de.rettichlp.therettingtoncompanion.gui.screens;
 
-import de.rettichlp.therettingtoncompanion.configuration.ChatTab;
+import de.rettichlp.therettingtoncompanion.chat.CustomChatTab;
 import de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry;
 import de.rettichlp.therettingtoncompanion.gui.PatternEditBox;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -22,7 +22,9 @@ import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.OFF;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_HORIZONTAL;
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_VERTICAL;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.DEFAULT_CHAT_TAB;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.FOCUSED_CHAT_TAB;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.rebuildMessageClassification;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getCurrentServerBaseDomain;
 import static net.minecraft.client.gui.layouts.FrameLayout.centerInRectangle;
 import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
@@ -42,9 +44,9 @@ public class ChatTabPopupScreen extends Screen {
     private final LinearLayout layout = vertical().spacing(SPACING_VERTICAL);
 
     private final @Nullable Screen backgroundScreen;
-    private final ChatTab chatTab;
+    private final CustomChatTab chatTab;
 
-    public ChatTabPopupScreen(@Nullable Screen backgroundScreen, @NonNull ChatTab chatTab) {
+    public ChatTabPopupScreen(@Nullable Screen backgroundScreen, @NonNull CustomChatTab chatTab) {
         super(literal("chat_tab"));
         this.backgroundScreen = backgroundScreen;
         this.chatTab = chatTab;
@@ -53,6 +55,9 @@ public class ChatTabPopupScreen extends Screen {
     @Override
     public void onClose() {
         configuration.saveToFile();
+
+        // this tab's patterns may have just changed, so every message that arrived earlier needs to be reclassified again
+        rebuildMessageClassification();
 
         if (this.backgroundScreen != null) {
             // force the chat screen to re-init so its tab button row picks up the (possibly changed) tab layout
@@ -106,7 +111,7 @@ public class ChatTabPopupScreen extends Screen {
         buttonRow.addChild(Button.builder(translatable("trc.chat_screen.chat_tabs.delete_tab").withColor(RED), _ -> {
             configuration.chat().getChatTabs().remove(this.chatTab);
             if (FOCUSED_CHAT_TAB == this.chatTab) {
-                FOCUSED_CHAT_TAB = null;
+                FOCUSED_CHAT_TAB = DEFAULT_CHAT_TAB;
             }
             onClose();
         }).width(96).build());

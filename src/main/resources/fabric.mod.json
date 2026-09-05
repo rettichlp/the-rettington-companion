@@ -12,11 +12,13 @@
   ],
   "contact": {
     "homepage": "https://rettichlp.de/",
-    "sources": "https://github.com/rettichlp/the-rettington-companion"
+    "sources": "https://github.com/rettichlp/the-rettington-companion",
+    "issues": "https://github.com/rettichlp/the-rettington-companion/issues",
+    "discord": "https://discord.gg/mZGAAwhPHu"
   },
   "license": "Apache-2.0",
   "icon": "assets/the-rettington-companion/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
       "de.rettichlp.therettingtoncompanion.TheRettingtonCompanion"

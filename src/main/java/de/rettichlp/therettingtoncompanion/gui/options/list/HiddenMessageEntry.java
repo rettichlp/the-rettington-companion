@@ -25,9 +25,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.OFF;
 import static de.rettichlp.therettingtoncompanion.gui.OnOffCycleButtonEntry.ON;
-import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.isValidPattern;
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
-import static java.util.regex.Pattern.compile;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.compiledPattern;
 import static net.minecraft.client.gui.components.Tooltip.create;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 import static net.minecraft.network.chat.Component.empty;
@@ -111,9 +109,7 @@ public class HiddenMessageEntry extends AbstractEntry {
         }
 
         public Optional<Pattern> getPattern() {
-            return isValidPattern(this.patternString)
-                    ? Optional.of(compile(this.patternString, CASE_INSENSITIVE))
-                    : Optional.empty();
+            return compiledPattern(this.patternString);
         }
 
         public static @NonNull Optional<HiddenMessage> shouldBeHidden(CharSequence message) {

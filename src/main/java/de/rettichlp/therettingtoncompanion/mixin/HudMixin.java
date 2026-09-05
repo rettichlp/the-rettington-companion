@@ -6,11 +6,11 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.Window;
-import de.rettichlp.therettingtoncompanion.configuration.ChatTab;
+import de.rettichlp.therettingtoncompanion.chat.AbstractChatTab;
+import de.rettichlp.therettingtoncompanion.chat.CustomChatTab;
 import de.rettichlp.therettingtoncompanion.gui.ChatTabButton;
 import de.rettichlp.therettingtoncompanion.gui.screens.ChatTabPopupScreen;
 import de.rettichlp.therettingtoncompanion.gui.screens.WidgetPositionScreen;
-import de.rettichlp.therettingtoncompanion.utils.ChatUtils;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -29,7 +29,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -52,10 +51,12 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configu
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
-import static de.rettichlp.therettingtoncompanion.gui.ChatTabButton.*;
-import static de.rettichlp.therettingtoncompanion.gui.ChatTabButton.forTab;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.ADD_CHAT_TAB;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.CHAT_TAB_BUTTONS;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.DEFAULT_CHAT_TAB;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.FOCUSED_CHAT_TAB;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.applyFocusedChatTabMessages;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getAllChatTabs;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatLeft;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatRight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatTopHeight;
@@ -205,9 +206,16 @@ public abstract class HudMixin {
 
     @ModifyExpressionValue(method = "extractEffects",
                            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectInstance;showIcon()Z"))
-    private boolean trc$modifyExpressionValue$extractEffectsInvoke(boolean showIcon) {
-        // optionally render the effect icon, even if the effect has no visible particles
-        return showIcon || configuration.visuals().isEffectShowAllIcons();
+    private boolean trc$modifyExpressionValue$extractEffectsInvoke(boolean showIcon,
+                                                                   @Local(name = "instance") @NonNull MobEffectInstance effectInstance) {
+        if (showIcon || !configuration.visuals().isEffectShowAllIcons()) {
+            return showIcon;
+        }
+
+        // render the effect icon, even if the effect has no visible particles (only for vanilla effects, not modded ones)
+        return effectInstance.getEffect().unwrapKey()
+                .map(key -> key.identifier().getNamespace().equals("minecraft"))
+                .orElse(false);
     }
 
     @WrapOperation(method = "extractEffects",
@@ -271,37 +279,33 @@ public abstract class HudMixin {
     private void updateChatTabButtons(@NonNull GuiGraphicsExtractor graphics) {
         CHAT_TAB_BUTTONS.clear();
 
-        List<ChatTab> chatTabs = configuration.chat().getChatTabs().stream()
-                .filter(ChatTab::isAvailableOnCurrentServer)
-                .toList();
+        List<AbstractChatTab> chatTabs = getAllChatTabs(); // default tab first, then the available custom tabs
+        boolean hasCustomTabs = chatTabs.size() > 1;
         Font font = this.minecraft.font;
         boolean chatFocused = this.minecraft.gui.screen() instanceof ChatScreen;
 
         // a server-bound tab that fell out of scope (e.g. the player switched servers) can't stay focused
-        if (FOCUSED_CHAT_TAB != null && !chatTabs.contains(FOCUSED_CHAT_TAB)) {
-            setFocusedChatTab(null);
+        if (!chatTabs.contains(FOCUSED_CHAT_TAB)) {
+            setFocusedChatTab(DEFAULT_CHAT_TAB);
         }
 
         if (chatFocused) {
-            // focused: show every tab (with its full unread badge) plus the default/add buttons, and let clicks
-            // through the buttons themselves - ChatScreenMixin dispatches mouse events to this same list
-            if (!chatTabs.isEmpty()) {
-                CHAT_TAB_BUTTONS.add(forDefaultTab(font, _ -> setFocusedChatTab(null)));
+            // focused: show every tab (with its full unread badge) plus the add button, and let clicks through the buttons themselves
+            if (hasCustomTabs) {
+                for (AbstractChatTab chatTab : chatTabs) {
+                    CHAT_TAB_BUTTONS.add(chatTab.getChatTabButton(font, _ -> setFocusedChatTab(FOCUSED_CHAT_TAB == chatTab ? DEFAULT_CHAT_TAB : chatTab)));
+                }
             }
 
-            for (ChatTab chatTab : chatTabs) {
-                CHAT_TAB_BUTTONS.add(forTab(font, chatTab, _ -> setFocusedChatTab(FOCUSED_CHAT_TAB == chatTab ? null : chatTab)));
-            }
-
-            CHAT_TAB_BUTTONS.add(forAddButton(font, _ -> {
-                ChatTab newChatTab = new ChatTab("Tab " + (configuration.chat().getChatTabs().size() + 1));
+            CHAT_TAB_BUTTONS.add(ADD_CHAT_TAB.getChatTabButton(font, _ -> {
+                CustomChatTab newChatTab = new CustomChatTab("Tab " + (configuration.chat().getChatTabs().size() + 1));
                 configuration.chat().getChatTabs().add(newChatTab);
                 this.minecraft.gui.setScreen(new ChatTabPopupScreen(this.minecraft.gui.screen(), newChatTab));
             }));
         } else {
-            for (ChatTab chatTab : chatTabs) {
+            for (AbstractChatTab chatTab : chatTabs) {
                 if (chatTab.getUnreadCount() > 0) {
-                    CHAT_TAB_BUTTONS.add(forTab(font, chatTab, _ -> {}));
+                    CHAT_TAB_BUTTONS.add(chatTab.getChatTabButton(font, _ -> {}));
                 }
             }
         }
@@ -317,21 +321,22 @@ public abstract class HudMixin {
         layoutChatTabButtons(CHAT_TAB_BUTTONS);
 
         for (ChatTabButton chatTabButton : CHAT_TAB_BUTTONS) {
-            chatTabButton.draw(graphics, -1, -1, 1.0F);
+            chatTabButton.extractContents(graphics, -1, -1, 1.0F);
         }
     }
 
     @Unique
-    private void setFocusedChatTab(@Nullable ChatTab chatTab) {
+    private void setFocusedChatTab(@NonNull AbstractChatTab chatTab) {
         // clear the previously focused tab's unread state only once it's actually left, so its unread divider line stays
         // in place for as long as it remains focused
-        if (FOCUSED_CHAT_TAB != null && FOCUSED_CHAT_TAB != chatTab) {
-            FOCUSED_CHAT_TAB.setUnreadCount(0);
-            FOCUSED_CHAT_TAB.setFilterTriggered(false);
+        if (FOCUSED_CHAT_TAB != chatTab) {
+            FOCUSED_CHAT_TAB.clearUnreadState();
         }
 
         FOCUSED_CHAT_TAB = chatTab;
-        this.minecraft.gui.hud.getChat().setVisibleMessageFilter(ChatUtils::isMessageVisible);
+
+        // load pre-filtered messages
+        applyFocusedChatTabMessages();
     }
 
     @Unique
@@ -462,24 +467,6 @@ public abstract class HudMixin {
     }
 
     @Unique
-    private static @NonNull String getEffectDurationText(@NonNull MobEffectInstance instance) {
-        if (instance.isInfiniteDuration()) {
-            return "";
-        }
-
-        int totalSeconds = (int) Math.ceil(instance.getDuration() / 20.0);
-        if (totalSeconds >= 86400) {
-            return (totalSeconds / 86400) + "d";
-        } else if (totalSeconds >= 3600) {
-            return (totalSeconds / 3600) + "h";
-        } else if (totalSeconds > 60) {
-            return (totalSeconds / 60) + "m";
-        } else {
-            return totalSeconds + "s";
-        }
-    }
-
-    @Unique
     private void layoutChatTabButtons(@NonNull List<? extends AbstractWidget> chatTabButtonsInDisplayOrder) {
         int spacing = 2;
         int rowHeight = 14;
@@ -500,6 +487,24 @@ public abstract class HudMixin {
 
             chatTabButton.setPosition(currentX, currentRowY);
             currentX += (width + spacing);
+        }
+    }
+
+    @Unique
+    private static @NonNull String getEffectDurationText(@NonNull MobEffectInstance instance) {
+        if (instance.isInfiniteDuration()) {
+            return "";
+        }
+
+        int totalSeconds = (int) Math.ceil(instance.getDuration() / 20.0);
+        if (totalSeconds >= 86400) {
+            return (totalSeconds / 86400) + "d";
+        } else if (totalSeconds >= 3600) {
+            return (totalSeconds / 3600) + "h";
+        } else if (totalSeconds > 60) {
+            return (totalSeconds / 60) + "m";
+        } else {
+            return totalSeconds + "s";
         }
     }
 }

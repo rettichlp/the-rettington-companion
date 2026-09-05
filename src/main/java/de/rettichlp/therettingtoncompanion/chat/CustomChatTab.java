@@ -1,38 +1,41 @@
-package de.rettichlp.therettingtoncompanion.configuration;
+package de.rettichlp.therettingtoncompanion.chat;
 
 import de.rettichlp.therettingtoncompanion.utils.ChatUtils;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.getCurrentServerBaseDomain;
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
-import static java.util.regex.Pattern.compile;
+import static net.minecraft.network.chat.Component.literal;
 
 @Getter
 @Setter
-public class ChatTab {
+public class CustomChatTab extends AbstractChatTab {
 
     private String name;
     private List<String> patternStrings = new ArrayList<>();
 
     private @Nullable String serverBoundDomain;
 
-    private transient int unreadCount;
-    private transient boolean filterTriggered;
-
-    public ChatTab(String name) {
+    public CustomChatTab(String name) {
         this.name = name;
+    }
+
+    @Override
+    public @NonNull Component getDisplayName() {
+        return literal(this.name == null || this.name.isBlank() ? "?" : this.name);
     }
 
     public boolean matches(@NonNull CharSequence message) {
         return this.patternStrings.stream()
-                .filter(ChatUtils::isValidPattern)
-                .map(patternString -> compile(patternString, CASE_INSENSITIVE))
+                .map(ChatUtils::compiledPattern)
+                .flatMap(Optional::stream)
                 .anyMatch(pattern -> pattern.matcher(message).find());
     }
 

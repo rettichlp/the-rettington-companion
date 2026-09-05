@@ -10,21 +10,19 @@ import java.io.File;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
-import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getAllMessages;
-import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.refreshTrimmedMessages;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.applyFocusedChatTabMessages;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMessages;
+import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.registerMessage;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.GSON_COMPACT;
 import static java.nio.file.Files.newBufferedReader;
 import static java.nio.file.Files.newBufferedWriter;
+import static java.util.Arrays.stream;
 import static net.minecraft.network.chat.Component.translatable;
 
 public class ChatLogService {
-
-    // limits the file size of the chat log, keeping only the most recent messages
-    private static final int MAX_SAVED_MESSAGES = 10_000;
 
     private static final Path CHAT_LOG_PATH = FabricLoader.getInstance().getGameDir().resolve("chatlog.json");
     private static final GuiMessageTag LOADED_FROM_PREVIOUS_SESSION_TAG = new GuiMessageTag(-13474666, null, translatable("trc.chat_log.indicator"), "Previous session");
@@ -32,10 +30,8 @@ public class ChatLogService {
     private boolean chatLogLoaded = false;
 
     public void saveChatLog() {
-        // allMessages is ordered newest first, so limiting it keeps the most recent messages
-        ChatLogEntry[] chatLogEntries = getAllMessages().stream()
-                .limit(MAX_SAVED_MESSAGES)
-                .map(guiMessage -> new ChatLogEntry(guiMessage.content(), guiMessage.source()))
+        ChatLogEntry[] chatLogEntries = getMessages().entrySet().stream()
+                .map(entry -> entry.getValue().toChatLogEntry(entry.getKey()))
                 .toArray(ChatLogEntry[]::new);
 
         try (Writer writer = newBufferedWriter(CHAT_LOG_PATH)) {
@@ -46,7 +42,7 @@ public class ChatLogService {
         }
     }
 
-    public void loadChatLogIfNeeded() {
+    public void loadChatLog() {
         if (this.chatLogLoaded) {
             return;
         }
@@ -62,12 +58,15 @@ public class ChatLogService {
             ChatLogEntry[] chatLogEntries = GSON_COMPACT.fromJson(reader, ChatLogEntry[].class);
             int guiTicks = Minecraft.getInstance().gui.hud.getGuiTicks();
 
-            List<GuiMessage> loadedMessages = Arrays.stream(chatLogEntries)
-                    .map(entry -> new GuiMessage(guiTicks, entry.getContent(), null, entry.getSource(), LOADED_FROM_PREVIOUS_SESSION_TAG))
+            List<GuiMessage> loadedMessages = stream(chatLogEntries)
+                    .map(chatLogEntry -> {
+                        GuiMessage guiMessage = new GuiMessage(guiTicks, chatLogEntry.getContent(), null, chatLogEntry.getSource(), LOADED_FROM_PREVIOUS_SESSION_TAG);
+                        registerMessage(guiMessage, chatLogEntry.getTimestamp(), false);
+                        return guiMessage;
+                    })
                     .toList();
 
-            getAllMessages().addAll(loadedMessages);
-            refreshTrimmedMessages();
+            applyFocusedChatTabMessages();
 
             LOGGER.info("Loaded {} chat messages from {}", loadedMessages.size(), CHAT_LOG_PATH);
         } catch (Exception e) {

@@ -27,7 +27,12 @@ public abstract class AbstractTRCTextWidget<C extends WidgetConfiguration> exten
     }
 
     @Override
-    public void extractWidget(@NotNull GuiGraphicsExtractor graphics, int x, int y, Color color, boolean backgroundEnabled, boolean textShadowEnabled) {
+    public void extractWidget(@NotNull GuiGraphicsExtractor graphics,
+                              int x,
+                              int y,
+                              Color color,
+                              boolean backgroundEnabled,
+                              boolean textShadowEnabled) {
         if (backgroundEnabled) {
             Color transparentColor = widgetService.getTransparentColor(color);
             graphics.fill(x, y, x + getWidth(), y + getHeight(), transparentColor.getRGB());
