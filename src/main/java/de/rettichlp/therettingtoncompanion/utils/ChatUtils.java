@@ -166,13 +166,8 @@ public class ChatUtils {
 
     public static void rebuildMessageClassification() {
         Map<GuiMessage, MessageMeta> messages = getMessages();
-
-        MESSAGE_CACHE.clear();
-        DEFAULT_CHAT_TAB.getMessages().clear();
-        configuration.chat().getChatTabs().forEach(chatTab -> chatTab.getMessages().clear());
-
+        clearAllMessages();
         messages.forEach((message, messageMeta) -> registerMessage(message, messageMeta.receivedAt(), false));
-
         applyFocusedChatTabMessages();
     }
 
@@ -370,6 +365,12 @@ public class ChatUtils {
     }
 
     public record MessageMeta(long receivedAt, @NonNull Set<CustomChatTab> matchingChatTabs, @Nullable FilteredMessage bestMatchingFilteredMessage) {
+    private static void clearAllMessages() {
+        MESSAGE_CACHE.clear();
+        DEFAULT_CHAT_TAB.getMessages().clear();
+        configuration.chat().getChatTabs().forEach(chatTab -> chatTab.getMessages().clear());
+    }
+
 
         public @NonNull ChatLogEntry toChatLogEntry(@NonNull GuiMessage message) {
             return new ChatLogEntry(message.content(), message.source(), this.receivedAt);
