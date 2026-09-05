@@ -365,13 +365,13 @@ public class ChatUtils {
         return new ScreenRectangle(getChatLeft(), top, getChatRight() - getChatLeft(), bottom - top);
     }
 
-    public record MessageMeta(long receivedAt, @NonNull Set<CustomChatTab> matchingChatTabs, @Nullable FilteredMessage bestMatchingFilteredMessage) {
-    private static void clearAllMessages() {
+    public static void clearAllMessages() {
         MESSAGE_CACHE.clear();
         DEFAULT_CHAT_TAB.getMessages().clear();
         configuration.chat().getChatTabs().forEach(chatTab -> chatTab.getMessages().clear());
     }
 
+    public record MessageMeta(long receivedAt, @NonNull Set<CustomChatTab> matchingChatTabs, @Nullable FilteredMessage bestMatchingFilteredMessage) {
 
         public @NonNull ChatLogEntry toChatLogEntry(@NonNull GuiMessage message) {
             return new ChatLogEntry(message.content(), message.source(), this.receivedAt);
