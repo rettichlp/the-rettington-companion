@@ -218,13 +218,14 @@ public class ChatUtils {
         }
 
         // remove messages above limit for lag prevention
-        int max = configuration.chat().getEffectiveMaxChatMessages();
-        while (MESSAGE_CACHE.size() > max) {
-            GuiMessage oldest = MESSAGE_CACHE.entrySet().stream()
-                    .min(BY_TIMESTAMP)
+        int excess = MESSAGE_CACHE.size() - configuration.chat().getEffectiveMaxChatMessages();
+        if (excess > 0) {
+            MESSAGE_CACHE.entrySet().stream()
+                    .sorted(BY_TIMESTAMP)
+                    .limit(excess)
                     .map(Map.Entry::getKey)
-                    .orElseThrow();
-            unregisterMessage(oldest);
+                    .toList()
+                    .forEach(ChatUtils::unregisterMessage);
         }
     }
 
