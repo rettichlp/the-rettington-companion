@@ -57,6 +57,14 @@ public class ChatUtils {
     public static final AddChatTab ADD_CHAT_TAB = new AddChatTab();
 
     public static AbstractChatTab FOCUSED_CHAT_TAB = DEFAULT_CHAT_TAB;
+    // identity map is required here (two messages with equal content and source would otherwise collide as the same map key)
+    private static final Map<GuiMessage, MessageMeta> MESSAGE_CACHE = new IdentityHashMap<>();
+    // regex compilation is comparatively expensive, and these patterns (chat tabs, filtered/hidden messages) are matched against every
+    // chat message as it's classified, so recompiling the same pattern string on every single match call causes noticeable lag
+    private static final Map<String, Optional<Pattern>> COMPILED_PATTERN_CACHE = new HashMap<>();
+    private static final AtomicLong SEQUENCE_GENERATOR = new AtomicLong();
+    private static final Comparator<Map.Entry<GuiMessage, MessageMeta>> BY_TIMESTAMP = comparingLong((Map.Entry<GuiMessage, MessageMeta> entry) -> entry.getValue().receivedAt())
+            .thenComparingLong(entry -> entry.getValue().sequence());
 
     public static @NonNull List<AbstractChatTab> getAllChatTabs() {
         List<AbstractChatTab> allChatTabs = new ArrayList<>();
@@ -66,15 +74,6 @@ public class ChatUtils {
                 .forEach(allChatTabs::add);
         return allChatTabs;
     }
-
-    // identity map is required here (two messages with equal content and source would otherwise collide as the same map key)
-    private static final Map<GuiMessage, MessageMeta> MESSAGE_CACHE = new IdentityHashMap<>();
-    // regex compilation is comparatively expensive, and these patterns (chat tabs, filtered/hidden messages) are matched against every
-    // chat message as it's classified, so recompiling the same pattern string on every single match call causes noticeable lag
-    private static final Map<String, Optional<Pattern>> COMPILED_PATTERN_CACHE = new HashMap<>();
-    private static final AtomicLong SEQUENCE_GENERATOR = new AtomicLong();
-    private static final Comparator<Map.Entry<GuiMessage, MessageMeta>> BY_TIMESTAMP = comparingLong((Map.Entry<GuiMessage, MessageMeta> entry) -> entry.getValue().receivedAt())
-            .thenComparingLong(entry -> entry.getValue().sequence());
 
     public static double getMaxChatWidth(Window window, double defaultChatWidth) {
         return !configuration.chat().isOptimizedChat()
