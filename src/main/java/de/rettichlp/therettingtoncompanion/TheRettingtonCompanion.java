@@ -52,6 +52,7 @@ public class TheRettingtonCompanion implements ModInitializer {
     public static final KeyMapping GAMMA_PRESET_KEY = registerKeyMapping(new KeyMapping("trc.key.gamma_preset", KEYSYM, GLFW_KEY_G, KEY_CATEGORY));
     public static final KeyMapping EQUIPMENT_MODEL_VISIBILITY_KEY = registerKeyMapping(new KeyMapping("trc.key.hide_armor", KEYSYM, GLFW_KEY_H, KEY_CATEGORY));
     public static final KeyMapping SCREENSHOT_KEY = registerKeyMapping(new KeyMapping("trc.key.screenshot", KEYSYM, GLFW_KEY_F12, KEY_CATEGORY));
+    public static final KeyMapping SLOT_LOCK_KEY = registerKeyMapping(new KeyMapping("trc.key.slot_lock", KEYSYM, GLFW_KEY_UNKNOWN, KEY_CATEGORY));
 
     public static LocalPlayer player;
 
