@@ -207,15 +207,15 @@ public abstract class HudMixin {
     @ModifyExpressionValue(method = "extractEffects",
                            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectInstance;showIcon()Z"))
     private boolean trc$modifyExpressionValue$extractEffectsInvoke(boolean showIcon,
-                                                                   @Local(name = "instance") @NonNull MobEffectInstance instance) {
-        if (!configuration.visuals().isEffectShowAllIcons()) {
+                                                                   @Local(name = "instance") @NonNull MobEffectInstance effectInstance) {
+        if (showIcon || !configuration.visuals().isEffectShowAllIcons()) {
             return showIcon;
         }
 
         // render the effect icon, even if the effect has no visible particles (only for vanilla effects, not modded ones)
-        return instance.getEffect().unwrapKey()
-                    .map(key -> key.identifier().getNamespace().equals("minecraft"))
-                    .orElse(false);
+        return effectInstance.getEffect().unwrapKey()
+                .map(key -> key.identifier().getNamespace().equals("minecraft"))
+                .orElse(false);
     }
 
     @WrapOperation(method = "extractEffects",
