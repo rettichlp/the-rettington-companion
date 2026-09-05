@@ -330,8 +330,7 @@ public abstract class HudMixin {
         // clear the previously focused tab's unread state only once it's actually left, so its unread divider line stays
         // in place for as long as it remains focused
         if (FOCUSED_CHAT_TAB != chatTab) {
-            FOCUSED_CHAT_TAB.setUnreadCount(0);
-            FOCUSED_CHAT_TAB.setFilterTriggered(false);
+            FOCUSED_CHAT_TAB.clearUnreadState();
         }
 
         FOCUSED_CHAT_TAB = chatTab;

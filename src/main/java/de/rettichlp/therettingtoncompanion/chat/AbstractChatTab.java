@@ -56,4 +56,9 @@ public abstract class AbstractChatTab {
     public int getButtonWidth(@NonNull Font font) {
         return this instanceof AddChatTab ? 16 : clamp(font.width(getButtonLabel()) + 10, 20, 80);
     }
+
+    public void clearUnreadState() {
+        this.unreadCount = 0;
+        this.filterTriggered = false;
+    }
 }
