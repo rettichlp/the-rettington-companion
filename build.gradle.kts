@@ -47,7 +47,7 @@ dependencies {
     compileOnly("xaero.minimap:xaerominimap-fabric-${providers.gradleProperty("minecraft_version").get()}:${providers.gradleProperty("xaerominimap_version").get()}")
 
     // https://modrinth.com/mod/dev-auth-neo
-    localRuntime("net.litetex.mcm:dev-auth-neo:1.1.1")
+    localRuntime("net.litetex.mcm:dev-auth-neo:1.2.0")
 }
 
 tasks.processResources {
