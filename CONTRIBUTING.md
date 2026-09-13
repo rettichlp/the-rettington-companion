@@ -66,11 +66,11 @@ it makes sense.
 
 ## Testing your changes
 
-`./gradlew build` verifies the project compiles and packages correctly. Automated tests don't cover GUI and in-game behavior, so run the
-client with `./gradlew runClient` (or the Fabric Loom `client` run configuration in IntelliJ, picked up after a Gradle sync) and check the
-change manually in a world before opening a PR.
+`./gradlew build` verifies the project compiles and packages correctly. Automated tests don't cover GUI and in-game behavior, so run
+the client with `./gradlew runClient` (or the Fabric Loom `client` run configuration in IntelliJ, picked up after a Gradle sync) and
+check the change manually in a world before opening a PR.
 
 ## Reporting bugs / requesting features
 
-Open a GitHub issue with as much detail as you can: Minecraft/mod version, steps to reproduce, and what you
-expected vs. what happened. For feature requests, describe the use case, not just the desired implementation.
+Open a GitHub issue with as much detail as you can: Minecraft/mod version, steps to reproduce, and what you expected vs. what happened.
+For feature requests, describe the use case, not just the desired implementation.
