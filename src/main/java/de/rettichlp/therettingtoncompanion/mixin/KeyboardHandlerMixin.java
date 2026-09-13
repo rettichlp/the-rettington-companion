@@ -19,6 +19,7 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.EQUIPME
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.GAMMA_PRESET_KEY;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.SCREENSHOT_KEY;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.delayedAction;
@@ -26,6 +27,7 @@ import static de.rettichlp.therettingtoncompanion.utils.ScreenshotUtils.takeImgu
 import static de.rettichlp.therettingtoncompanion.utils.ScreenshotUtils.uploadImageToImgur;
 import static java.awt.Color.CYAN;
 import static net.minecraft.network.chat.Component.translatable;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 import static xaero.common.effect.Effects.NO_MINIMAP;
 
@@ -69,6 +71,13 @@ public abstract class KeyboardHandlerMixin {
                 configuration.visuals().setGammaPreset(newGammaPreset);
                 newGammaPreset.sendMessage();
             }
+        }
+    }
+
+    @Inject(method = "keyPress", at = @At("HEAD"))
+    private void trc$keyPressHead(long handle, int action, KeyEvent event, CallbackInfo ci) {
+        if (action == GLFW_RELEASE) {
+            inventoryService.releaseSlotLockKey(event);
         }
     }
 }
