@@ -15,6 +15,7 @@
     "minVersion": "0.5.4"
   },
   "client": [
+    "AbstractContainerMenuMixin",
     "AbstractContainerScreenMixin",
     "ChatComponentAccessor",
     "ChatComponentMixin",
@@ -30,6 +31,7 @@
     "OptionInstanceMixin",
     "OverlayTextureAccessor",
     "OverlayTextureMixin",
-    "PauseScreenMixin"
+    "PauseScreenMixin",
+    "SlotMixin"
   ]
 }
