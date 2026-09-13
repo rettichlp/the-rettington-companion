@@ -48,6 +48,10 @@ public abstract class AbstractTRCWidgetGroup<C extends WidgetConfiguration> exte
                               Color color,
                               boolean backgroundEnabled,
                               boolean textShadowEnabled) {
+        if (this.minecraft.gui.hud.isHidden()) {
+            return;
+        }
+
         List<? extends AbstractTRCWidget<?>> widgets = widgets();
         for (int i = 0; i < widgets.size(); i++) {
             AbstractTRCWidget<?> widget = widgets.get(i);
