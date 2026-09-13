@@ -133,7 +133,7 @@ public abstract class HudMixin {
 
         // render empty inventory space text
         GameType gameType = player.gameMode();
-        if (configuration.visuals().isShowEmptyInventorySlotCount() && gameType != null && gameType.isSurvival()) {
+        if (configuration.visuals().isShowEmptyInventorySlotCount() && gameType != null && gameType.isSurvival() && !this.minecraft.gui.hud.isHidden()) {
             ItemStack mainHandStack = player.getMainHandItem();
             boolean showSameItemLeftAmount = player.isCrouching() && !mainHandStack.isEmpty();
             long emptySlotAmount = showSameItemLeftAmount
