@@ -4,8 +4,11 @@ import de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration;
 import de.rettichlp.therettingtoncompanion.models.GammaPreset;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.inventory.Slot;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -13,12 +16,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.EQUIPMENT_MODEL_VISIBILITY_KEY;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.GAMMA_PRESET_KEY;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.SCREENSHOT_KEY;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.SLOT_LOCK_KEY;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.notificationService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.utils.ModUtils.delayedAction;
@@ -26,7 +32,7 @@ import static de.rettichlp.therettingtoncompanion.utils.ScreenshotUtils.takeImgu
 import static de.rettichlp.therettingtoncompanion.utils.ScreenshotUtils.uploadImageToImgur;
 import static java.awt.Color.CYAN;
 import static net.minecraft.network.chat.Component.translatable;
-import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static xaero.common.effect.Effects.NO_MINIMAP;
 
 @Mixin(KeyboardHandler.class)
@@ -36,13 +42,10 @@ public abstract class KeyboardHandlerMixin {
     @Final
     private Minecraft minecraft;
 
-    @Inject(method = "keyPress",
-            at = @At(value = "INVOKE",
-                     target = "Lnet/minecraft/client/KeyMapping;click(Lcom/mojang/blaze3d/platform/InputConstants$Key;)V",
-                     shift = AFTER))
-    private void trc$keyPressInvoke(long handle, int action, KeyEvent event, CallbackInfo ci) {
+    @Inject(method = "keyPress", at = @At("HEAD"))
+    private void trc$keyPressHead(long handle, int action, KeyEvent event, CallbackInfo ci) {
         // support focused chat
-        if (SCREENSHOT_KEY.matches(event)) {
+        if (SCREENSHOT_KEY.matches(event) && action == GLFW_RELEASE) {
             player.addEffect(new MobEffectInstance(NO_MINIMAP, -1, 0, false, false, false));
 
             delayedAction(() -> takeImgurScreenshot().thenAccept(file -> {
@@ -54,6 +57,13 @@ public abstract class KeyboardHandlerMixin {
             }), 100);
 
             delayedAction(() -> player.removeEffect(NO_MINIMAP), 1000);
+        }
+
+        if (SLOT_LOCK_KEY.matches(event) && action == GLFW_RELEASE) {
+            if (this.minecraft.gui.screen() instanceof AbstractContainerScreen<?> containerScreen) {
+                Slot hoveredSlot = ((AbstractContainerScreenAccessor) containerScreen).getHoveredSlot();
+                onSlotLockKey(hoveredSlot);
+            }
         }
 
         // only with closed chat
@@ -70,5 +80,22 @@ public abstract class KeyboardHandlerMixin {
                 newGammaPreset.sendMessage();
             }
         }
+    }
+
+    private void onSlotLockKey(@Nullable Slot slot) {
+        if (slot == null || !inventoryService.isOwnInventory(slot.container)) {
+            return;
+        }
+
+        Set<Integer> lockedSlots = configuration.inventory().getLockedSlots();
+        int slotIndex = slot.getContainerSlot();
+        boolean wasLocked = lockedSlots.remove(slotIndex);
+
+        if (!wasLocked) {
+            lockedSlots.add(slotIndex);
+        }
+
+        configuration.saveToFile();
+        player.sendOverlayMessage(translatable(wasLocked ? "trc.message.slot_lock.unlocked" : "trc.message.slot_lock.locked"));
     }
 }

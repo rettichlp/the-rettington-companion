@@ -4,7 +4,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
-import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.network.chat.Component;
@@ -21,7 +20,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.SLOT_LOCK_KEY;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
@@ -41,10 +39,6 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
     @Shadow
     @Final
     protected T menu;
-
-    @Shadow
-    @Nullable
-    protected Slot hoveredSlot;
 
     protected AbstractContainerScreenMixin(Component title) {
         super(title);
@@ -80,13 +74,6 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
     private void trc$extractSlotTail(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
         if (inventoryService.isLockedSlot(slot)) {
             graphics.blitSprite(GUI_TEXTURED, LOCKED_SLOT_SPRITE, slot.x + 10, slot.y, 6, 8);
-        }
-    }
-
-    @Inject(method = "keyPressed", at = @At("HEAD"))
-    private void trc$keyPressedHead(KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
-        if (SLOT_LOCK_KEY.matches(event)) {
-            inventoryService.onSlotLockKeyPressed(this.hoveredSlot);
         }
     }
 }
