@@ -4,16 +4,37 @@ import com.mojang.blaze3d.platform.NativeImage;
 import de.rettichlp.therettingtoncompanion.mixin.OverlayTextureAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.List;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.MOD_ID;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.CUSTOM_CROSSHAIR_SIZE;
+import static net.minecraft.network.chat.TextColor.AQUA;
+import static net.minecraft.network.chat.TextColor.BLACK;
+import static net.minecraft.network.chat.TextColor.BLUE;
+import static net.minecraft.network.chat.TextColor.DARK_AQUA;
+import static net.minecraft.network.chat.TextColor.DARK_BLUE;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.DARK_GREEN;
+import static net.minecraft.network.chat.TextColor.DARK_PURPLE;
+import static net.minecraft.network.chat.TextColor.DARK_RED;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.GREEN;
+import static net.minecraft.network.chat.TextColor.LIGHT_PURPLE;
+import static net.minecraft.network.chat.TextColor.RED;
+import static net.minecraft.network.chat.TextColor.WHITE;
+import static net.minecraft.network.chat.TextColor.YELLOW;
 import static net.minecraft.resources.Identifier.fromNamespaceAndPath;
 
 public class VisualsService {
 
+    public static final Collection<TextColor> VANILLA_TEXT_COLORS = List.of(BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY, DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE);
     public static final Identifier CUSTOM_CROSSHAIR_TEXTURE = fromNamespaceAndPath(MOD_ID, "dynamic/custom_crosshair");
 
     private @Nullable DynamicTexture customCrosshairTexture;
