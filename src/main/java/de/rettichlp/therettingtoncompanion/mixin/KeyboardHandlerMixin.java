@@ -30,7 +30,6 @@ import static de.rettichlp.therettingtoncompanion.utils.ScreenshotUtils.uploadIm
 import static java.awt.Color.CYAN;
 import static net.minecraft.network.chat.Component.translatable;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
-import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 import static xaero.common.effect.Effects.NO_MINIMAP;
 
 @Mixin(KeyboardHandler.class)
@@ -64,14 +63,12 @@ public abstract class KeyboardHandlerMixin {
         if (SLOT_LOCK_KEY.matches(event) && this.minecraft.gui.screen() instanceof AbstractContainerScreen<?> containerScreen) {
             inventoryService.toggleSlotLock(((AbstractContainerScreenAccessor) containerScreen).getHoveredSlot());
         }
-    }
 
-    // only called on key press without an open screen
-    @Inject(method = "keyPress",
-            at = @At(value = "INVOKE",
-                     target = "Lnet/minecraft/client/KeyMapping;click(Lcom/mojang/blaze3d/platform/InputConstants$Key;)V",
-                     shift = AFTER))
-    private void trc$keyPressInvoke(long handle, int action, KeyEvent event, CallbackInfo ci) {
+        // only without an open screen and not as part of a debug key combination (e.g. F3 + G)
+        if (this.minecraft.gui.screen() != null || this.minecraft.options.keyDebugModifier.isDown()) {
+            return;
+        }
+
         if (EQUIPMENT_MODEL_VISIBILITY_KEY.matches(event)) {
             VisualsConfiguration.EquipmentModelVisibility equipmentModelVisibility = configuration.visuals().getEquipmentModelVisibility().next();
             configuration.visuals().setEquipmentModelVisibility(equipmentModelVisibility);
