@@ -15,7 +15,6 @@
     "minVersion": "0.5.4"
   },
   "client": [
-    "AbstractContainerMenuMixin",
     "AbstractContainerScreenAccessor",
     "AbstractContainerScreenMixin",
     "ChatComponentAccessor",
@@ -28,11 +27,11 @@
     "LevelMixin",
     "LivingEntityMixin",
     "LivingEntityRendererMixin",
+    "MultiPlayerGameModeMixin",
     "NametagFeatureRendererMixin",
     "OptionInstanceMixin",
     "OverlayTextureAccessor",
     "OverlayTextureMixin",
-    "PauseScreenMixin",
-    "SlotMixin"
+    "PauseScreenMixin"
   ]
 }
