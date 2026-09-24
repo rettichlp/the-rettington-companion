@@ -10,7 +10,6 @@
   "trc.chat_screen.chat_tabs.server_bound": "Server-bound",
   "trc.chat_screen.context_menu.copy_message": "Copy message",
   "trc.chat_screen.context_menu.copy_message_without_timestamp": "Copy message (no timestamp)",
-  "trc.crosshair_editor.title": "Paint your crosshair",
   "trc.crosshair_editor.eraser": "Eraser",
   "trc.crosshair_editor.custom_color": "Custom color",
   "trc.crosshair_editor.clear": "Clear",

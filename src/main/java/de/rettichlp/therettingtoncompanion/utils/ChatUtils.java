@@ -34,6 +34,7 @@ import java.util.regex.PatternSyntaxException;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
 import static de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry.FilteredMessage.getBestMatchingFilteredMessage;
+import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.System.currentTimeMillis;
@@ -127,6 +128,10 @@ public class ChatUtils {
             return true;
         }
 
+        if (messageMeta.hidden()) {
+            return false;
+        }
+
         return FOCUSED_CHAT_TAB instanceof CustomChatTab customChatTab
                 ? messageMeta.matchingChatTabs().contains(customChatTab)
                 : messageMeta.matchingChatTabs().isEmpty();
@@ -138,6 +143,7 @@ public class ChatUtils {
 
     public static @Nullable GuiMessage getMostRecentMessage() {
         return MESSAGE_CACHE.entrySet().stream()
+                .filter(entry -> !entry.getValue().hidden())
                 .max(BY_TIMESTAMP)
                 .map(Map.Entry::getKey)
                 .orElse(null);
@@ -176,15 +182,35 @@ public class ChatUtils {
     public static void registerMessage(@NonNull GuiMessage message, @Nullable Long timestamp, boolean live) {
         // classify the message
         String messageString = message.content().getString();
+        boolean hidden = shouldBeHidden(messageString).isPresent();
         long receivedAt = timestamp != null ? timestamp : currentTimeMillis();
+
         Set<CustomChatTab> matchingChatTabs = configuration.chat().getChatTabs().stream()
+                .filter(_ -> !hidden) // hidden messages stay registered but are not assigned to any chat tab
                 .filter(CustomChatTab::isAvailableOnCurrentServer)
                 .filter(chatTab -> chatTab.matches(messageString))
                 .collect(toUnmodifiableSet());
-        FilteredMessage bestMatchingFilteredMessage = getBestMatchingFilteredMessage(messageString);
 
-        MessageMeta messageMeta = new MessageMeta(receivedAt, SEQUENCE_GENERATOR.incrementAndGet(), matchingChatTabs, bestMatchingFilteredMessage);
+        // a hidden message can never match a filter
+        FilteredMessage bestMatchingFilteredMessage = hidden ? null : getBestMatchingFilteredMessage(messageString);
+
+        MessageMeta messageMeta = new MessageMeta(receivedAt, SEQUENCE_GENERATOR.incrementAndGet(), matchingChatTabs, bestMatchingFilteredMessage, hidden);
         MESSAGE_CACHE.put(message, messageMeta);
+
+        // remove messages above limit for lag prevention
+        int excess = MESSAGE_CACHE.size() - configuration.chat().getEffectiveMaxChatMessages();
+        if (excess > 0) {
+            MESSAGE_CACHE.entrySet().stream()
+                    .sorted(BY_TIMESTAMP)
+                    .limit(excess)
+                    .map(Map.Entry::getKey)
+                    .toList()
+                    .forEach(ChatUtils::unregisterMessage);
+        }
+
+        if (hidden) {
+            return;
+        }
 
         // add message to chat tabs
         if (matchingChatTabs.isEmpty()) {
@@ -217,17 +243,6 @@ public class ChatUtils {
                     }
                 }
             }
-        }
-
-        // remove messages above limit for lag prevention
-        int excess = MESSAGE_CACHE.size() - configuration.chat().getEffectiveMaxChatMessages();
-        if (excess > 0) {
-            MESSAGE_CACHE.entrySet().stream()
-                    .sorted(BY_TIMESTAMP)
-                    .limit(excess)
-                    .map(Map.Entry::getKey)
-                    .toList()
-                    .forEach(ChatUtils::unregisterMessage);
         }
     }
 
@@ -373,7 +388,7 @@ public class ChatUtils {
         configuration.chat().getChatTabs().forEach(chatTab -> chatTab.getMessages().clear());
     }
 
-    public record MessageMeta(long receivedAt, long sequence, @NonNull Set<CustomChatTab> matchingChatTabs, @Nullable FilteredMessage bestMatchingFilteredMessage) {
+    public record MessageMeta(long receivedAt, long sequence, @NonNull Set<CustomChatTab> matchingChatTabs, @Nullable FilteredMessage bestMatchingFilteredMessage, boolean hidden) {
 
         public @NonNull ChatLogEntry toChatLogEntry(@NonNull GuiMessage message) {
             return new ChatLogEntry(message.content(), message.source(), this.receivedAt);

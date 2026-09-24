@@ -6,7 +6,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.Window;
 import de.rettichlp.therettingtoncompanion.gui.options.list.FilteredMessageEntry;
-import de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry;
 import de.rettichlp.therettingtoncompanion.utils.ChatUtils.MessageMeta;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
@@ -35,14 +34,11 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import java.awt.Color;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.CHAT_PEEK_KEY;
-import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.LOGGER;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
-import static de.rettichlp.therettingtoncompanion.gui.options.list.HiddenMessageEntry.HiddenMessage.shouldBeHidden;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.clearAllMessages;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatBottomHeight;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getMaxChatHeight;
@@ -97,19 +93,6 @@ public abstract class ChatComponentMixin {
 
     @Shadow
     protected abstract void refreshTrimmedMessages();
-
-    @Inject(method = "addMessage", at = @At("HEAD"), cancellable = true)
-    private void trc$addMessageHead(@NonNull Component contents,
-                                    MessageSignature signature,
-                                    GuiMessageSource source,
-                                    GuiMessageTag tag,
-                                    CallbackInfo ci) {
-        Optional<HiddenMessageEntry.HiddenMessage> shouldBeHidden = shouldBeHidden(contents.getString());
-        shouldBeHidden.ifPresent(hiddenMessage -> {
-            ci.cancel();
-            LOGGER.info("Hidden following message (commissioned by {}): {} ", hiddenMessage.getProviderModId(), contents.getString());
-        });
-    }
 
     @ModifyExpressionValue(method = "addMessage",
                            at = @At(value = "INVOKE", target = "Ljava/util/function/Predicate;test(Ljava/lang/Object;)Z"))
