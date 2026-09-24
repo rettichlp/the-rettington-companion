@@ -29,6 +29,7 @@ public class VisualsConfiguration {
 
     public static final int DEFAULT_DAMAGE_OVERLAY_COLOR = 0xFF0000;
     public static final int DEFAULT_DAMAGE_OVERLAY_OPACITY = 70;
+    public static final int CUSTOM_CROSSHAIR_SIZE = 15;
 
     private boolean showArmorHud = true;
     private boolean showArrowHud = true;
@@ -44,6 +45,8 @@ public class VisualsConfiguration {
     private boolean effectShowDurationTimer = true;
     private int damageOverlayColor = DEFAULT_DAMAGE_OVERLAY_COLOR;
     private int damageOverlayOpacity = DEFAULT_DAMAGE_OVERLAY_OPACITY;
+    private boolean customCrosshairEnabled = false;
+    private int[] customCrosshairPixels = new int[CUSTOM_CROSSHAIR_SIZE * CUSTOM_CROSSHAIR_SIZE];
 
     @Getter
     @Accessors(fluent = true)

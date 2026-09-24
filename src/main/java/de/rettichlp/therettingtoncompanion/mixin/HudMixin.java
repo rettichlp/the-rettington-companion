@@ -50,7 +50,9 @@ import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.CHAT_PE
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.configuration;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.player;
+import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.visualsService;
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.widgetService;
+import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfiguration.CUSTOM_CROSSHAIR_SIZE;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.ADD_CHAT_TAB;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.CHAT_TAB_BUTTONS;
 import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.DEFAULT_CHAT_TAB;
@@ -190,6 +192,25 @@ public abstract class HudMixin {
 
         if (!arrowItems.isEmpty() && configuration.visuals().isShowArrowHud()) {
             drawArrowHud(graphics, deltaTracker, y, arrowItems);
+        }
+    }
+
+    @WrapOperation(method = "extractCrosshair",
+                   at = @At(value = "INVOKE",
+                            target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V",
+                            ordinal = 0))
+    private void trc$extractCrosshairInvoke(GuiGraphicsExtractor graphics,
+                                            RenderPipeline pipeline,
+                                            Identifier sprite,
+                                            int x,
+                                            int y,
+                                            int width,
+                                            int height,
+                                            Operation<Void> original) {
+        if (configuration.visuals().isCustomCrosshairEnabled()) {
+            graphics.blit(GUI_TEXTURED, visualsService.getCustomCrosshairTextureId(), x, y, 0.0F, 0.0F, width, height, CUSTOM_CROSSHAIR_SIZE, CUSTOM_CROSSHAIR_SIZE);
+        } else {
+            original.call(graphics, pipeline, sprite, x, y, width, height);
         }
     }
 
