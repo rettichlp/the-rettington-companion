@@ -12,7 +12,6 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 import java.awt.Color;
 import java.util.function.IntSupplier;
@@ -23,6 +22,7 @@ import static de.rettichlp.therettingtoncompanion.configuration.VisualsConfigura
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_HORIZONTAL;
 import static de.rettichlp.therettingtoncompanion.gui.screens.TRCOptionsScreen.SPACING_VERTICAL;
 import static de.rettichlp.therettingtoncompanion.services.VisualsService.VANILLA_TEXT_COLORS;
+import static java.util.Arrays.fill;
 import static net.minecraft.client.gui.layouts.FrameLayout.centerInRectangle;
 import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
 import static net.minecraft.client.gui.layouts.LinearLayout.vertical;
@@ -47,7 +47,7 @@ public class CrosshairEditorScreen extends Screen {
     private Button eraserButton;
 
     public CrosshairEditorScreen(Screen backgroundScreen) {
-        super(translatable("trc.crosshair_editor.title"));
+        super(translatable("trc.option.visuals.crosshair.edit.label"));
         this.backgroundScreen = backgroundScreen;
     }
 
@@ -62,7 +62,7 @@ public class CrosshairEditorScreen extends Screen {
         this.layout.addChild(new StringWidget(this.title, this.font));
 
         LinearLayout contentRow = this.layout.addChild(horizontal().spacing(SPACING_HORIZONTAL));
-        contentRow.addChild(new CrosshairCanvas(0, 0, CUSTOM_CROSSHAIR_SIZE, PIXEL_SIZE, this.pixels, () -> this.eraserActive ? 0 : this.selectedColor.getRGB()));
+        CrosshairCanvas crosshairCanvas = contentRow.addChild(new CrosshairCanvas(0, 0, CUSTOM_CROSSHAIR_SIZE, PIXEL_SIZE, this.pixels, () -> this.eraserActive ? 0 : this.selectedColor.getRGB()));
 
         LinearLayout palette = contentRow.addChild(vertical().spacing(SPACING_VERTICAL));
 
@@ -88,24 +88,24 @@ public class CrosshairEditorScreen extends Screen {
             palette.addChild(currentRow);
         }
 
-        this.eraserButton = palette.addChild(Button.builder(translatable("trc.crosshair_editor.eraser"), _ -> {
-            this.eraserActive = !this.eraserActive;
-            updatePaletteFocus();
-        }).width(20 * PALETTE_COLUMNS + SPACING_HORIZONTAL * (PALETTE_COLUMNS - 1)).build());
+        int buttonWidth = 20 * PALETTE_COLUMNS + SPACING_HORIZONTAL * (PALETTE_COLUMNS - 1);
 
         palette.addChild(Button.builder(translatable("trc.crosshair_editor.custom_color"), _ -> this.minecraft.gui.setScreen(new ColorSelectionPopupScreen(this, this.selectedColor, color -> {
             this.eraserActive = false;
             this.selectedColor = color;
             updatePaletteFocus();
-        }))).width(20 * PALETTE_COLUMNS + SPACING_HORIZONTAL * (PALETTE_COLUMNS - 1)).build());
+        }))).width(buttonWidth).build());
+
+        this.eraserButton = palette.addChild(Button.builder(translatable("trc.crosshair_editor.eraser"), _ -> {
+            this.eraserActive = !this.eraserActive;
+            updatePaletteFocus();
+        }).width(buttonWidth).build());
+
+        palette.addChild(Button.builder(translatable("trc.crosshair_editor.clear"), _ -> fill(this.pixels, 0)).width(buttonWidth).build());
+        palette.addChild(Button.builder(GUI_CANCEL, _ -> onClose()).width(buttonWidth).build());
+        palette.addChild(Button.builder(GUI_DONE, _ -> onDone()).width(buttonWidth).build());
 
         updatePaletteFocus();
-
-        LinearLayout buttonRow = horizontal().spacing(SPACING_HORIZONTAL);
-        buttonRow.addChild(Button.builder(GUI_CANCEL, _ -> onClose()).width(88).build());
-        buttonRow.addChild(Button.builder(translatable("trc.crosshair_editor.clear"), _ -> Arrays.fill(this.pixels, 0)).width(88).build());
-        buttonRow.addChild(Button.builder(GUI_DONE, _ -> onDone()).width(88).build());
-        this.layout.addChild(buttonRow);
 
         this.layout.visitWidgets(this::addRenderableWidget);
         repositionElements();
