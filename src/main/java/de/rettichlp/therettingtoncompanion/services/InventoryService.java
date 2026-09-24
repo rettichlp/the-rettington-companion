@@ -3,7 +3,9 @@ package de.rettichlp.therettingtoncompanion.services;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
 
@@ -84,6 +86,11 @@ public class InventoryService {
                 continue;
             }
 
+            // skip locked slots
+            if (isLockedSlot(i)) {
+                continue;
+            }
+
             // check for same type
             if (!is.is(itemStack.getItem())) {
                 continue;
@@ -103,5 +110,21 @@ public class InventoryService {
         }
 
         return matchingSlotIds;
+    }
+
+    public boolean isLockedSlot(int slotIndex) {
+        return configuration.inventory().getLockedSlots().contains(slotIndex);
+    }
+
+    public boolean isLockedSlot(@NonNull Slot slot) {
+        return isLockedSlot(slot.container, slot.getContainerSlot());
+    }
+
+    public boolean isLockedSlot(Container container, int containerSlot) {
+        return isOwnInventory(container) && isLockedSlot(containerSlot);
+    }
+
+    public boolean isOwnInventory(Container container) {
+        return player != null && container instanceof Inventory inventory && inventory.player.getUUID().equals(player.getUUID());
     }
 }
