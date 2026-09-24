@@ -518,7 +518,7 @@ public abstract class HudMixin {
             return "";
         }
 
-        int totalSeconds = (int) ceil(instance.getDuration() / 20.0) - 1;
+        int totalSeconds = (int) ceil(instance.getDuration() / 20.0);
         if (totalSeconds >= 86400) {
             return (totalSeconds / 86400) + "d";
         } else if (totalSeconds >= 3600) {
