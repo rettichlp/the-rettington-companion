@@ -65,6 +65,7 @@ import static de.rettichlp.therettingtoncompanion.utils.ChatUtils.getChatTopHeig
 import static java.awt.Color.BLACK;
 import static java.awt.Color.WHITE;
 import static java.lang.Math.ceil;
+import static java.lang.Math.max;
 import static java.lang.String.valueOf;
 import static net.minecraft.client.gui.components.ChatComponent.DisplayMode.FOREGROUND;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
@@ -518,7 +519,7 @@ public abstract class HudMixin {
             return "";
         }
 
-        int totalSeconds = (int) ceil(instance.getDuration() / 20.0);
+        int totalSeconds = max(0, (int) ceil(instance.getDuration() / 20.0) - 1);
         if (totalSeconds >= 86400) {
             return (totalSeconds / 86400) + "d";
         } else if (totalSeconds >= 3600) {
