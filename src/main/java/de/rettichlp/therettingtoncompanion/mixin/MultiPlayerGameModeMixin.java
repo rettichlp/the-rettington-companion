@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
-import static net.minecraft.world.inventory.ContainerInput.PICKUP_ALL;
 
 @Mixin(MultiPlayerGameMode.class)
 public abstract class MultiPlayerGameModeMixin {
@@ -28,16 +27,14 @@ public abstract class MultiPlayerGameModeMixin {
     private boolean suppressPredictionPacket;
 
     @Inject(method = "handleContainerInput", at = @At("HEAD"), cancellable = true)
-    private void trc$handleContainerInputHead(int containerId, int slotNum, int buttonNum, ContainerInput containerInput, @NonNull Player player, CallbackInfo ci) {
-        if (containerId != player.containerMenu.containerId || !inventoryService.affectsLockedSlot(player.containerMenu, slotNum, buttonNum, containerInput, player)) {
-            return;
-        }
-
-        ci.cancel();
-
-        // the server would also take from locked slots, so collect from the unlocked ones only
-        if (containerInput == PICKUP_ALL) {
-            inventoryService.pickupAllFromUnlockedSlots((MultiPlayerGameMode) (Object) this, player.containerMenu, buttonNum, player);
+    private void trc$handleContainerInputHead(int containerId,
+                                              int slotNum,
+                                              int buttonNum,
+                                              ContainerInput containerInput,
+                                              @NonNull Player player,
+                                              CallbackInfo ci) {
+        if (containerId == player.containerMenu.containerId && inventoryService.affectsLockedSlot(player.containerMenu, slotNum, buttonNum, containerInput)) {
+            ci.cancel();
         }
     }
 
@@ -52,7 +49,10 @@ public abstract class MultiPlayerGameModeMixin {
             at = @At(value = "INVOKE",
                      target = "Lnet/minecraft/world/item/ItemStack;useOn(Lnet/minecraft/world/item/context/UseOnContext;)Lnet/minecraft/world/InteractionResult;"),
             cancellable = true)
-    private void trc$performUseItemOnInvoke(LocalPlayer player, InteractionHand hand, BlockHitResult blockHit, CallbackInfoReturnable<InteractionResult> cir) {
+    private void trc$performUseItemOnInvoke(LocalPlayer player,
+                                            InteractionHand hand,
+                                            BlockHitResult blockHit,
+                                            CallbackInfoReturnable<InteractionResult> cir) {
         // block interactions (e.g. opening a chest) already happened, only the placement is prevented
         if (inventoryService.wouldPlaceFromLockedSlot(player, hand)) {
             this.suppressPredictionPacket = true;

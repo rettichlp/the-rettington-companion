@@ -2,7 +2,6 @@ package de.rettichlp.therettingtoncompanion.services;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -31,11 +30,7 @@ import static net.minecraft.network.chat.Component.translatable;
 import static net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_GENERIC;
 import static net.minecraft.world.entity.player.Inventory.EQUIPMENT_SLOT_MAPPING;
 import static net.minecraft.world.entity.player.Inventory.SLOT_OFFHAND;
-import static net.minecraft.world.inventory.AbstractContainerMenu.canItemQuickReplace;
 import static net.minecraft.world.inventory.ContainerInput.CLONE;
-import static net.minecraft.world.inventory.ContainerInput.PICKUP;
-import static net.minecraft.world.inventory.ContainerInput.PICKUP_ALL;
-import static net.minecraft.world.inventory.ContainerInput.QUICK_MOVE;
 import static net.minecraft.world.inventory.ContainerInput.SWAP;
 
 public class InventoryService {
@@ -136,7 +131,7 @@ public class InventoryService {
     }
 
     public boolean isLockedSlot(int slotIndex) {
-        return isSlotLockActive() && configuration.inventory().getLockedSlots().contains(slotIndex);
+        return configuration.inventory().getLockedSlots().contains(slotIndex);
     }
 
     public boolean isLockedSlot(@NonNull Slot slot) {
@@ -144,7 +139,7 @@ public class InventoryService {
     }
 
     public void toggleSlotLock(@Nullable Slot slot) {
-        if (slot == null || !isSlotLockActive() || !isOwnInventory(slot)) {
+        if (slot == null || !isOwnInventory(slot)) {
             return;
         }
 
@@ -160,17 +155,7 @@ public class InventoryService {
         player.sendOverlayMessage(translatable(wasLocked ? "trc.message.slot_lock.unlocked" : "trc.message.slot_lock.locked"));
     }
 
-    // the creative inventory ignores locked slots
-    private boolean isSlotLockActive() {
-        return !(Minecraft.getInstance().gui.screen() instanceof CreativeModeInventoryScreen);
-    }
-
-    // identity check keeps the locks client-side only (the integrated server has its own player instance)
-    private boolean isOwnInventory(@NonNull Slot slot) {
-        return slot.container instanceof Inventory inventory && inventory.player == player;
-    }
-
-    public boolean affectsLockedSlot(@NonNull AbstractContainerMenu menu, int slotNum, int buttonNum, ContainerInput containerInput, Player clickPlayer) {
+    public boolean affectsLockedSlot(@NonNull AbstractContainerMenu menu, int slotNum, int buttonNum, ContainerInput containerInput) {
         if (configuration.inventory().getLockedSlots().isEmpty()) {
             return false;
         }
@@ -181,65 +166,7 @@ public class InventoryService {
         }
 
         // hotbar or offhand slot used as swap source is locked
-        if (containerInput == SWAP && isLockedSlot(buttonNum)) {
-            return true;
-        }
-
-        // quick move and pick all may touch any slot, so predict what the (unmodded) server would do
-        return (containerInput == QUICK_MOVE || containerInput == PICKUP_ALL) && wouldChangeLockedSlot(menu, slotNum, buttonNum, containerInput, clickPlayer);
-    }
-
-    private boolean wouldChangeLockedSlot(@NonNull AbstractContainerMenu menu, int slotNum, int buttonNum, ContainerInput containerInput, Player clickPlayer) {
-        List<ItemStack> itemsBeforeClick = menu.slots.stream().map(slot -> slot.getItem().copy()).toList();
-        ItemStack carriedBeforeClick = menu.getCarried().copy();
-
-        menu.clicked(slotNum, buttonNum, containerInput, clickPlayer);
-
-        boolean lockedSlotChanged = false;
-        for (int i = 0; i < menu.slots.size(); i++) {
-            Slot slot = menu.slots.get(i);
-            ItemStack before = itemsBeforeClick.get(i);
-            if (ItemStack.matches(before, slot.getItem())) {
-                continue;
-            }
-
-            lockedSlotChanged |= isLockedSlot(slot);
-            slot.set(before);
-        }
-
-        menu.setCarried(carriedBeforeClick);
-
-        return lockedSlotChanged;
-    }
-
-    public void pickupAllFromUnlockedSlots(MultiPlayerGameMode gameMode, @NonNull AbstractContainerMenu menu, int buttonNum, Player clickPlayer) {
-        // same slot order as vanilla: first non-full stacks, then full stacks
-        int start = buttonNum == 0 ? 0 : menu.slots.size() - 1;
-        int step = buttonNum == 0 ? 1 : -1;
-
-        for (int pass = 0; pass < 2; pass++) {
-            for (int i = start; i >= 0 && i < menu.slots.size(); i += step) {
-                ItemStack carried = menu.getCarried();
-                if (carried.isEmpty() || carried.getCount() >= carried.getMaxStackSize()) {
-                    return;
-                }
-
-                Slot slot = menu.slots.get(i);
-                ItemStack item = slot.getItem();
-                if (isLockedSlot(slot) || !slot.hasItem() || !canItemQuickReplace(slot, carried, true) || !slot.mayPickup(clickPlayer) || !menu.canTakeItemForPickAll(carried, slot)) {
-                    continue;
-                }
-
-                // plain clicks cannot take a part of a stack, so only take stacks that fit completely
-                if ((pass == 0 && item.getCount() == item.getMaxStackSize()) || carried.getCount() + item.getCount() > carried.getMaxStackSize()) {
-                    continue;
-                }
-
-                // put the carried items onto the slot, then pick up the merged stack
-                gameMode.handleContainerInput(menu.containerId, i, 0, PICKUP, clickPlayer);
-                gameMode.handleContainerInput(menu.containerId, i, 0, PICKUP, clickPlayer);
-            }
-        }
+        return containerInput == SWAP && isLockedSlot(buttonNum);
     }
 
     public boolean wouldEquipIntoLockedSlot(@NonNull Player usePlayer, InteractionHand hand) {
@@ -255,8 +182,13 @@ public class InventoryService {
         return usePlayer.getItemInHand(hand).getItem() instanceof BlockItem && isLockedHand(usePlayer, hand);
     }
 
-    private boolean isLockedHand(@NonNull Player usePlayer, InteractionHand hand) {
+    public boolean isLockedHand(@NonNull Player usePlayer, InteractionHand hand) {
         return isLockedSlot(hand == InteractionHand.MAIN_HAND ? usePlayer.getInventory().getSelectedSlot() : SLOT_OFFHAND);
+    }
+
+    // identity check keeps the locks client-side only (the integrated server has its own player instance)
+    private boolean isOwnInventory(@NonNull Slot slot) {
+        return slot.container instanceof Inventory inventory && inventory.player == player;
     }
 
     private int getInventorySlotIndex(EquipmentSlot equipmentSlot) {

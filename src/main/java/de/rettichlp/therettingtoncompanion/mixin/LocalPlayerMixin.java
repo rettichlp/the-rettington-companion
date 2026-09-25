@@ -7,13 +7,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static de.rettichlp.therettingtoncompanion.TheRettingtonCompanion.inventoryService;
+import static net.minecraft.world.InteractionHand.MAIN_HAND;
 
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin {
 
     @Inject(method = "drop", at = @At("HEAD"), cancellable = true)
     private void trc$dropHead(boolean all, CallbackInfoReturnable<Boolean> cir) {
-        if (inventoryService.isLockedSlot(((LocalPlayer) (Object) this).getInventory().getSelectedSlot())) {
+        if (inventoryService.isLockedHand((LocalPlayer) (Object) this, MAIN_HAND)) {
             cir.setReturnValue(false);
         }
     }

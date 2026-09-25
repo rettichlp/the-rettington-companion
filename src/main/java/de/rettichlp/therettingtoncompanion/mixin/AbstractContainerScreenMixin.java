@@ -34,11 +34,11 @@ import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> extends Screen implements MenuAccess<T> {
 
-    private static final Identifier LOCKED_SLOT_SPRITE = withDefaultNamespace("container/cartography_table/locked");
-
     @Shadow
     @Final
     protected T menu;
+
+    private static final Identifier LOCKED_SLOT_SPRITE = withDefaultNamespace("container/cartography_table/locked");
 
     protected AbstractContainerScreenMixin(Component title) {
         super(title);
