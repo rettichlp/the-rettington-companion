@@ -15,6 +15,7 @@
     "minVersion": "0.5.4"
   },
   "client": [
+    "AbstractContainerScreenAccessor",
     "AbstractContainerScreenMixin",
     "ChatComponentAccessor",
     "ChatComponentMixin",
@@ -26,6 +27,8 @@
     "LevelMixin",
     "LivingEntityMixin",
     "LivingEntityRendererMixin",
+    "LocalPlayerMixin",
+    "MultiPlayerGameModeMixin",
     "NametagFeatureRendererMixin",
     "OptionInstanceMixin",
     "OverlayTextureAccessor",
