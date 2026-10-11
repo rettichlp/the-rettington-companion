@@ -71,7 +71,7 @@ public class VisualsConfiguration {
         }
 
         public void sendMessage() {
-            player.sendOverlayMessage(empty()
+            player().sendOverlayMessage(empty()
                     .append(literal("Equipment").withColor(GRAY))
                     .append(literal(": ").withColor(DARK_GRAY))
                     .append(this.value));

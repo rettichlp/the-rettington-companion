@@ -43,7 +43,7 @@ public abstract class KeyboardHandlerMixin {
     private void trc$keyPressInvoke(long handle, int action, KeyEvent event, CallbackInfo ci) {
         // support focused chat
         if (SCREENSHOT_KEY.matches(event)) {
-            player.addEffect(new MobEffectInstance(NO_MINIMAP, -1, 0, false, false, false));
+            player().addEffect(new MobEffectInstance(NO_MINIMAP, -1, 0, false, false, false));
 
             delayedAction(() -> takeImgurScreenshot().thenAccept(file -> {
                 CompletableFuture<String> futureImageLink = uploadImageToImgur(file.toPath());
@@ -53,7 +53,7 @@ public abstract class KeyboardHandlerMixin {
                 });
             }), 100);
 
-            delayedAction(() -> player.removeEffect(NO_MINIMAP), 1000);
+            delayedAction(() -> player().removeEffect(NO_MINIMAP), 1000);
         }
 
         // only with closed chat

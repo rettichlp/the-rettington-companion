@@ -22,7 +22,7 @@ public class LivingEntityRendererMixin {
                            at = @At(value = "INVOKE",
                                     target = "Lnet/minecraft/client/Minecraft;getCameraEntity()Lnet/minecraft/world/entity/Entity;"))
     private @Nullable Entity trc$shouldShowNameInvoke(Entity original) {
-        if (original != player) {
+        if (original != player()) {
             return original;
         }
 

@@ -53,8 +53,6 @@ public class TheRettingtonCompanion implements ModInitializer {
     public static final KeyMapping EQUIPMENT_MODEL_VISIBILITY_KEY = registerKeyMapping(new KeyMapping("trc.key.hide_armor", KEYSYM, GLFW_KEY_H, KEY_CATEGORY));
     public static final KeyMapping SCREENSHOT_KEY = registerKeyMapping(new KeyMapping("trc.key.screenshot", KEYSYM, GLFW_KEY_F12, KEY_CATEGORY));
 
-    public static LocalPlayer player;
-
     @Override
     public void onInitialize() {
         // This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -63,8 +61,6 @@ public class TheRettingtonCompanion implements ModInitializer {
         widgetService.initWidgets();
 
         JOIN.register((_, _, minecraft) -> {
-            player = minecraft.player;
-
             if (configuration.chat().isSaveChatLog()) {
                 chatLogService.loadChatLog();
             }
@@ -97,9 +93,16 @@ public class TheRettingtonCompanion implements ModInitializer {
             worldName = minecraft.getCurrentServer().name.isBlank() ? minecraft.getCurrentServer().ip : minecraft.getCurrentServer().name;
         }
 
-        player.sendSystemMessage(empty()
+        player().sendSystemMessage(empty()
                 .append(literal("[").withColor(GRAY))
                 .append(literal(worldName).withColor(AQUA))
                 .append(literal("]").withColor(GRAY)));
+    }
+
+    /**
+     * The current local player. Resolved on every call because a new instance is created e.g. on dimension change.
+     */
+    public static LocalPlayer player() {
+        return Minecraft.getInstance().player;
     }
 }
