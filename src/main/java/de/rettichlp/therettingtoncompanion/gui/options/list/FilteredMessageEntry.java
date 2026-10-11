@@ -197,7 +197,7 @@ public class FilteredMessageEntry extends AbstractEntry {
         }
 
         private static boolean matchesDefaultFilteredMessage(@NonNull FilteredMessage defaultFilteredMessage, String message) {
-            return defaultFilteredMessage.isActive() && message.toLowerCase().contains(player.getGameProfile().name().toLowerCase());
+            return defaultFilteredMessage.isActive() && message.toLowerCase().contains(player().getGameProfile().name().toLowerCase());
         }
     }
 }

@@ -74,7 +74,7 @@ public class ScreenshotUtils {
                 Map<String, String> fields = Map.of(
                         "type", "file",
                         "title", pathToImage.getFileName().toString(),
-                        "description", "Uploaded by " + player.getName().getString() + " using the Minecraft mod '" + MOD_NAME + "'"
+                        "description", "Uploaded by " + player().getName().getString() + " using the Minecraft mod '" + MOD_NAME + "'"
                 );
 
                 byte[] body = createMultipartBody(pathToImage, fields, boundary);

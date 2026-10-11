@@ -96,12 +96,12 @@ public class ChatUtils {
         }
 
         int yLineBase = minecraft.getWindow().getGuiScaledHeight() - 39;
-        float maxHealth = max((float) player.getAttributeValue(MAX_HEALTH), player.getHealth());
-        int totalAbsorption = ceil(player.getAbsorptionAmount());
+        float maxHealth = max((float) player().getAttributeValue(MAX_HEALTH), player().getHealth());
+        int totalAbsorption = ceil(player().getAbsorptionAmount());
         int numHealthRows = ceil((maxHealth + (float) totalAbsorption) / 2.0F / 10.0F);
         int healthRowHeight = max(10 - (numHealthRows - 2), 3);
         int yLineArmor = yLineBase - (numHealthRows - 1) * healthRowHeight - 10;
-        int yLineChatBottom = player.getArmorValue() > 0 ? yLineArmor : yLineArmor + 10;
+        int yLineChatBottom = player().getArmorValue() > 0 ? yLineArmor : yLineArmor + 10;
         return min(minecraft.getWindow().getGuiScaledHeight() - 47, yLineChatBottom); // same height as empty inventory slot count
     }
 

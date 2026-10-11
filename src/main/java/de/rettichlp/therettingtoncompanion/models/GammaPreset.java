@@ -69,7 +69,7 @@ public enum GammaPreset implements ICycleButtonValue {
             }
         }
 
-        player.sendOverlayMessage(component);
+        player().sendOverlayMessage(component);
     }
 
     private int toPercent(double d) {

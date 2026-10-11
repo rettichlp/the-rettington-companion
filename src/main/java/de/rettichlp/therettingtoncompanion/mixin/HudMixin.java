@@ -136,13 +136,13 @@ public abstract class HudMixin {
         Profiler.get().pop();
 
         // render empty inventory space text
-        GameType gameType = player.gameMode();
+        GameType gameType = player().gameMode();
         if (configuration.visuals().isShowEmptyInventorySlotCount() && gameType != null && gameType.isSurvival() && !this.minecraft.gui.hud.isHidden()) {
-            ItemStack mainHandStack = player.getMainHandItem();
-            boolean showSameItemLeftAmount = player.isCrouching() && !mainHandStack.isEmpty();
+            ItemStack mainHandStack = player().getMainHandItem();
+            boolean showSameItemLeftAmount = player().isCrouching() && !mainHandStack.isEmpty();
             long emptySlotAmount = showSameItemLeftAmount
                     ? inventoryService.getMatchingSlotIds(mainHandStack).size() // retrieve same-item-left number
-                    : player.getInventory().getNonEquipmentItems().stream().filter(ItemStack::isEmpty).count();
+                    : player().getInventory().getNonEquipmentItems().stream().filter(ItemStack::isEmpty).count();
 
             Component text = literal(valueOf(emptySlotAmount));
             int y = graphics.guiHeight() - 46;

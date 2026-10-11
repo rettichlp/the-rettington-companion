@@ -53,7 +53,7 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 
         MultiPlayerGameMode gameMode = this.minecraft.gameMode;
         if (gameMode != null && slot != null && slot.hasItem() && isShiftPressed && isMouseLeftDown) {
-            gameMode.handleContainerInput(this.menu.containerId, slot.index, 0, QUICK_MOVE, player);
+            gameMode.handleContainerInput(this.menu.containerId, slot.index, 0, QUICK_MOVE, player());
             cir.cancel();
         }
     }

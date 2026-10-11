@@ -24,8 +24,8 @@ public class InventoryService {
     private ItemStack itemStack;
 
     public void checkRestock() {
-        int currentHotbarSlotIndex = player.getInventory().getSelectedSlot();
-        ItemStack currentItemStack = player.getMainHandItem().copy();
+        int currentHotbarSlotIndex = player().getInventory().getSelectedSlot();
+        ItemStack currentItemStack = player().getMainHandItem().copy();
 
         if (this.itemStack == null || this.hotbarSlotIndex != currentHotbarSlotIndex) {
             this.hotbarSlotIndex = currentHotbarSlotIndex;
@@ -37,7 +37,7 @@ public class InventoryService {
             if (restock(this.itemStack)) {
                 Minecraft.getInstance().getSoundManager().play(forUI(ARMOR_EQUIP_GENERIC.value(), 1f, 2f));
                 Component message = translatable("trc.message.auto_restock.restock_succeeded", this.itemStack.getHoverName());
-                player.sendOverlayMessage(message);
+                player().sendOverlayMessage(message);
             }
         }
 
@@ -67,14 +67,14 @@ public class InventoryService {
             mostMatchingSlotIndex += 36;
         }
 
-        gameMode.handleContainerInput(player.containerMenu.containerId, mostMatchingSlotIndex, this.hotbarSlotIndex, SWAP, player);
+        gameMode.handleContainerInput(player().containerMenu.containerId, mostMatchingSlotIndex, this.hotbarSlotIndex, SWAP, player());
 
         return true;
     }
 
     public List<Integer> getMatchingSlotIds(ItemStack itemStack) {
         List<Integer> matchingSlotIds = new ArrayList<>();
-        Inventory inventory = player.getInventory();
+        Inventory inventory = player().getInventory();
 
         for (int i = 0; i < inventory.getNonEquipmentItems().size(); i++) {
             ItemStack is = inventory.getNonEquipmentItems().get(i);
